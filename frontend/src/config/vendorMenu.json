@@ -1,0 +1,41 @@
+[
+  {
+    "title": "Dashboard",
+    "route": "/vendor/dashboard",
+    "children": []
+  },
+  {
+    "title": "Products",
+    "route": "/vendor/products",
+    "children": ["Manage Products", "Add Product", "Bulk Upload"]
+  },
+  {
+    "title": "Orders",
+    "route": "/vendor/orders",
+    "children": ["All Orders", "Order Tracking"]
+  },
+  {
+    "title": "Analytics",
+    "route": "/vendor/analytics",
+    "children": []
+  },
+  {
+    "title": "Earnings",
+    "route": "/vendor/earnings",
+    "children": [
+      "Earnings Overview",
+      "Commission History",
+      "Settlement History"
+    ]
+  },
+  {
+    "title": "Settings",
+    "route": "/vendor/settings",
+    "children": ["Store Settings", "Payment Settings", "Shipping Settings"]
+  },
+  {
+    "title": "Profile",
+    "route": "/vendor/profile",
+    "children": []
+  }
+]
