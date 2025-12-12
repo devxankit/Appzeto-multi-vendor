@@ -1,6 +1,6 @@
 import { useState, useEffect } from 'react';
-import { useNavigate } from 'react-router-dom';
-import { FiMessageSquare, FiSearch, FiPlus, FiEye } from 'react-icons/fi';
+import { useNavigate, useParams } from 'react-router-dom';
+import { FiMessageSquare, FiSearch, FiPlus, FiEye, FiArrowLeft, FiCalendar, FiTag } from 'react-icons/fi';
 import { motion } from 'framer-motion';
 import DataTable from '../../components/Admin/DataTable';
 import Badge from '../../components/Badge';
@@ -10,6 +10,7 @@ import toast from 'react-hot-toast';
 
 const SupportTickets = () => {
   const navigate = useNavigate();
+  const { id } = useParams();
   const { vendor } = useVendorAuthStore();
   const [tickets, setTickets] = useState([]);
   const [searchQuery, setSearchQuery] = useState('');
@@ -115,6 +116,17 @@ const SupportTickets = () => {
     },
   ];
 
+  // Find ticket by ID if viewing detail
+  const selectedTicket = id ? tickets.find(ticket => ticket.id === id) : null;
+
+  // If ID is present but ticket not found, redirect to list
+  useEffect(() => {
+    if (id && tickets.length > 0 && !selectedTicket) {
+      toast.error('Ticket not found');
+      navigate('/vendor/support-tickets');
+    }
+  }, [id, tickets, selectedTicket, navigate]);
+
   if (!vendorId) {
     return (
       <div className="text-center py-12">
@@ -123,6 +135,12 @@ const SupportTickets = () => {
     );
   }
 
+  // Render detail view if ID is present and ticket is found
+  if (id && selectedTicket) {
+    return <TicketDetail ticket={selectedTicket} navigate={navigate} getStatusVariant={getStatusVariant} getPriorityColor={getPriorityColor} />;
+  }
+
+  // Render list view
   return (
     <motion.div
       initial={{ opacity: 0, y: 20 }}
@@ -193,6 +211,88 @@ const SupportTickets = () => {
           onClose={() => setShowForm(false)}
         />
       )}
+    </motion.div>
+  );
+};
+
+const TicketDetail = ({ ticket, navigate, getStatusVariant, getPriorityColor }) => {
+  return (
+    <motion.div
+      initial={{ opacity: 0, y: 20 }}
+      animate={{ opacity: 1, y: 0 }}
+      className="space-y-6">
+      <div className="flex items-center gap-4 mb-6">
+        <button
+          onClick={() => navigate('/vendor/support-tickets')}
+          className="p-2 hover:bg-gray-100 rounded-lg transition-colors">
+          <FiArrowLeft className="text-xl" />
+        </button>
+        <div>
+          <h1 className="text-2xl sm:text-3xl font-bold text-gray-800">Ticket Details</h1>
+          <p className="text-sm text-gray-600 mt-1">View and manage ticket information</p>
+        </div>
+      </div>
+
+      <div className="bg-white rounded-xl p-6 shadow-sm border border-gray-200 space-y-6">
+        {/* Ticket Header */}
+        <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-4 pb-6 border-b border-gray-200">
+          <div>
+            <div className="flex items-center gap-3 mb-2">
+              <h2 className="text-xl font-bold text-gray-800">{ticket.subject}</h2>
+              <Badge variant={getStatusVariant(ticket.status)}>{ticket.status}</Badge>
+            </div>
+            <div className="flex flex-wrap items-center gap-4 text-sm text-gray-600">
+              <span className="flex items-center gap-1">
+                <FiTag />
+                Ticket ID: <span className="font-semibold text-gray-800">{ticket.id}</span>
+              </span>
+              <span className="flex items-center gap-1">
+                <FiCalendar />
+                Created: {new Date(ticket.createdAt).toLocaleDateString()}
+              </span>
+            </div>
+          </div>
+        </div>
+
+        {/* Ticket Information */}
+        <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+          <div>
+            <label className="text-sm font-semibold text-gray-600 block mb-2">Type</label>
+            <p className="text-gray-800">{ticket.type}</p>
+          </div>
+          <div>
+            <label className="text-sm font-semibold text-gray-600 block mb-2">Priority</label>
+            <span className={`inline-block px-3 py-1 rounded text-sm font-medium ${getPriorityColor(ticket.priority)}`}>
+              {ticket.priority}
+            </span>
+          </div>
+          <div>
+            <label className="text-sm font-semibold text-gray-600 block mb-2">Status</label>
+            <Badge variant={getStatusVariant(ticket.status)}>{ticket.status}</Badge>
+          </div>
+          <div>
+            <label className="text-sm font-semibold text-gray-600 block mb-2">Created Date</label>
+            <p className="text-gray-800">{new Date(ticket.createdAt).toLocaleString()}</p>
+          </div>
+        </div>
+
+        {/* Description */}
+        <div>
+          <label className="text-sm font-semibold text-gray-600 block mb-2">Description</label>
+          <div className="bg-gray-50 rounded-lg p-4 border border-gray-200">
+            <p className="text-gray-800 whitespace-pre-wrap">{ticket.description}</p>
+          </div>
+        </div>
+
+        {/* Action Buttons */}
+        <div className="flex gap-3 pt-4 border-t border-gray-200">
+          <button
+            onClick={() => navigate('/vendor/support-tickets')}
+            className="px-4 py-2 bg-gray-100 text-gray-700 rounded-lg hover:bg-gray-200 transition-colors font-semibold">
+            Back to Tickets
+          </button>
+        </div>
+      </div>
     </motion.div>
   );
 };
