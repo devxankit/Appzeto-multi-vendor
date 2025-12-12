@@ -7,6 +7,7 @@ import { useVendorStore } from '../../store/vendorStore';
 import { useOrderStore } from '../../store/orderStore';
 import { useCommissionStore } from '../../store/commissionStore';
 import { formatPrice } from '../../utils/helpers';
+import { initializeFashionHubData } from '../../utils/initializeFashionHubData';
 
 const VendorDashboard = () => {
   const navigate = useNavigate();
@@ -25,6 +26,18 @@ const VendorDashboard = () => {
   });
 
   const vendorId = vendor?.id;
+
+  // Initialize dummy data for Fashion Hub vendor (id: 1) on first load
+  useEffect(() => {
+    if (vendorId === 1) {
+      // Check if data has already been initialized
+      const hasInitialized = localStorage.getItem('fashionhub-data-initialized');
+      if (!hasInitialized) {
+        initializeFashionHubData();
+        localStorage.setItem('fashionhub-data-initialized', 'true');
+      }
+    }
+  }, [vendorId]);
 
   useEffect(() => {
     if (vendorId) {

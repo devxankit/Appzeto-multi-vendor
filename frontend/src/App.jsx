@@ -167,6 +167,24 @@ import VendorOrderDetail from "./pages/vendor/orders/OrderDetail";
 import VendorAnalytics from "./pages/vendor/Analytics";
 import VendorEarnings from "./pages/vendor/Earnings";
 import VendorSettings from "./pages/vendor/Settings";
+import VendorStockManagement from "./pages/vendor/StockManagement";
+import VendorWalletHistory from "./pages/vendor/WalletHistory";
+import VendorPickupLocations from "./pages/vendor/PickupLocations";
+import VendorChat from "./pages/vendor/Chat";
+import VendorReturnRequests from "./pages/vendor/ReturnRequests";
+import VendorReturnRequestDetail from "./pages/vendor/returns/ReturnRequestDetail";
+import VendorProductReviews from "./pages/vendor/ProductReviews";
+import VendorPromotions from "./pages/vendor/Promotions";
+import VendorNotifications from "./pages/vendor/Notifications";
+import VendorProductFAQs from "./pages/vendor/ProductFAQs";
+import VendorTaxPricing from "./pages/vendor/TaxPricing";
+import VendorShippingManagement from "./pages/vendor/ShippingManagement";
+import VendorCustomers from "./pages/vendor/Customers";
+import VendorSupportTickets from "./pages/vendor/SupportTickets";
+import VendorProductAttributes from "./pages/vendor/ProductAttributes";
+import VendorInventoryReports from "./pages/vendor/InventoryReports";
+import VendorPerformanceMetrics from "./pages/vendor/PerformanceMetrics";
+import VendorDocuments from "./pages/vendor/Documents";
 
 // Inner component that has access to useLocation
 const AppRoutes = () => {
@@ -352,6 +370,9 @@ const AppRoutes = () => {
           <Route path="products/manage-products" element={<VendorManageProducts />} />
           <Route path="products/add-product" element={<VendorAddProduct />} />
           <Route path="products/bulk-upload" element={<VendorBulkUpload />} />
+          <Route path="products/product-faqs" element={<VendorProductFAQs />} />
+          <Route path="products/tax-pricing" element={<VendorTaxPricing />} />
+          <Route path="products/product-attributes" element={<VendorProductAttributes />} />
           <Route path="products/:id" element={<VendorProductForm />} />
           <Route path="orders" element={<VendorOrders />} />
           <Route path="orders/all-orders" element={<VendorAllOrders />} />
@@ -362,6 +383,22 @@ const AppRoutes = () => {
           <Route path="earnings/overview" element={<VendorEarnings />} />
           <Route path="earnings/commission-history" element={<VendorEarnings />} />
           <Route path="earnings/settlement-history" element={<VendorEarnings />} />
+          <Route path="stock-management" element={<VendorStockManagement />} />
+          <Route path="wallet-history" element={<VendorWalletHistory />} />
+          <Route path="pickup-locations" element={<VendorPickupLocations />} />
+          <Route path="chat" element={<VendorChat />} />
+          <Route path="return-requests" element={<VendorReturnRequests />} />
+          <Route path="return-requests/:id" element={<VendorReturnRequestDetail />} />
+          <Route path="product-reviews" element={<VendorProductReviews />} />
+          <Route path="promotions" element={<VendorPromotions />} />
+          <Route path="notifications" element={<VendorNotifications />} />
+          <Route path="shipping-management" element={<VendorShippingManagement />} />
+          <Route path="customers" element={<VendorCustomers />} />
+          <Route path="support-tickets" element={<VendorSupportTickets />} />
+          <Route path="support-tickets/:id" element={<VendorSupportTickets />} />
+          <Route path="inventory-reports" element={<VendorInventoryReports />} />
+          <Route path="performance-metrics" element={<VendorPerformanceMetrics />} />
+          <Route path="documents" element={<VendorDocuments />} />
           <Route path="settings" element={<VendorSettings />} />
           <Route path="settings/store" element={<VendorSettings />} />
           <Route path="settings/payment" element={<VendorSettings />} />

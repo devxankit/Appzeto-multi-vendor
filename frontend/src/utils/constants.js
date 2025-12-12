@@ -2,8 +2,8 @@
 export const API_BASE_URL = import.meta.env.VITE_API_BASE_URL || 'http://localhost:5000/api';
 
 // App Constants
-export const APP_NAME = 'Appzeto E-commerce';
-export const APP_DESCRIPTION = 'Single Vendor E-commerce Platform';
+export const APP_NAME = 'Appzeto multi vendor E-commerce';
+export const APP_DESCRIPTION = 'Multi Vendor E-commerce Platform';
 
 // Animation Durations
 export const ANIMATION_DURATION = {

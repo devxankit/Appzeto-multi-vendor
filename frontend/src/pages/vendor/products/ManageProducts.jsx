@@ -13,6 +13,7 @@ import { useVendorAuthStore } from "../../../store/vendorAuthStore";
 import { useVendorStore } from "../../../store/vendorStore";
 import { useCategoryStore } from "../../../store/categoryStore";
 import { useBrandStore } from "../../../store/brandStore";
+import { initializeFashionHubProducts } from "../../../utils/initializeFashionHubProducts";
 import toast from "react-hot-toast";
 
 const ManageProducts = () => {
@@ -37,6 +38,16 @@ const ManageProducts = () => {
   useEffect(() => {
     initCategories();
     initBrands();
+    
+    // Initialize dummy products for Fashion Hub vendor (id: 1) on first load
+    if (vendorId === 1) {
+      const hasInitialized = localStorage.getItem('fashionhub-products-initialized');
+      if (!hasInitialized) {
+        initializeFashionHubProducts();
+        localStorage.setItem('fashionhub-products-initialized', 'true');
+      }
+    }
+    
     loadProducts();
   }, [vendorId]);
 
