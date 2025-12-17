@@ -1,13 +1,16 @@
-import { useState, useRef, useEffect } from 'react';
-import { Link } from 'react-router-dom';
-import { motion } from 'framer-motion';
-import { FiShoppingBag, FiTrash2 } from 'react-icons/fi';
-import { useWishlistStore } from '../../../../shared/store/wishlistStore';
-import { useCartStore } from '../../../../shared/store/useStore';
-import { formatPrice } from '../../../../shared/utils/helpers';
-import toast from 'react-hot-toast';
-import LazyImage from '../../../../shared/components/LazyImage';
-import useSwipeGesture from '../../hooks/useSwipeGesture';
+import { useState, useRef, useEffect } from "react";
+import { Link } from "react-router-dom";
+import { motion } from "framer-motion";
+import { FiShoppingBag, FiTrash2 } from "react-icons/fi";
+import { useWishlistStore } from "../../../../shared/store/wishlistStore";
+import { useCartStore } from "../../../../shared/store/useStore";
+import {
+  formatPrice,
+  getPlaceholderImage,
+} from "../../../../shared/utils/helpers";
+import toast from "react-hot-toast";
+import LazyImage from "../../../../shared/components/LazyImage";
+import useSwipeGesture from "../../hooks/useSwipeGesture";
 
 const SwipeableWishlistItem = ({ item, index, onMoveToCart, onRemove }) => {
   const [swipeOffset, setSwipeOffset] = useState(0);
@@ -20,16 +23,16 @@ const SwipeableWishlistItem = ({ item, index, onMoveToCart, onRemove }) => {
     deletedItemRef.current = { ...item };
     removeItem(item.id);
     onRemove(item.id);
-    toast.success('Removed from wishlist', {
+    toast.success("Removed from wishlist", {
       duration: 3000,
       action: {
-        label: 'Undo',
+        label: "Undo",
         onClick: () => {
           if (deletedItemRef.current) {
             addToWishlist(deletedItemRef.current);
             setIsDeleted(false);
             deletedItemRef.current = null;
-            toast.success('Item restored');
+            toast.success("Item restored");
           }
         },
       },
@@ -59,18 +62,17 @@ const SwipeableWishlistItem = ({ item, index, onMoveToCart, onRemove }) => {
     <motion.div
       initial={{ opacity: 0, y: 20 }}
       animate={{ opacity: 1, y: 0, x: swipeOffset }}
-      exit={{ opacity: 0, x: '100%' }}
+      exit={{ opacity: 0, x: "100%" }}
       transition={{
         delay: index * 0.05,
-        type: 'spring',
+        type: "spring",
         stiffness: 300,
         damping: 30,
       }}
       className="glass-card rounded-2xl p-4 mb-3 relative"
       onTouchStart={swipeHandlers.onTouchStart}
       onTouchMove={swipeHandlers.onTouchMove}
-      onTouchEnd={swipeHandlers.onTouchEnd}
-    >
+      onTouchEnd={swipeHandlers.onTouchEnd}>
       {/* Delete Background */}
       {swipeOffset > 0 && (
         <div className="absolute inset-0 bg-red-500 rounded-2xl flex items-center justify-end pr-4">
@@ -87,7 +89,7 @@ const SwipeableWishlistItem = ({ item, index, onMoveToCart, onRemove }) => {
               alt={item.name}
               className="w-full h-full object-cover"
               onError={(e) => {
-                e.target.src = 'https://via.placeholder.com/200x200?text=Product';
+                e.target.src = getPlaceholderImage(200, 200, "Product");
               }}
             />
           </div>
@@ -108,15 +110,13 @@ const SwipeableWishlistItem = ({ item, index, onMoveToCart, onRemove }) => {
           <div className="flex gap-2">
             <button
               onClick={() => onMoveToCart(item)}
-              className="flex-1 py-2.5 gradient-green text-white rounded-xl font-semibold text-sm flex items-center justify-center gap-2 hover:shadow-glow-green transition-all"
-            >
+              className="flex-1 py-2.5 gradient-green text-white rounded-xl font-semibold text-sm flex items-center justify-center gap-2 hover:shadow-glow-green transition-all">
               <FiShoppingBag className="text-base" />
               Add to Cart
             </button>
             <button
               onClick={() => onRemove(item.id)}
-              className="p-2.5 bg-red-50 text-red-600 rounded-xl hover:bg-red-100 transition-colors"
-            >
+              className="p-2.5 bg-red-50 text-red-600 rounded-xl hover:bg-red-100 transition-colors">
               <FiTrash2 className="text-base" />
             </button>
           </div>
@@ -127,4 +127,3 @@ const SwipeableWishlistItem = ({ item, index, onMoveToCart, onRemove }) => {
 };
 
 export default SwipeableWishlistItem;
-

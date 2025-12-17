@@ -1,16 +1,25 @@
-import { useState, useEffect, useMemo } from 'react';
-import { useNavigate, Link } from 'react-router-dom';
-import { FiMapPin, FiCreditCard, FiTruck, FiCheck, FiX, FiPlus, FiArrowLeft, FiShoppingBag } from 'react-icons/fi';
-import { motion, AnimatePresence } from 'framer-motion';
-import { useCartStore } from '../../../shared/store/useStore';
-import { useAuthStore } from '../../../shared/store/authStore';
-import { useAddressStore } from '../../../shared/store/addressStore';
-import { useOrderStore } from '../../../shared/store/orderStore';
-import { formatPrice } from '../../../shared/utils/helpers';
-import toast from 'react-hot-toast';
+import { useState, useEffect, useMemo } from "react";
+import { useNavigate, Link } from "react-router-dom";
+import {
+  FiMapPin,
+  FiCreditCard,
+  FiTruck,
+  FiCheck,
+  FiX,
+  FiPlus,
+  FiArrowLeft,
+  FiShoppingBag,
+} from "react-icons/fi";
+import { motion, AnimatePresence } from "framer-motion";
+import { useCartStore } from "../../../shared/store/useStore";
+import { useAuthStore } from "../../../shared/store/authStore";
+import { useAddressStore } from "../../../shared/store/addressStore";
+import { useOrderStore } from "../../../shared/store/orderStore";
+import { formatPrice } from "../../../shared/utils/helpers";
+import toast from "react-hot-toast";
 import MobileLayout from "../components/Layout/MobileLayout";
-import MobileCheckoutSteps from '../components/Mobile/MobileCheckoutSteps';
-import PageTransition from '../../../shared/components/PageTransition';
+import MobileCheckoutSteps from "../components/Mobile/MobileCheckoutSteps";
+import PageTransition from "../../../shared/components/PageTransition";
 // import successSound from '../../../data/sounds/success.mp3'; // File not found
 
 const MobileCheckout = () => {
@@ -21,34 +30,37 @@ const MobileCheckout = () => {
   const { createOrder } = useOrderStore();
 
   // Group items by vendor
-  const itemsByVendor = useMemo(() => getItemsByVendor(), [items, getItemsByVendor]);
+  const itemsByVendor = useMemo(
+    () => getItemsByVendor(),
+    [items, getItemsByVendor]
+  );
 
   const [step, setStep] = useState(1);
   const [isGuest, setIsGuest] = useState(false);
   const [selectedAddressId, setSelectedAddressId] = useState(null);
   const [showAddressForm, setShowAddressForm] = useState(false);
-  const [couponCode, setCouponCode] = useState('');
+  const [couponCode, setCouponCode] = useState("");
   const [appliedCoupon, setAppliedCoupon] = useState(null);
-  const [shippingOption, setShippingOption] = useState('standard');
+  const [shippingOption, setShippingOption] = useState("standard");
   const [formData, setFormData] = useState({
-    name: '',
-    email: '',
-    phone: '',
-    address: '',
-    city: '',
-    zipCode: '',
-    state: '',
-    country: '',
-    paymentMethod: 'card',
+    name: "",
+    email: "",
+    phone: "",
+    address: "",
+    city: "",
+    zipCode: "",
+    state: "",
+    country: "",
+    paymentMethod: "card",
   });
 
   useEffect(() => {
     if (isAuthenticated && user && !isGuest) {
       setFormData((prev) => ({
         ...prev,
-        name: user.name || '',
-        email: user.email || '',
-        phone: user.phone || '',
+        name: user.name || "",
+        email: user.email || "",
+        phone: user.phone || "",
       }));
 
       const defaultAddress = getDefaultAddress();
@@ -56,14 +68,14 @@ const MobileCheckout = () => {
         setSelectedAddressId(defaultAddress.id);
         setFormData((prev) => ({
           ...prev,
-          name: defaultAddress.fullName || user.name || '',
-          email: user.email || '',
-          phone: defaultAddress.phone || user.phone || '',
-          address: defaultAddress.address || '',
-          city: defaultAddress.city || '',
-          zipCode: defaultAddress.zipCode || '',
-          state: defaultAddress.state || '',
-          country: defaultAddress.country || '',
+          name: defaultAddress.fullName || user.name || "",
+          email: user.email || "",
+          phone: defaultAddress.phone || user.phone || "",
+          address: defaultAddress.address || "",
+          city: defaultAddress.city || "",
+          zipCode: defaultAddress.zipCode || "",
+          state: defaultAddress.state || "",
+          country: defaultAddress.country || "",
         }));
       }
     }
@@ -71,13 +83,13 @@ const MobileCheckout = () => {
 
   const calculateShipping = () => {
     const total = getTotal();
-    if (appliedCoupon?.type === 'freeship') {
+    if (appliedCoupon?.type === "freeship") {
       return 0;
     }
     if (total >= 100) {
       return 0;
     }
-    if (shippingOption === 'express') {
+    if (shippingOption === "express") {
       return 100;
     }
     return 50;
@@ -86,24 +98,26 @@ const MobileCheckout = () => {
   const total = getTotal();
   const shipping = calculateShipping();
   const tax = total * 0.1;
-  const discount = appliedCoupon ? (appliedCoupon.type === 'percentage'
-    ? total * (appliedCoupon.value / 100)
-    : appliedCoupon.value) : 0;
+  const discount = appliedCoupon
+    ? appliedCoupon.type === "percentage"
+      ? total * (appliedCoupon.value / 100)
+      : appliedCoupon.value
+    : 0;
   const finalTotal = Math.max(0, total + shipping + tax - discount);
 
   const validateCoupon = (code) => {
     const coupons = {
-      'SAVE10': { type: 'percentage', value: 10, name: '10% Off' },
-      'FREESHIP': { type: 'freeship', value: 0, name: 'Free Shipping' },
-      'WELCOME20': { type: 'percentage', value: 20, name: '20% Off' },
-      'SAVE50': { type: 'fixed', value: 50, name: '$50 Off' },
+      SAVE10: { type: "percentage", value: 10, name: "10% Off" },
+      FREESHIP: { type: "freeship", value: 0, name: "Free Shipping" },
+      WELCOME20: { type: "percentage", value: 20, name: "20% Off" },
+      SAVE50: { type: "fixed", value: 50, name: "$50 Off" },
     };
     return coupons[code.toUpperCase()] || null;
   };
 
   const handleApplyCoupon = () => {
     if (!couponCode.trim()) {
-      toast.error('Please enter a coupon code');
+      toast.error("Please enter a coupon code");
       return;
     }
     const coupon = validateCoupon(couponCode);
@@ -111,7 +125,7 @@ const MobileCheckout = () => {
       setAppliedCoupon(coupon);
       toast.success(`Coupon "${coupon.name}" applied!`);
     } else {
-      toast.error('Invalid coupon code');
+      toast.error("Invalid coupon code");
     }
   };
 
@@ -133,7 +147,7 @@ const MobileCheckout = () => {
     const newAddress = addAddress(addressData);
     handleSelectAddress(newAddress);
     setShowAddressForm(false);
-    toast.success('Address added and selected!');
+    toast.success("Address added and selected!");
   };
 
   if (items.length === 0) {
@@ -142,11 +156,12 @@ const MobileCheckout = () => {
         <MobileLayout showBottomNav={false} showCartBar={false}>
           <div className="flex items-center justify-center min-h-[60vh] px-4">
             <div className="text-center">
-              <h2 className="text-xl font-bold text-gray-800 mb-4">Your cart is empty</h2>
+              <h2 className="text-xl font-bold text-gray-800 mb-4">
+                Your cart is empty
+              </h2>
               <button
-                onClick={() => navigate('/app')}
-                className="gradient-green text-white px-6 py-3 rounded-xl font-semibold"
-              >
+                onClick={() => navigate("/app")}
+                className="gradient-green text-white px-6 py-3 rounded-xl font-semibold">
                 Continue Shopping
               </button>
             </div>
@@ -191,11 +206,11 @@ const MobileCheckout = () => {
 
       // Play success sound
       // const audio = new Audio(successSound); // Commented out - file not found
-      audio.play().catch((error) => {
-        console.log('Could not play sound:', error);
-      });
+      // audio.play().catch((error) => {
+      //   console.log('Could not play sound:', error);
+      // });
 
-      toast.success('Order placed successfully!');
+      toast.success("Order placed successfully!");
       navigate(`/app/order-confirmation/${order.id}`);
     }
   };
@@ -210,8 +225,7 @@ const MobileCheckout = () => {
             <div className="px-4 py-3 flex items-center gap-3">
               <button
                 onClick={() => navigate(-1)}
-                className="p-2 hover:bg-gray-100 rounded-full transition-colors"
-              >
+                className="p-2 hover:bg-gray-100 rounded-full transition-colors">
                 <FiArrowLeft className="text-xl text-gray-700" />
               </button>
               <h1 className="text-xl font-bold text-gray-800">Checkout</h1>
@@ -226,19 +240,21 @@ const MobileCheckout = () => {
           {!isAuthenticated && !isGuest && (
             <div className="px-4 py-4 bg-white border-b border-gray-200">
               <div className="glass-card rounded-xl p-4">
-                <h3 className="text-base font-bold text-gray-800 mb-2">Have an account?</h3>
-                <p className="text-sm text-gray-600 mb-4">Sign in for faster checkout</p>
+                <h3 className="text-base font-bold text-gray-800 mb-2">
+                  Have an account?
+                </h3>
+                <p className="text-sm text-gray-600 mb-4">
+                  Sign in for faster checkout
+                </p>
                 <div className="flex gap-3">
                   <Link
                     to="/app/login"
-                    className="flex-1 py-2.5 gradient-green text-white rounded-xl font-semibold text-center hover:shadow-glow-green transition-all"
-                  >
+                    className="flex-1 py-2.5 gradient-green text-white rounded-xl font-semibold text-center hover:shadow-glow-green transition-all">
                     Sign In
                   </Link>
                   <button
                     onClick={() => setIsGuest(true)}
-                    className="flex-1 py-2.5 bg-gray-100 text-gray-700 rounded-xl font-semibold hover:bg-gray-200 transition-colors"
-                  >
+                    className="flex-1 py-2.5 bg-gray-100 text-gray-700 rounded-xl font-semibold hover:bg-gray-200 transition-colors">
                     Continue as Guest
                   </button>
                 </div>
@@ -252,8 +268,7 @@ const MobileCheckout = () => {
               <motion.div
                 initial={{ opacity: 0, x: 20 }}
                 animate={{ opacity: 1, x: 0 }}
-                className="px-4 py-4"
-              >
+                className="px-4 py-4">
                 <h2 className="text-lg font-bold text-gray-800 mb-4 flex items-center gap-2">
                   <FiTruck className="text-primary-600" />
                   Shipping Information
@@ -262,26 +277,35 @@ const MobileCheckout = () => {
                 {/* Saved Addresses */}
                 {isAuthenticated && addresses.length > 0 && (
                   <div className="mb-4">
-                    <h3 className="text-sm font-semibold text-gray-700 mb-3">Saved Addresses</h3>
+                    <h3 className="text-sm font-semibold text-gray-700 mb-3">
+                      Saved Addresses
+                    </h3>
                     <div className="space-y-2 mb-3">
                       {addresses.map((address) => (
                         <div
                           key={address.id}
                           onClick={() => handleSelectAddress(address)}
-                          className={`p-3 rounded-xl border-2 cursor-pointer transition-all ${selectedAddressId === address.id
-                            ? 'border-primary-500 bg-primary-50'
-                            : 'border-gray-200'
-                            }`}
-                        >
+                          className={`p-3 rounded-xl border-2 cursor-pointer transition-all ${
+                            selectedAddressId === address.id
+                              ? "border-primary-500 bg-primary-50"
+                              : "border-gray-200"
+                          }`}>
                           <div className="flex items-start justify-between">
                             <div className="flex items-start gap-2 flex-1">
                               <FiMapPin className="text-primary-600 mt-0.5 flex-shrink-0" />
                               <div className="flex-1">
-                                <h4 className="font-bold text-gray-800 text-sm">{address.name}</h4>
-                                <p className="text-xs text-gray-600">{address.fullName}</p>
-                                <p className="text-xs text-gray-600">{address.address}</p>
+                                <h4 className="font-bold text-gray-800 text-sm">
+                                  {address.name}
+                                </h4>
                                 <p className="text-xs text-gray-600">
-                                  {address.city}, {address.state} {address.zipCode}
+                                  {address.fullName}
+                                </p>
+                                <p className="text-xs text-gray-600">
+                                  {address.address}
+                                </p>
+                                <p className="text-xs text-gray-600">
+                                  {address.city}, {address.state}{" "}
+                                  {address.zipCode}
                                 </p>
                               </div>
                             </div>
@@ -295,8 +319,7 @@ const MobileCheckout = () => {
                     <button
                       type="button"
                       onClick={() => setShowAddressForm(true)}
-                      className="flex items-center gap-2 text-primary-600 hover:text-primary-700 font-semibold text-sm"
-                    >
+                      className="flex items-center gap-2 text-primary-600 hover:text-primary-700 font-semibold text-sm">
                       <FiPlus />
                       Add New Address
                     </button>
@@ -359,7 +382,9 @@ const MobileCheckout = () => {
                   </div>
                   <div className="grid grid-cols-2 gap-3">
                     <div>
-                      <label className="block text-sm font-semibold text-gray-700 mb-2">City</label>
+                      <label className="block text-sm font-semibold text-gray-700 mb-2">
+                        City
+                      </label>
                       <input
                         type="text"
                         name="city"
@@ -370,7 +395,9 @@ const MobileCheckout = () => {
                       />
                     </div>
                     <div>
-                      <label className="block text-sm font-semibold text-gray-700 mb-2">State</label>
+                      <label className="block text-sm font-semibold text-gray-700 mb-2">
+                        State
+                      </label>
                       <input
                         type="text"
                         name="state"
@@ -383,7 +410,9 @@ const MobileCheckout = () => {
                   </div>
                   <div className="grid grid-cols-2 gap-3">
                     <div>
-                      <label className="block text-sm font-semibold text-gray-700 mb-2">ZIP Code</label>
+                      <label className="block text-sm font-semibold text-gray-700 mb-2">
+                        ZIP Code
+                      </label>
                       <input
                         type="text"
                         name="zipCode"
@@ -394,7 +423,9 @@ const MobileCheckout = () => {
                       />
                     </div>
                     <div>
-                      <label className="block text-sm font-semibold text-gray-700 mb-2">Country</label>
+                      <label className="block text-sm font-semibold text-gray-700 mb-2">
+                        Country
+                      </label>
                       <input
                         type="text"
                         name="country"
@@ -414,21 +445,20 @@ const MobileCheckout = () => {
               <motion.div
                 initial={{ opacity: 0, x: 20 }}
                 animate={{ opacity: 1, x: 0 }}
-                className="px-4 py-4"
-              >
+                className="px-4 py-4">
                 <h2 className="text-lg font-bold text-gray-800 mb-4 flex items-center gap-2">
                   <FiCreditCard className="text-primary-600" />
                   Payment Method
                 </h2>
                 <div className="space-y-3 mb-6">
-                  {['card', 'cash', 'bank'].map((method) => (
+                  {["card", "cash", "bank"].map((method) => (
                     <label
                       key={method}
-                      className={`flex items-center gap-3 p-4 rounded-xl border-2 cursor-pointer transition-all ${formData.paymentMethod === method
-                        ? 'border-primary-500 bg-primary-50'
-                        : 'border-gray-200'
-                        }`}
-                    >
+                      className={`flex items-center gap-3 p-4 rounded-xl border-2 cursor-pointer transition-all ${
+                        formData.paymentMethod === method
+                          ? "border-primary-500 bg-primary-50"
+                          : "border-gray-200"
+                      }`}>
                       <input
                         type="radio"
                         name="paymentMethod"
@@ -438,7 +468,11 @@ const MobileCheckout = () => {
                         className="w-5 h-5 text-primary-500"
                       />
                       <span className="font-semibold text-gray-800 capitalize text-base">
-                        {method === 'card' ? 'Credit/Debit Card' : method === 'cash' ? 'Cash on Delivery' : 'Bank Transfer'}
+                        {method === "card"
+                          ? "Credit/Debit Card"
+                          : method === "cash"
+                          ? "Cash on Delivery"
+                          : "Bank Transfer"}
                       </span>
                     </label>
                   ))}
@@ -447,47 +481,61 @@ const MobileCheckout = () => {
                 {/* Shipping Options */}
                 {total < 100 && (
                   <div className="mb-6">
-                    <h3 className="text-base font-semibold text-gray-800 mb-3">Shipping Options</h3>
+                    <h3 className="text-base font-semibold text-gray-800 mb-3">
+                      Shipping Options
+                    </h3>
                     <div className="space-y-3">
                       <label
-                        className={`flex items-center justify-between p-4 rounded-xl border-2 cursor-pointer transition-all ${shippingOption === 'standard'
-                          ? 'border-primary-500 bg-primary-50'
-                          : 'border-gray-200'
-                          }`}
-                      >
+                        className={`flex items-center justify-between p-4 rounded-xl border-2 cursor-pointer transition-all ${
+                          shippingOption === "standard"
+                            ? "border-primary-500 bg-primary-50"
+                            : "border-gray-200"
+                        }`}>
                         <div>
                           <input
                             type="radio"
                             name="shippingOption"
                             value="standard"
-                            checked={shippingOption === 'standard'}
+                            checked={shippingOption === "standard"}
                             onChange={(e) => setShippingOption(e.target.value)}
                             className="w-5 h-5 text-primary-500 mr-3"
                           />
-                          <span className="font-semibold text-gray-800 text-base">Standard Shipping</span>
-                          <p className="text-xs text-gray-600">5-7 business days</p>
+                          <span className="font-semibold text-gray-800 text-base">
+                            Standard Shipping
+                          </span>
+                          <p className="text-xs text-gray-600">
+                            5-7 business days
+                          </p>
                         </div>
-                        <span className="font-bold text-gray-800">{formatPrice(50)}</span>
+                        <span className="font-bold text-gray-800">
+                          {formatPrice(50)}
+                        </span>
                       </label>
                       <label
-                        className={`flex items-center justify-between p-4 rounded-xl border-2 cursor-pointer transition-all ${shippingOption === 'express'
-                          ? 'border-primary-500 bg-primary-50'
-                          : 'border-gray-200'
-                          }`}
-                      >
+                        className={`flex items-center justify-between p-4 rounded-xl border-2 cursor-pointer transition-all ${
+                          shippingOption === "express"
+                            ? "border-primary-500 bg-primary-50"
+                            : "border-gray-200"
+                        }`}>
                         <div>
                           <input
                             type="radio"
                             name="shippingOption"
                             value="express"
-                            checked={shippingOption === 'express'}
+                            checked={shippingOption === "express"}
                             onChange={(e) => setShippingOption(e.target.value)}
                             className="w-5 h-5 text-primary-500 mr-3"
                           />
-                          <span className="font-semibold text-gray-800 text-base">Express Shipping</span>
-                          <p className="text-xs text-gray-600">2-3 business days</p>
+                          <span className="font-semibold text-gray-800 text-base">
+                            Express Shipping
+                          </span>
+                          <p className="text-xs text-gray-600">
+                            2-3 business days
+                          </p>
                         </div>
-                        <span className="font-bold text-gray-800">{formatPrice(100)}</span>
+                        <span className="font-bold text-gray-800">
+                          {formatPrice(100)}
+                        </span>
                       </label>
                     </div>
                   </div>
@@ -495,7 +543,9 @@ const MobileCheckout = () => {
 
                 {/* Coupon Code */}
                 <div className="mb-6">
-                  <h3 className="text-base font-semibold text-gray-800 mb-3">Coupon Code</h3>
+                  <h3 className="text-base font-semibold text-gray-800 mb-3">
+                    Coupon Code
+                  </h3>
                   {!appliedCoupon ? (
                     <div className="flex gap-2">
                       <input
@@ -508,25 +558,27 @@ const MobileCheckout = () => {
                       <button
                         type="button"
                         onClick={handleApplyCoupon}
-                        className="px-4 py-3 gradient-green text-white rounded-xl font-semibold hover:shadow-glow-green transition-all"
-                      >
+                        className="px-4 py-3 gradient-green text-white rounded-xl font-semibold hover:shadow-glow-green transition-all">
                         Apply
                       </button>
                     </div>
                   ) : (
                     <div className="flex items-center justify-between p-3 bg-green-50 rounded-xl">
                       <div>
-                        <p className="text-sm font-semibold text-green-800">{appliedCoupon.name} Applied</p>
-                        <p className="text-xs text-green-600">Code: {couponCode}</p>
+                        <p className="text-sm font-semibold text-green-800">
+                          {appliedCoupon.name} Applied
+                        </p>
+                        <p className="text-xs text-green-600">
+                          Code: {couponCode}
+                        </p>
                       </div>
                       <button
                         type="button"
                         onClick={() => {
                           setAppliedCoupon(null);
-                          setCouponCode('');
+                          setCouponCode("");
                         }}
-                        className="text-red-600 hover:text-red-700"
-                      >
+                        className="text-red-600 hover:text-red-700">
                         <FiX className="text-lg" />
                       </button>
                     </div>
@@ -535,10 +587,14 @@ const MobileCheckout = () => {
 
                 {/* Order Summary */}
                 <div className="glass-card rounded-xl p-4">
-                  <h3 className="text-base font-bold text-gray-800 mb-3">Order Summary</h3>
+                  <h3 className="text-base font-bold text-gray-800 mb-3">
+                    Order Summary
+                  </h3>
                   <div className="space-y-3 mb-4">
                     {itemsByVendor.map((vendorGroup) => (
-                      <div key={vendorGroup.vendorId} className="space-y-2 mb-4">
+                      <div
+                        key={vendorGroup.vendorId}
+                        className="space-y-2 mb-4">
                         {/* Vendor Header */}
                         <div className="flex items-center gap-2 px-3 py-2 bg-gradient-to-r from-primary-50 to-primary-100 rounded-lg border border-primary-200/50 shadow-sm">
                           <div className="w-5 h-5 rounded-full bg-gradient-to-br from-primary-400 to-primary-600 flex items-center justify-center flex-shrink-0">
@@ -554,7 +610,9 @@ const MobileCheckout = () => {
                         {/* Vendor Items */}
                         <div className="space-y-2 pl-2">
                           {vendorGroup.items.map((item) => (
-                            <div key={item.id} className="flex items-center gap-2 text-xs">
+                            <div
+                              key={item.id}
+                              className="flex items-center gap-2 text-xs">
                               <img
                                 src={item.image}
                                 alt={item.name}
@@ -587,7 +645,15 @@ const MobileCheckout = () => {
                     )}
                     <div className="flex justify-between text-gray-600">
                       <span>Shipping</span>
-                      <span>{shipping === 0 ? <span className="text-green-600 font-semibold">FREE</span> : formatPrice(shipping)}</span>
+                      <span>
+                        {shipping === 0 ? (
+                          <span className="text-green-600 font-semibold">
+                            FREE
+                          </span>
+                        ) : (
+                          formatPrice(shipping)
+                        )}
+                      </span>
                     </div>
                     <div className="flex justify-between text-gray-600">
                       <span>Tax</span>
@@ -595,7 +661,9 @@ const MobileCheckout = () => {
                     </div>
                     <div className="flex justify-between text-lg font-bold text-gray-800 pt-2 border-t border-gray-200">
                       <span>Total</span>
-                      <span className="text-primary-600">{formatPrice(finalTotal)}</span>
+                      <span className="text-primary-600">
+                        {formatPrice(finalTotal)}
+                      </span>
                     </div>
                   </div>
                 </div>
@@ -609,16 +677,14 @@ const MobileCheckout = () => {
                   <button
                     type="button"
                     onClick={() => setStep(step - 1)}
-                    className="px-6 py-3 bg-gray-200 text-gray-700 rounded-xl font-semibold hover:bg-gray-300 transition-colors"
-                  >
+                    className="px-6 py-3 bg-gray-200 text-gray-700 rounded-xl font-semibold hover:bg-gray-300 transition-colors">
                     Back
                   </button>
                 )}
                 <button
                   type="submit"
-                  className="flex-1 gradient-green text-white py-3 rounded-xl font-semibold hover:shadow-glow-green transition-all duration-300"
-                >
-                  {step === 2 ? 'Place Order' : 'Continue'}
+                  className="flex-1 gradient-green text-white py-3 rounded-xl font-semibold hover:shadow-glow-green transition-all duration-300">
+                  {step === 2 ? "Place Order" : "Continue"}
                 </button>
               </div>
             </div>
@@ -642,14 +708,14 @@ const MobileCheckout = () => {
 // Address Form Modal Component
 const AddressFormModal = ({ onSubmit, onCancel }) => {
   const [formData, setFormData] = useState({
-    name: '',
-    fullName: '',
-    phone: '',
-    address: '',
-    city: '',
-    state: '',
-    zipCode: '',
-    country: '',
+    name: "",
+    fullName: "",
+    phone: "",
+    address: "",
+    city: "",
+    state: "",
+    zipCode: "",
+    country: "",
   });
 
   const handleChange = (e) => {
@@ -667,27 +733,26 @@ const AddressFormModal = ({ onSubmit, onCancel }) => {
       animate={{ opacity: 1 }}
       exit={{ opacity: 0 }}
       className="fixed inset-0 bg-black/50 z-50 flex items-end"
-      onClick={onCancel}
-    >
+      onClick={onCancel}>
       <motion.div
-        initial={{ y: '100%' }}
+        initial={{ y: "100%" }}
         animate={{ y: 0 }}
-        exit={{ y: '100%' }}
+        exit={{ y: "100%" }}
         onClick={(e) => e.stopPropagation()}
-        className="bg-white rounded-t-3xl p-6 w-full max-h-[90vh] overflow-y-auto"
-      >
+        className="bg-white rounded-t-3xl p-6 w-full max-h-[90vh] overflow-y-auto">
         <div className="flex items-center justify-between mb-6">
           <h3 className="text-xl font-bold text-gray-800">Add New Address</h3>
           <button
             onClick={onCancel}
-            className="p-2 hover:bg-gray-100 rounded-full"
-          >
+            className="p-2 hover:bg-gray-100 rounded-full">
             <FiX className="text-xl" />
           </button>
         </div>
         <form onSubmit={handleSubmit} className="space-y-4">
           <div>
-            <label className="block text-sm font-semibold text-gray-700 mb-2">Address Label</label>
+            <label className="block text-sm font-semibold text-gray-700 mb-2">
+              Address Label
+            </label>
             <input
               type="text"
               name="name"
@@ -699,7 +764,9 @@ const AddressFormModal = ({ onSubmit, onCancel }) => {
             />
           </div>
           <div>
-            <label className="block text-sm font-semibold text-gray-700 mb-2">Full Name</label>
+            <label className="block text-sm font-semibold text-gray-700 mb-2">
+              Full Name
+            </label>
             <input
               type="text"
               name="fullName"
@@ -710,7 +777,9 @@ const AddressFormModal = ({ onSubmit, onCancel }) => {
             />
           </div>
           <div>
-            <label className="block text-sm font-semibold text-gray-700 mb-2">Phone Number</label>
+            <label className="block text-sm font-semibold text-gray-700 mb-2">
+              Phone Number
+            </label>
             <input
               type="tel"
               name="phone"
@@ -721,7 +790,9 @@ const AddressFormModal = ({ onSubmit, onCancel }) => {
             />
           </div>
           <div>
-            <label className="block text-sm font-semibold text-gray-700 mb-2">Street Address</label>
+            <label className="block text-sm font-semibold text-gray-700 mb-2">
+              Street Address
+            </label>
             <input
               type="text"
               name="address"
@@ -733,7 +804,9 @@ const AddressFormModal = ({ onSubmit, onCancel }) => {
           </div>
           <div className="grid grid-cols-3 gap-3">
             <div>
-              <label className="block text-sm font-semibold text-gray-700 mb-2">City</label>
+              <label className="block text-sm font-semibold text-gray-700 mb-2">
+                City
+              </label>
               <input
                 type="text"
                 name="city"
@@ -744,7 +817,9 @@ const AddressFormModal = ({ onSubmit, onCancel }) => {
               />
             </div>
             <div>
-              <label className="block text-sm font-semibold text-gray-700 mb-2">State</label>
+              <label className="block text-sm font-semibold text-gray-700 mb-2">
+                State
+              </label>
               <input
                 type="text"
                 name="state"
@@ -755,7 +830,9 @@ const AddressFormModal = ({ onSubmit, onCancel }) => {
               />
             </div>
             <div>
-              <label className="block text-sm font-semibold text-gray-700 mb-2">Zip Code</label>
+              <label className="block text-sm font-semibold text-gray-700 mb-2">
+                Zip Code
+              </label>
               <input
                 type="text"
                 name="zipCode"
@@ -767,7 +844,9 @@ const AddressFormModal = ({ onSubmit, onCancel }) => {
             </div>
           </div>
           <div>
-            <label className="block text-sm font-semibold text-gray-700 mb-2">Country</label>
+            <label className="block text-sm font-semibold text-gray-700 mb-2">
+              Country
+            </label>
             <input
               type="text"
               name="country"
@@ -780,15 +859,13 @@ const AddressFormModal = ({ onSubmit, onCancel }) => {
           <div className="flex gap-3 pt-4">
             <button
               type="submit"
-              className="flex-1 gradient-green text-white py-3 rounded-xl font-semibold hover:shadow-glow-green transition-all"
-            >
+              className="flex-1 gradient-green text-white py-3 rounded-xl font-semibold hover:shadow-glow-green transition-all">
               Add Address
             </button>
             <button
               type="button"
               onClick={onCancel}
-              className="px-6 py-3 bg-gray-100 text-gray-700 rounded-xl font-semibold hover:bg-gray-200 transition-colors"
-            >
+              className="px-6 py-3 bg-gray-100 text-gray-700 rounded-xl font-semibold hover:bg-gray-200 transition-colors">
               Cancel
             </button>
           </div>
@@ -799,4 +876,3 @@ const AddressFormModal = ({ onSubmit, onCancel }) => {
 };
 
 export default MobileCheckout;
-

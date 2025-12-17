@@ -1,9 +1,9 @@
 /**
  * Format price with currency symbol
  */
-export const formatPrice = (price, currency = '₹') => {
+export const formatPrice = (price, currency = "₹") => {
   const numPrice = price ?? 0;
-  return `${currency}${numPrice.toLocaleString('en-IN')}`;
+  return `${currency}${numPrice.toLocaleString("en-IN")}`;
 };
 
 /**
@@ -11,7 +11,7 @@ export const formatPrice = (price, currency = '₹') => {
  */
 export const truncateText = (text, length = 50) => {
   if (text.length <= length) return text;
-  return text.substring(0, length) + '...';
+  return text.substring(0, length) + "...";
 };
 
 /**
@@ -49,15 +49,48 @@ export const isValidEmail = (email) => {
  */
 export const isValidPhone = (phone) => {
   const phoneRegex = /^[6-9]\d{9}$/;
-  return phoneRegex.test(phone.replace(/\D/g, ''));
+  return phoneRegex.test(phone.replace(/\D/g, ""));
 };
 
 /**
  * Get image URL (with fallback)
  */
-export const getImageUrl = (image, fallback = '/placeholder.jpg') => {
+export const getImageUrl = (image, fallback = "/placeholder.jpg") => {
   if (!image) return fallback;
-  if (image.startsWith('http')) return image;
-  return `${import.meta.env.VITE_IMAGE_BASE_URL || ''}${image}`;
+  if (image.startsWith("http")) return image;
+  return `${import.meta.env.VITE_IMAGE_BASE_URL || ""}${image}`;
 };
 
+/**
+ * Generate a placeholder image as SVG data URI
+ * @param {number} width - Image width
+ * @param {number} height - Image height
+ * @param {string} text - Text to display on placeholder
+ * @param {string} bgColor - Background color (hex or color name)
+ * @param {string} textColor - Text color (hex or color name)
+ * @returns {string} SVG data URI
+ */
+export const getPlaceholderImage = (
+  width = 200,
+  height = 200,
+  text = "Image",
+  bgColor = "#e5e7eb",
+  textColor = "#9ca3af"
+) => {
+  const svg = `
+    <svg width="${width}" height="${height}" xmlns="http://www.w3.org/2000/svg">
+      <rect width="100%" height="100%" fill="${bgColor}"/>
+      <text 
+        x="50%" 
+        y="50%" 
+        font-family="Arial, sans-serif" 
+        font-size="${Math.min(width, height) / 8}" 
+        fill="${textColor}" 
+        text-anchor="middle" 
+        dominant-baseline="middle"
+      >${text}</text>
+    </svg>
+  `.trim();
+
+  return `data:image/svg+xml;base64,${btoa(svg)}`;
+};

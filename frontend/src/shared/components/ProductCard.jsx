@@ -3,7 +3,7 @@ import { motion } from "framer-motion";
 import { Link, useLocation } from "react-router-dom";
 import { useCartStore, useUIStore } from "../store/useStore";
 import { useWishlistStore } from "../store/wishlistStore";
-import { formatPrice } from "../utils/helpers";
+import { formatPrice, getPlaceholderImage } from "../utils/helpers";
 import toast from "react-hot-toast";
 import LazyImage from "./LazyImage";
 import { useState, useRef } from "react";
@@ -11,7 +11,7 @@ import useLongPress from "../../modules/UserApp/hooks/useLongPress";
 import LongPressMenu from "../../modules/UserApp/components/Mobile/LongPressMenu";
 import FlyingItem from "../../modules/UserApp/components/Mobile/FlyingItem";
 import VendorBadge from "../../modules/Vendor/components/VendorBadge";
-import { getVendorById } from '../../data/vendors';
+import { getVendorById } from "../../data/vendors";
 
 const ProductCard = ({ product, hideRating = false }) => {
   const location = useLocation();
@@ -147,10 +147,11 @@ const ProductCard = ({ product, hideRating = false }) => {
               onClick={handleFavorite}
               className="p-1 glass rounded-full shadow-lg transition-all duration-300 group">
               <FiHeart
-                className={`text-xs transition-all duration-300 ${isFavorite
+                className={`text-xs transition-all duration-300 ${
+                  isFavorite
                     ? "text-red-500 fill-red-500 scale-110"
                     : "text-gray-600"
-                  }`}
+                }`}
               />
             </button>
           </div>
@@ -164,8 +165,7 @@ const ProductCard = ({ product, hideRating = false }) => {
                 className="w-full h-full object-contain max-w-[85%] max-h-[85%]"
                 style={{ willChange: "transform", transform: "translateZ(0)" }}
                 onError={(e) => {
-                  e.target.src =
-                    "https://via.placeholder.com/300x300?text=Product+Image";
+                  e.target.src = getPlaceholderImage(300, 300, "Product Image");
                 }}
               />
             </div>
@@ -202,10 +202,11 @@ const ProductCard = ({ product, hideRating = false }) => {
                 {[...Array(5)].map((_, i) => (
                   <FiStar
                     key={i}
-                    className={`text-[8px] ${i < Math.floor(product.rating)
+                    className={`text-[8px] ${
+                      i < Math.floor(product.rating)
                         ? "text-yellow-400 fill-yellow-400"
                         : "text-gray-300"
-                      }`}
+                    }`}
                   />
                 ))}
               </div>
@@ -236,21 +237,22 @@ const ProductCard = ({ product, hideRating = false }) => {
             animate={
               isAdding
                 ? {
-                  scale: [1, 1.1, 1],
-                }
+                    scale: [1, 1.1, 1],
+                  }
                 : {}
             }
             style={{ willChange: "transform", transform: "translateZ(0)" }}
-            className={`w-full py-1.5 rounded-md font-semibold text-[10px] transition-all duration-300 flex items-center justify-center gap-1 mt-auto ${product.stock === "out_of_stock"
+            className={`w-full py-1.5 rounded-md font-semibold text-[10px] transition-all duration-300 flex items-center justify-center gap-1 mt-auto ${
+              product.stock === "out_of_stock"
                 ? "bg-gray-300 text-gray-500 cursor-not-allowed"
                 : "gradient-green text-white group/btn"
-              }`}>
+            }`}>
             <motion.div
               animate={
                 isAdding
                   ? {
-                    rotate: [0, -10, 10, -10, 0],
-                  }
+                      rotate: [0, -10, 10, -10, 0],
+                    }
                   : {}
               }
               transition={{ duration: 0.5 }}>
@@ -260,8 +262,8 @@ const ProductCard = ({ product, hideRating = false }) => {
               {product.stock === "out_of_stock"
                 ? "Out of Stock"
                 : isAdding
-                  ? "Adding..."
-                  : "Add"}
+                ? "Adding..."
+                : "Add"}
             </span>
           </motion.button>
         </div>

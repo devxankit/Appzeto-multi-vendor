@@ -11,6 +11,7 @@ import { useCategoryStore } from "../../../shared/store/categoryStore";
 import PageTransition from "../../../shared/components/PageTransition";
 import useInfiniteScroll from "../../../shared/hooks/useInfiniteScroll";
 import LazyImage from "../../../shared/components/LazyImage";
+import { getPlaceholderImage } from "../../../shared/utils/helpers";
 
 const MobileCategory = () => {
   const { id } = useParams();
@@ -183,8 +184,7 @@ const MobileCategory = () => {
                   alt={category.name}
                   className="w-full h-full object-cover"
                   onError={(e) => {
-                    e.target.src =
-                      "https://via.placeholder.com/48x48?text=Category";
+                    e.target.src = getPlaceholderImage(48, 48, "Category");
                   }}
                 />
               </div>
@@ -202,29 +202,33 @@ const MobileCategory = () => {
                 <div className="flex items-center bg-gray-100 rounded-lg p-1">
                   <button
                     onClick={() => setViewMode("list")}
-                    className={`p-1.5 rounded transition-colors ${viewMode === "list"
-                      ? "bg-white text-primary-600 shadow-sm"
-                      : "text-gray-600"
-                      }`}>
+                    className={`p-1.5 rounded transition-colors ${
+                      viewMode === "list"
+                        ? "bg-white text-primary-600 shadow-sm"
+                        : "text-gray-600"
+                    }`}>
                     <FiList className="text-lg" />
                   </button>
                   <button
                     onClick={() => setViewMode("grid")}
-                    className={`p-1.5 rounded transition-colors ${viewMode === "grid"
-                      ? "bg-white text-primary-600 shadow-sm"
-                      : "text-gray-600"
-                      }`}>
+                    className={`p-1.5 rounded transition-colors ${
+                      viewMode === "grid"
+                        ? "bg-white text-primary-600 shadow-sm"
+                        : "text-gray-600"
+                    }`}>
                     <FiGrid className="text-lg" />
                   </button>
                 </div>
                 <div ref={filterButtonRef} className="relative">
                   <button
                     onClick={() => setShowFilters(!showFilters)}
-                    className={`p-2.5 glass-card rounded-xl hover:bg-white/80 transition-colors ${showFilters ? "bg-white/80" : ""
-                      }`}>
+                    className={`p-2.5 glass-card rounded-xl hover:bg-white/80 transition-colors ${
+                      showFilters ? "bg-white/80" : ""
+                    }`}>
                     <FiFilter
-                      className={`text-lg transition-colors ${hasActiveFilters ? "text-blue-600" : "text-gray-600"
-                        }`}
+                      className={`text-lg transition-colors ${
+                        hasActiveFilters ? "text-blue-600" : "text-gray-600"
+                      }`}
                     />
                   </button>
 
@@ -330,7 +334,7 @@ const MobileCategory = () => {
                                         style={{
                                           backgroundImage:
                                             filters.minRating ===
-                                              rating.toString()
+                                            rating.toString()
                                               ? "radial-gradient(circle, #10b981 40%, transparent 40%)"
                                               : "none",
                                         }}

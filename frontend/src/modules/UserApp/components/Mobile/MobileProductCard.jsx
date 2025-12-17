@@ -1,27 +1,39 @@
-import { FiHeart, FiShoppingBag, FiStar } from 'react-icons/fi';
-import { Link } from 'react-router-dom';
-import { motion } from 'framer-motion';
-import { useCartStore, useUIStore } from '../../../../shared/store/useStore';
-import { useWishlistStore } from '../../../../shared/store/wishlistStore';
-import { formatPrice } from '../../../../shared/utils/helpers';
-import toast from 'react-hot-toast';
-import LazyImage from '../../../../shared/components/LazyImage';
-import { useState, useRef } from 'react';
-import useLongPress from '../../hooks/useLongPress';
-import LongPressMenu from './LongPressMenu';
-import FlyingItem from './FlyingItem';
-import VendorBadge from '../../../Vendor/components/VendorBadge';
-import { getVendorById } from '../../../../data/vendors';
+import { FiHeart, FiShoppingBag, FiStar } from "react-icons/fi";
+import { Link } from "react-router-dom";
+import { motion } from "framer-motion";
+import { useCartStore, useUIStore } from "../../../../shared/store/useStore";
+import { useWishlistStore } from "../../../../shared/store/wishlistStore";
+import {
+  formatPrice,
+  getPlaceholderImage,
+} from "../../../../shared/utils/helpers";
+import toast from "react-hot-toast";
+import LazyImage from "../../../../shared/components/LazyImage";
+import { useState, useRef } from "react";
+import useLongPress from "../../hooks/useLongPress";
+import LongPressMenu from "./LongPressMenu";
+import FlyingItem from "./FlyingItem";
+import VendorBadge from "../../../Vendor/components/VendorBadge";
+import { getVendorById } from "../../../../data/vendors";
 
 const MobileProductCard = ({ product }) => {
   const addItem = useCartStore((state) => state.addItem);
-  const triggerCartAnimation = useUIStore((state) => state.triggerCartAnimation);
-  const { addItem: addToWishlist, removeItem: removeFromWishlist, isInWishlist } = useWishlistStore();
+  const triggerCartAnimation = useUIStore(
+    (state) => state.triggerCartAnimation
+  );
+  const {
+    addItem: addToWishlist,
+    removeItem: removeFromWishlist,
+    isInWishlist,
+  } = useWishlistStore();
   const isFavorite = isInWishlist(product.id);
   const [showLongPressMenu, setShowLongPressMenu] = useState(false);
   const [menuPosition, setMenuPosition] = useState({ x: 0, y: 0 });
   const [showFlyingItem, setShowFlyingItem] = useState(false);
-  const [flyingItemPos, setFlyingItemPos] = useState({ start: { x: 0, y: 0 }, end: { x: 0, y: 0 } });
+  const [flyingItemPos, setFlyingItemPos] = useState({
+    start: { x: 0, y: 0 },
+    end: { x: 0, y: 0 },
+  });
   const buttonRef = useRef(null);
 
   const handleAddToCart = (e) => {
@@ -37,7 +49,7 @@ const MobileProductCard = ({ product }) => {
 
     // Get cart bar position (prefer cart bar over header icon)
     setTimeout(() => {
-      const cartBar = document.querySelector('[data-cart-bar]');
+      const cartBar = document.querySelector("[data-cart-bar]");
       let endX = window.innerWidth / 2;
       let endY = window.innerHeight - 100;
 
@@ -47,7 +59,7 @@ const MobileProductCard = ({ product }) => {
         endY = cartRect.top + cartRect.height / 2;
       } else {
         // Fallback to cart icon in header
-        const cartIcon = document.querySelector('[data-cart-icon]');
+        const cartIcon = document.querySelector("[data-cart-icon]");
         if (cartIcon) {
           const cartRect = cartIcon.getBoundingClientRect();
           endX = cartRect.left + cartRect.width / 2;
@@ -79,7 +91,7 @@ const MobileProductCard = ({ product }) => {
     }
     if (isFavorite) {
       removeFromWishlist(product.id);
-      toast.success('Removed from wishlist');
+      toast.success("Removed from wishlist");
     } else {
       addToWishlist({
         id: product.id,
@@ -87,7 +99,7 @@ const MobileProductCard = ({ product }) => {
         price: product.price,
         image: product.image,
       });
-      toast.success('Added to wishlist');
+      toast.success("Added to wishlist");
     }
   };
 
@@ -108,8 +120,10 @@ const MobileProductCard = ({ product }) => {
         url: window.location.origin + `/app/product/${product.id}`,
       });
     } else {
-      navigator.clipboard.writeText(window.location.origin + `/app/product/${product.id}`);
-      toast.success('Link copied to clipboard');
+      navigator.clipboard.writeText(
+        window.location.origin + `/app/product/${product.id}`
+      );
+      toast.success("Link copied to clipboard");
     }
   };
 
@@ -121,8 +135,7 @@ const MobileProductCard = ({ product }) => {
         <motion.div
           whileTap={{ scale: 0.98 }}
           className="glass-card rounded-2xl overflow-hidden mb-4"
-          {...longPressHandlers}
-        >
+          {...longPressHandlers}>
           <div className="flex gap-4 p-4">
             {/* Product Image */}
             <div className="w-24 h-24 flex-shrink-0 rounded-xl overflow-hidden bg-gray-100">
@@ -131,7 +144,7 @@ const MobileProductCard = ({ product }) => {
                 alt={product.name}
                 className="w-full h-full object-cover"
                 onError={(e) => {
-                  e.target.src = 'https://via.placeholder.com/200x200?text=Product';
+                  e.target.src = getPlaceholderImage(200, 200, "Product");
                 }}
               />
             </div>
@@ -144,10 +157,11 @@ const MobileProductCard = ({ product }) => {
                 </h3>
                 <button
                   onClick={handleFavorite}
-                  className="flex-shrink-0 p-1.5 hover:bg-gray-100 rounded-full transition-colors"
-                >
+                  className="flex-shrink-0 p-1.5 hover:bg-gray-100 rounded-full transition-colors">
                   <FiHeart
-                    className={`text-lg ${isFavorite ? 'text-red-500 fill-red-500' : 'text-gray-400'}`}
+                    className={`text-lg ${
+                      isFavorite ? "text-red-500 fill-red-500" : "text-gray-400"
+                    }`}
                   />
                 </button>
               </div>
@@ -161,6 +175,7 @@ const MobileProductCard = ({ product }) => {
                     vendor={getVendorById(product.vendorId)}
                     showVerified={true}
                     size="sm"
+                    disableLink={true}
                   />
                 </div>
               )}
@@ -172,10 +187,11 @@ const MobileProductCard = ({ product }) => {
                     {[...Array(5)].map((_, i) => (
                       <FiStar
                         key={i}
-                        className={`text-xs ${i < Math.floor(product.rating)
-                            ? 'text-yellow-400 fill-yellow-400'
-                            : 'text-gray-300'
-                          }`}
+                        className={`text-xs ${
+                          i < Math.floor(product.rating)
+                            ? "text-yellow-400 fill-yellow-400"
+                            : "text-gray-300"
+                        }`}
                       />
                     ))}
                   </div>
@@ -201,15 +217,19 @@ const MobileProductCard = ({ product }) => {
               <motion.button
                 ref={buttonRef}
                 onClick={handleAddToCart}
-                disabled={product.stock === 'out_of_stock'}
+                disabled={product.stock === "out_of_stock"}
                 whileTap={{ scale: 0.95 }}
-                className={`w-full py-3 rounded-xl font-semibold text-sm transition-all duration-300 flex items-center justify-center gap-2 ${product.stock === 'out_of_stock'
-                    ? 'bg-gray-300 text-gray-500 cursor-not-allowed'
-                    : 'gradient-green text-white hover:shadow-glow-green'
-                  }`}
-              >
+                className={`w-full py-3 rounded-xl font-semibold text-sm transition-all duration-300 flex items-center justify-center gap-2 ${
+                  product.stock === "out_of_stock"
+                    ? "bg-gray-300 text-gray-500 cursor-not-allowed"
+                    : "gradient-green text-white hover:shadow-glow-green"
+                }`}>
                 <FiShoppingBag className="text-base" />
-                <span>{product.stock === 'out_of_stock' ? 'Out of Stock' : 'Add to Cart'}</span>
+                <span>
+                  {product.stock === "out_of_stock"
+                    ? "Out of Stock"
+                    : "Add to Cart"}
+                </span>
               </motion.button>
             </div>
           </div>
@@ -239,4 +259,3 @@ const MobileProductCard = ({ product }) => {
 };
 
 export default MobileProductCard;
-
