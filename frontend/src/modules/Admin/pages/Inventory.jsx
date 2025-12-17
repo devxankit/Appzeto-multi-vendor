@@ -75,8 +75,8 @@ const Inventory = () => {
           newQuantity === 0
             ? 'out_of_stock'
             : newQuantity <= lowStockThreshold
-            ? 'low_stock'
-            : 'in_stock';
+              ? 'low_stock'
+              : 'in_stock';
         return {
           ...p,
           stockQuantity: parseInt(newQuantity),
@@ -117,8 +117,8 @@ const Inventory = () => {
           newQuantity === 0
             ? 'out_of_stock'
             : newQuantity <= lowStockThreshold
-            ? 'low_stock'
-            : 'in_stock';
+              ? 'low_stock'
+              : 'in_stock';
         return {
           ...p,
           stockQuantity: newQuantity,
@@ -194,8 +194,8 @@ const Inventory = () => {
             value === 'in_stock'
               ? 'success'
               : value === 'low_stock'
-              ? 'warning'
-              : 'error'
+                ? 'warning'
+                : 'error'
           }
         >
           {value.replace('_', ' ').toUpperCase()}
@@ -371,6 +371,7 @@ const Inventory = () => {
         isOpen={stockModal.isOpen}
         product={stockModal.product}
         lowStockThreshold={lowStockThreshold}
+        isAppRoute={isAppRoute}
         onClose={() => setStockModal({ isOpen: false, product: null })}
         onUpdate={(newQuantity) => {
           if (stockModal.product) {
@@ -384,7 +385,7 @@ const Inventory = () => {
 };
 
 // Stock Management Modal Component
-const StockManagementModal = ({ isOpen, product, lowStockThreshold, onClose, onUpdate }) => {
+const StockManagementModal = ({ isOpen, product, lowStockThreshold, isAppRoute, onClose, onUpdate }) => {
   const [stockQuantity, setStockQuantity] = useState(0);
   const [stockAdjustment, setStockAdjustment] = useState('');
   const [adjustmentType, setAdjustmentType] = useState('set'); // 'set', 'add', 'subtract'
@@ -454,8 +455,8 @@ const StockManagementModal = ({ isOpen, product, lowStockThreshold, onClose, onU
     stockQuantity === 0
       ? 'out_of_stock'
       : stockQuantity <= lowStockThreshold
-      ? 'low_stock'
-      : 'in_stock';
+        ? 'low_stock'
+        : 'in_stock';
 
   return (
     <AnimatePresence>
@@ -470,7 +471,7 @@ const StockManagementModal = ({ isOpen, product, lowStockThreshold, onClose, onU
             className="fixed inset-0 bg-black/50 z-[10000]"
             onClick={onClose}
           />
-          
+
           {/* Modal Content - Mobile: Slide up from bottom, Desktop: Center with scale */}
           <motion.div
             initial={{ opacity: 0 }}
@@ -480,27 +481,27 @@ const StockManagementModal = ({ isOpen, product, lowStockThreshold, onClose, onU
           >
             <motion.div
               variants={{
-                hidden: { 
+                hidden: {
                   y: isAppRoute ? '-100%' : '100%',
                   scale: 0.95,
                   opacity: 0
                 },
-                visible: { 
+                visible: {
                   y: 0,
                   scale: 1,
                   opacity: 1,
-                  transition: { 
+                  transition: {
                     type: 'spring',
                     damping: 22,
                     stiffness: 350,
                     mass: 0.7
                   }
                 },
-                exit: { 
+                exit: {
                   y: isAppRoute ? '-100%' : '100%',
                   scale: 0.95,
                   opacity: 0,
-                  transition: { 
+                  transition: {
                     type: 'spring',
                     damping: 30,
                     stiffness: 400
@@ -515,7 +516,7 @@ const StockManagementModal = ({ isOpen, product, lowStockThreshold, onClose, onU
               style={{ willChange: 'transform' }}
             >
               {/* Drag Handle - Mobile Only */}
-              <motion.div 
+              <motion.div
                 initial={{ opacity: 0, scale: 0 }}
                 animate={{ opacity: 1, scale: 1 }}
                 transition={{ delay: 0.2, type: 'spring', stiffness: 400 }}
@@ -524,263 +525,259 @@ const StockManagementModal = ({ isOpen, product, lowStockThreshold, onClose, onU
                 <div className="w-12 h-1.5 bg-gray-300 rounded-full" />
               </motion.div>
 
-            {/* Header */}
-            <motion.div 
-              initial={{ opacity: 0, y: -10 }}
-              animate={{ opacity: 1, y: 0 }}
-              transition={{ delay: 0.1, duration: 0.3 }}
-              className="flex items-center justify-between mb-6"
-            >
-              <div className="flex items-center gap-3">
-                <div className="w-10 h-10 bg-blue-100 rounded-lg flex items-center justify-center">
-                  <FiPackage className="text-blue-600 text-xl" />
-                </div>
-                <div>
-                  <h2 className="text-xl font-bold text-gray-800">Update Stock</h2>
-                  <p className="text-sm text-gray-500">Manage inventory levels</p>
-                </div>
-              </div>
-              <button
-                onClick={onClose}
-                className="p-2 hover:bg-gray-100 rounded-full transition-colors"
+              {/* Header */}
+              <motion.div
+                initial={{ opacity: 0, y: -10 }}
+                animate={{ opacity: 1, y: 0 }}
+                transition={{ delay: 0.1, duration: 0.3 }}
+                className="flex items-center justify-between mb-6"
               >
-                <FiX className="text-xl text-gray-600" />
-              </button>
-            </motion.div>
-
-            {/* Product Info */}
-            <motion.div 
-              initial={{ opacity: 0, y: 10 }}
-              animate={{ opacity: 1, y: 0 }}
-              transition={{ delay: 0.15, duration: 0.3 }}
-              className="bg-gray-50 rounded-xl p-4 mb-6"
-            >
-              <div className="flex items-center gap-3 mb-3">
-                <img
-                  src={product.image}
-                  alt={product.name}
-                  className="w-16 h-16 object-cover rounded-lg"
-                  onError={(e) => {
-                    e.target.src = 'https://via.placeholder.com/64x64?text=Product';
-                  }}
-                />
-                <div className="flex-1 min-w-0">
-                  <h3 className="font-semibold text-gray-800 truncate">{product.name}</h3>
-                  <p className="text-sm text-gray-600">ID: {product.id}</p>
-                  <p className="text-sm font-medium text-gray-700">{formatCurrency(product.price)}</p>
+                <div className="flex items-center gap-3">
+                  <div className="w-10 h-10 bg-blue-100 rounded-lg flex items-center justify-center">
+                    <FiPackage className="text-blue-600 text-xl" />
+                  </div>
+                  <div>
+                    <h2 className="text-xl font-bold text-gray-800">Update Stock</h2>
+                    <p className="text-sm text-gray-500">Manage inventory levels</p>
+                  </div>
                 </div>
-              </div>
-              <div className="flex items-center justify-between pt-3 border-t border-gray-200">
-                <span className="text-sm text-gray-600">Current Stock:</span>
-                <span className="text-lg font-bold text-gray-800">{product.stockQuantity || 0}</span>
-              </div>
-              <div className="flex items-center justify-between mt-2">
-                <span className="text-sm text-gray-600">Status:</span>
-                <Badge
-                  variant={
-                    product.stock === 'in_stock'
-                      ? 'success'
-                      : product.stock === 'low_stock'
-                      ? 'warning'
-                      : 'error'
-                  }
+                <button
+                  onClick={onClose}
+                  className="p-2 hover:bg-gray-100 rounded-full transition-colors"
                 >
-                  {product.stock?.replace('_', ' ').toUpperCase() || 'UNKNOWN'}
-                </Badge>
-              </div>
-            </motion.div>
+                  <FiX className="text-xl text-gray-600" />
+                </button>
+              </motion.div>
 
-            {/* Stock Update Form */}
-            <motion.form 
-              initial={{ opacity: 0, y: 10 }}
-              animate={{ opacity: 1, y: 0 }}
-              transition={{ delay: 0.2, duration: 0.3 }}
-              onSubmit={handleSubmit} 
-              className="space-y-5"
-            >
-              {/* Update Type Selection */}
-              <div>
-                <label className="block text-sm font-semibold text-gray-700 mb-2">
-                  Update Type
-                </label>
-                <div className="grid grid-cols-3 gap-2">
-                  <button
-                    type="button"
-                    onClick={() => setAdjustmentType('set')}
-                    className={`px-3 py-2 rounded-lg text-sm font-medium transition-colors ${
-                      adjustmentType === 'set'
-                        ? 'bg-blue-600 text-white'
-                        : 'bg-gray-100 text-gray-700 hover:bg-gray-200'
-                    }`}
-                  >
-                    Set
-                  </button>
-                  <button
-                    type="button"
-                    onClick={() => setAdjustmentType('add')}
-                    className={`px-3 py-2 rounded-lg text-sm font-medium transition-colors ${
-                      adjustmentType === 'add'
-                        ? 'bg-blue-600 text-white'
-                        : 'bg-gray-100 text-gray-700 hover:bg-gray-200'
-                    }`}
-                  >
-                    Add
-                  </button>
-                  <button
-                    type="button"
-                    onClick={() => setAdjustmentType('subtract')}
-                    className={`px-3 py-2 rounded-lg text-sm font-medium transition-colors ${
-                      adjustmentType === 'subtract'
-                        ? 'bg-blue-600 text-white'
-                        : 'bg-gray-100 text-gray-700 hover:bg-gray-200'
-                    }`}
-                  >
-                    Subtract
-                  </button>
+              {/* Product Info */}
+              <motion.div
+                initial={{ opacity: 0, y: 10 }}
+                animate={{ opacity: 1, y: 0 }}
+                transition={{ delay: 0.15, duration: 0.3 }}
+                className="bg-gray-50 rounded-xl p-4 mb-6"
+              >
+                <div className="flex items-center gap-3 mb-3">
+                  <img
+                    src={product.image}
+                    alt={product.name}
+                    className="w-16 h-16 object-cover rounded-lg"
+                    onError={(e) => {
+                      e.target.src = 'https://via.placeholder.com/64x64?text=Product';
+                    }}
+                  />
+                  <div className="flex-1 min-w-0">
+                    <h3 className="font-semibold text-gray-800 truncate">{product.name}</h3>
+                    <p className="text-sm text-gray-600">ID: {product.id}</p>
+                    <p className="text-sm font-medium text-gray-700">{formatCurrency(product.price)}</p>
+                  </div>
                 </div>
-              </div>
+                <div className="flex items-center justify-between pt-3 border-t border-gray-200">
+                  <span className="text-sm text-gray-600">Current Stock:</span>
+                  <span className="text-lg font-bold text-gray-800">{product.stockQuantity || 0}</span>
+                </div>
+                <div className="flex items-center justify-between mt-2">
+                  <span className="text-sm text-gray-600">Status:</span>
+                  <Badge
+                    variant={
+                      product.stock === 'in_stock'
+                        ? 'success'
+                        : product.stock === 'low_stock'
+                          ? 'warning'
+                          : 'error'
+                    }
+                  >
+                    {product.stock?.replace('_', ' ').toUpperCase() || 'UNKNOWN'}
+                  </Badge>
+                </div>
+              </motion.div>
 
-              {/* Stock Input */}
-              {adjustmentType === 'set' ? (
+              {/* Stock Update Form */}
+              <motion.form
+                initial={{ opacity: 0, y: 10 }}
+                animate={{ opacity: 1, y: 0 }}
+                transition={{ delay: 0.2, duration: 0.3 }}
+                onSubmit={handleSubmit}
+                className="space-y-5"
+              >
+                {/* Update Type Selection */}
                 <div>
                   <label className="block text-sm font-semibold text-gray-700 mb-2">
-                    New Stock Quantity
+                    Update Type
                   </label>
-                  <div className="relative">
+                  <div className="grid grid-cols-3 gap-2">
+                    <button
+                      type="button"
+                      onClick={() => setAdjustmentType('set')}
+                      className={`px-3 py-2 rounded-lg text-sm font-medium transition-colors ${adjustmentType === 'set'
+                          ? 'bg-blue-600 text-white'
+                          : 'bg-gray-100 text-gray-700 hover:bg-gray-200'
+                        }`}
+                    >
+                      Set
+                    </button>
+                    <button
+                      type="button"
+                      onClick={() => setAdjustmentType('add')}
+                      className={`px-3 py-2 rounded-lg text-sm font-medium transition-colors ${adjustmentType === 'add'
+                          ? 'bg-blue-600 text-white'
+                          : 'bg-gray-100 text-gray-700 hover:bg-gray-200'
+                        }`}
+                    >
+                      Add
+                    </button>
+                    <button
+                      type="button"
+                      onClick={() => setAdjustmentType('subtract')}
+                      className={`px-3 py-2 rounded-lg text-sm font-medium transition-colors ${adjustmentType === 'subtract'
+                          ? 'bg-blue-600 text-white'
+                          : 'bg-gray-100 text-gray-700 hover:bg-gray-200'
+                        }`}
+                    >
+                      Subtract
+                    </button>
+                  </div>
+                </div>
+
+                {/* Stock Input */}
+                {adjustmentType === 'set' ? (
+                  <div>
+                    <label className="block text-sm font-semibold text-gray-700 mb-2">
+                      New Stock Quantity
+                    </label>
+                    <div className="relative">
+                      <input
+                        type="number"
+                        value={stockQuantity}
+                        onChange={(e) => setStockQuantity(e.target.value)}
+                        min="0"
+                        className="w-full px-4 py-3 bg-gray-50 border border-gray-200 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500 text-lg font-semibold"
+                        required
+                      />
+                      {/* Quick Adjust Buttons */}
+                      <div className="flex items-center gap-2 mt-2">
+                        <button
+                          type="button"
+                          onClick={() => quickAdjust(-10)}
+                          className="flex-1 px-3 py-2 bg-gray-100 hover:bg-gray-200 rounded-lg text-sm font-medium transition-colors"
+                        >
+                          <FiMinus className="inline mr-1" />
+                          -10
+                        </button>
+                        <button
+                          type="button"
+                          onClick={() => quickAdjust(-1)}
+                          className="flex-1 px-3 py-2 bg-gray-100 hover:bg-gray-200 rounded-lg text-sm font-medium transition-colors"
+                        >
+                          <FiMinus className="inline mr-1" />
+                          -1
+                        </button>
+                        <button
+                          type="button"
+                          onClick={() => quickAdjust(1)}
+                          className="flex-1 px-3 py-2 bg-gray-100 hover:bg-gray-200 rounded-lg text-sm font-medium transition-colors"
+                        >
+                          <FiPlus className="inline mr-1" />
+                          +1
+                        </button>
+                        <button
+                          type="button"
+                          onClick={() => quickAdjust(10)}
+                          className="flex-1 px-3 py-2 bg-gray-100 hover:bg-gray-200 rounded-lg text-sm font-medium transition-colors"
+                        >
+                          <FiPlus className="inline mr-1" />
+                          +10
+                        </button>
+                      </div>
+                    </div>
+                  </div>
+                ) : (
+                  <div>
+                    <label className="block text-sm font-semibold text-gray-700 mb-2">
+                      {adjustmentType === 'add' ? 'Quantity to Add' : 'Quantity to Subtract'}
+                    </label>
                     <input
                       type="number"
-                      value={stockQuantity}
-                      onChange={(e) => setStockQuantity(e.target.value)}
+                      value={stockAdjustment}
+                      onChange={(e) => setStockAdjustment(e.target.value)}
                       min="0"
                       className="w-full px-4 py-3 bg-gray-50 border border-gray-200 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500 text-lg font-semibold"
+                      placeholder="0"
                       required
                     />
-                    {/* Quick Adjust Buttons */}
-                    <div className="flex items-center gap-2 mt-2">
-                      <button
-                        type="button"
-                        onClick={() => quickAdjust(-10)}
-                        className="flex-1 px-3 py-2 bg-gray-100 hover:bg-gray-200 rounded-lg text-sm font-medium transition-colors"
-                      >
-                        <FiMinus className="inline mr-1" />
-                        -10
-                      </button>
-                      <button
-                        type="button"
-                        onClick={() => quickAdjust(-1)}
-                        className="flex-1 px-3 py-2 bg-gray-100 hover:bg-gray-200 rounded-lg text-sm font-medium transition-colors"
-                      >
-                        <FiMinus className="inline mr-1" />
-                        -1
-                      </button>
-                      <button
-                        type="button"
-                        onClick={() => quickAdjust(1)}
-                        className="flex-1 px-3 py-2 bg-gray-100 hover:bg-gray-200 rounded-lg text-sm font-medium transition-colors"
-                      >
-                        <FiPlus className="inline mr-1" />
-                        +1
-                      </button>
-                      <button
-                        type="button"
-                        onClick={() => quickAdjust(10)}
-                        className="flex-1 px-3 py-2 bg-gray-100 hover:bg-gray-200 rounded-lg text-sm font-medium transition-colors"
-                      >
-                        <FiPlus className="inline mr-1" />
-                        +10
-                      </button>
-                    </div>
+                    {stockAdjustment && (
+                      <p className="mt-2 text-sm text-gray-600">
+                        New stock will be:{' '}
+                        <span className="font-semibold">
+                          {adjustmentType === 'add'
+                            ? (product.stockQuantity || 0) + parseInt(stockAdjustment || 0)
+                            : Math.max(0, (product.stockQuantity || 0) - parseInt(stockAdjustment || 0))}
+                        </span>
+                      </p>
+                    )}
                   </div>
-                </div>
-              ) : (
-                <div>
-                  <label className="block text-sm font-semibold text-gray-700 mb-2">
-                    {adjustmentType === 'add' ? 'Quantity to Add' : 'Quantity to Subtract'}
-                  </label>
-                  <input
-                    type="number"
-                    value={stockAdjustment}
-                    onChange={(e) => setStockAdjustment(e.target.value)}
-                    min="0"
-                    className="w-full px-4 py-3 bg-gray-50 border border-gray-200 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500 text-lg font-semibold"
-                    placeholder="0"
-                    required
-                  />
-                  {stockAdjustment && (
-                    <p className="mt-2 text-sm text-gray-600">
-                      New stock will be:{' '}
-                      <span className="font-semibold">
-                        {adjustmentType === 'add'
-                          ? (product.stockQuantity || 0) + parseInt(stockAdjustment || 0)
-                          : Math.max(0, (product.stockQuantity || 0) - parseInt(stockAdjustment || 0))}
+                )}
+
+                {/* Preview */}
+                {adjustmentType === 'set' && (
+                  <div className="bg-blue-50 rounded-lg p-4">
+                    <div className="flex items-center justify-between mb-2">
+                      <span className="text-sm text-gray-600">Current:</span>
+                      <span className="text-sm font-semibold text-gray-800">{product.stockQuantity || 0}</span>
+                    </div>
+                    <div className="flex items-center justify-between mb-2">
+                      <span className="text-sm text-gray-600">New:</span>
+                      <span className="text-sm font-bold text-blue-600">{stockQuantity || 0}</span>
+                    </div>
+                    <div className="flex items-center justify-between pt-2 border-t border-blue-200">
+                      <span className="text-sm text-gray-600">Change:</span>
+                      <span
+                        className={`text-sm font-bold ${(stockQuantity || 0) - (product.stockQuantity || 0) >= 0
+                            ? 'text-green-600'
+                            : 'text-red-600'
+                          }`}
+                      >
+                        {(stockQuantity || 0) - (product.stockQuantity || 0) >= 0 ? '+' : ''}
+                        {(stockQuantity || 0) - (product.stockQuantity || 0)}
                       </span>
-                    </p>
-                  )}
-                </div>
-              )}
-
-              {/* Preview */}
-              {adjustmentType === 'set' && (
-                <div className="bg-blue-50 rounded-lg p-4">
-                  <div className="flex items-center justify-between mb-2">
-                    <span className="text-sm text-gray-600">Current:</span>
-                    <span className="text-sm font-semibold text-gray-800">{product.stockQuantity || 0}</span>
-                  </div>
-                  <div className="flex items-center justify-between mb-2">
-                    <span className="text-sm text-gray-600">New:</span>
-                    <span className="text-sm font-bold text-blue-600">{stockQuantity || 0}</span>
-                  </div>
-                  <div className="flex items-center justify-between pt-2 border-t border-blue-200">
-                    <span className="text-sm text-gray-600">Change:</span>
-                    <span
-                      className={`text-sm font-bold ${
-                        (stockQuantity || 0) - (product.stockQuantity || 0) >= 0
-                          ? 'text-green-600'
-                          : 'text-red-600'
-                      }`}
-                    >
-                      {(stockQuantity || 0) - (product.stockQuantity || 0) >= 0 ? '+' : ''}
-                      {(stockQuantity || 0) - (product.stockQuantity || 0)}
-                    </span>
-                  </div>
-                  <div className="mt-3 pt-3 border-t border-blue-200">
-                    <div className="flex items-center justify-between">
-                      <span className="text-sm text-gray-600">New Status:</span>
-                      <Badge
-                        variant={
-                          newStockStatus === 'in_stock'
-                            ? 'success'
-                            : newStockStatus === 'low_stock'
-                            ? 'warning'
-                            : 'error'
-                        }
-                      >
-                        {newStockStatus.replace('_', ' ').toUpperCase()}
-                      </Badge>
+                    </div>
+                    <div className="mt-3 pt-3 border-t border-blue-200">
+                      <div className="flex items-center justify-between">
+                        <span className="text-sm text-gray-600">New Status:</span>
+                        <Badge
+                          variant={
+                            newStockStatus === 'in_stock'
+                              ? 'success'
+                              : newStockStatus === 'low_stock'
+                                ? 'warning'
+                                : 'error'
+                          }
+                        >
+                          {newStockStatus.replace('_', ' ').toUpperCase()}
+                        </Badge>
+                      </div>
                     </div>
                   </div>
-                </div>
-              )}
+                )}
 
-              {/* Actions */}
-              <div className="flex gap-3 pt-4">
-                <button
-                  type="button"
-                  onClick={onClose}
-                  className="flex-1 px-4 py-3 bg-gray-100 hover:bg-gray-200 text-gray-700 rounded-lg font-semibold transition-colors"
-                >
-                  Cancel
-                </button>
-                <button
-                  type="submit"
-                  className="flex-1 px-4 py-3 bg-blue-600 hover:bg-blue-700 text-white rounded-lg font-semibold transition-colors"
-                >
-                  Update Stock
-                </button>
-              </div>
-            </motion.form>
+                {/* Actions */}
+                <div className="flex gap-3 pt-4">
+                  <button
+                    type="button"
+                    onClick={onClose}
+                    className="flex-1 px-4 py-3 bg-gray-100 hover:bg-gray-200 text-gray-700 rounded-lg font-semibold transition-colors"
+                  >
+                    Cancel
+                  </button>
+                  <button
+                    type="submit"
+                    className="flex-1 px-4 py-3 bg-blue-600 hover:bg-blue-700 text-white rounded-lg font-semibold transition-colors"
+                  >
+                    Update Stock
+                  </button>
+                </div>
+              </motion.form>
+            </motion.div>
           </motion.div>
-        </motion.div>
         </>
       )}
     </AnimatePresence>

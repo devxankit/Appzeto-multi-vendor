@@ -23,7 +23,8 @@ const TicketTypes = () => {
       setTicketTypes(ticketTypes.map((t) => (t.id === editingType.id ? { ...typeData, id: editingType.id } : t)));
       toast.success('Ticket type updated');
     } else {
-      setTicketTypes([...ticketTypes, { ...typeData, id: ticketTypes.length + 1 }]);
+      const newId = ticketTypes.length > 0 ? Math.max(...ticketTypes.map(t => t.id)) + 1 : 1;
+      setTicketTypes([...ticketTypes, { ...typeData, id: newId }]);
       toast.success('Ticket type added');
     }
     setEditingType(null);
@@ -53,9 +54,8 @@ const TicketTypes = () => {
       label: 'Status',
       sortable: true,
       render: (value) => (
-        <span className={`px-2 py-1 rounded text-xs font-medium ${
-          value === 'active' ? 'bg-green-100 text-green-800' : 'bg-gray-100 text-gray-800'
-        }`}>
+        <span className={`px-2 py-1 rounded text-xs font-medium ${value === 'active' ? 'bg-green-100 text-green-800' : 'bg-gray-100 text-gray-800'
+          }`}>
           {value}
         </span>
       ),
@@ -95,7 +95,7 @@ const TicketTypes = () => {
           <p className="text-sm sm:text-base text-gray-600">Manage support ticket categories</p>
         </div>
         <button
-          onClick={() => setEditingType({})}
+          onClick={() => setEditingType({ name: '', description: '', status: 'active' })}
           className="flex items-center gap-2 px-4 py-2 gradient-green text-white rounded-lg hover:shadow-glow-green transition-all font-semibold text-sm"
         >
           <FiPlus />
@@ -124,7 +124,7 @@ const TicketTypes = () => {
               onClick={() => setEditingType(null)}
               className="fixed inset-0 bg-black/50 z-[10000]"
             />
-            
+
             {/* Modal Content - Mobile: Slide up from bottom, Desktop: Center with scale */}
             <motion.div
               initial={{ opacity: 0 }}
@@ -134,27 +134,27 @@ const TicketTypes = () => {
             >
               <motion.div
                 variants={{
-                  hidden: { 
+                  hidden: {
                     y: isAppRoute ? '-100%' : '100%',
                     scale: 0.95,
                     opacity: 0
                   },
-                  visible: { 
+                  visible: {
                     y: 0,
                     scale: 1,
                     opacity: 1,
-                    transition: { 
+                    transition: {
                       type: 'spring',
                       damping: 22,
                       stiffness: 350,
                       mass: 0.7
                     }
                   },
-                  exit: { 
+                  exit: {
                     y: isAppRoute ? '-100%' : '100%',
                     scale: 0.95,
                     opacity: 0,
-                    transition: { 
+                    transition: {
                       type: 'spring',
                       damping: 30,
                       stiffness: 400
@@ -171,65 +171,60 @@ const TicketTypes = () => {
                 <h3 className="text-lg font-bold text-gray-800 mb-4">
                   {editingType.id ? 'Edit Ticket Type' : 'Add Ticket Type'}
                 </h3>
-            <form
-              onSubmit={(e) => {
-                e.preventDefault();
-                const formData = new FormData(e.target);
-                handleSave({
-                  name: formData.get('name'),
-                  description: formData.get('description'),
-                  status: formData.get('status'),
-                });
-              }}
-              className="space-y-4"
-            >
-              <input
-                type="text"
-                name="name"
-                defaultValue={editingType.name || ''}
-                placeholder="Type Name"
-                required
-                className="w-full px-4 py-2 border border-gray-200 rounded-lg focus:outline-none focus:ring-2 focus:ring-primary-500"
-              />
-              <textarea
-                name="description"
-                defaultValue={editingType.description || ''}
-                placeholder="Description"
-                required
-                rows={3}
-                className="w-full px-4 py-2 border border-gray-200 rounded-lg focus:outline-none focus:ring-2 focus:ring-primary-500"
-              />
-              <AnimatedSelect
-                name="status"
-                value={editingType.status || 'active'}
-                onChange={(e) => {
-                  const form = e.target.closest('form');
-                  if (form) {
-                    const statusInput = form.querySelector('[name="status"]');
-                    if (statusInput) statusInput.value = e.target.value;
-                  }
-                }}
-                options={[
-                  { value: 'active', label: 'Active' },
-                  { value: 'inactive', label: 'Inactive' },
-                ]}
-              />
-              <div className="flex items-center gap-2">
-                <button
-                  type="submit"
-                  className="flex-1 px-4 py-2 bg-primary-600 text-white rounded-lg hover:bg-primary-700 transition-colors font-semibold"
+                <form
+                  onSubmit={(e) => {
+                    e.preventDefault();
+                    const formData = new FormData(e.target);
+                    handleSave({
+                      name: formData.get('name'),
+                      description: formData.get('description'),
+                      status: formData.get('status'),
+                    });
+                  }}
+                  className="space-y-4"
                 >
-                  Save
-                </button>
-                <button
-                  type="button"
-                  onClick={() => setEditingType(null)}
-                  className="flex-1 px-4 py-2 bg-gray-200 text-gray-800 rounded-lg hover:bg-gray-300 transition-colors font-semibold"
-                >
-                  Cancel
-                </button>
-              </div>
-            </form>
+                  <input
+                    type="text"
+                    name="name"
+                    defaultValue={editingType.name || ''}
+                    placeholder="Type Name"
+                    required
+                    className="w-full px-4 py-2 border border-gray-200 rounded-lg focus:outline-none focus:ring-2 focus:ring-primary-500"
+                  />
+                  <textarea
+                    name="description"
+                    defaultValue={editingType.description || ''}
+                    placeholder="Description"
+                    required
+                    rows={3}
+                    className="w-full px-4 py-2 border border-gray-200 rounded-lg focus:outline-none focus:ring-2 focus:ring-primary-500"
+                  />
+                  <AnimatedSelect
+                    name="status"
+                    value={editingType.status || 'active'}
+                    onChange={(e) => setEditingType({ ...editingType, status: e.target.value })}
+                    options={[
+                      { value: 'active', label: 'Active' },
+                      { value: 'inactive', label: 'Inactive' },
+                    ]}
+                    required
+                  />
+                  <div className="flex items-center gap-2">
+                    <button
+                      type="submit"
+                      className="flex-1 px-4 py-2 bg-primary-600 text-white rounded-lg hover:bg-primary-700 transition-colors font-semibold"
+                    >
+                      Save
+                    </button>
+                    <button
+                      type="button"
+                      onClick={() => setEditingType(null)}
+                      className="flex-1 px-4 py-2 bg-gray-200 text-gray-800 rounded-lg hover:bg-gray-300 transition-colors font-semibold"
+                    >
+                      Cancel
+                    </button>
+                  </div>
+                </form>
               </motion.div>
             </motion.div>
           </>

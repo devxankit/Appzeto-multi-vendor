@@ -30,7 +30,8 @@ const Cities = () => {
       setCities(cities.map((c) => (c.id === editingCity.id ? { ...cityData, id: editingCity.id } : c)));
       toast.success('City updated');
     } else {
-      setCities([...cities, { ...cityData, id: cities.length + 1 }]);
+      const newId = cities.length > 0 ? Math.max(...cities.map(c => c.id)) + 1 : 1;
+      setCities([...cities, { ...cityData, id: newId }]);
       toast.success('City added');
     }
     setEditingCity(null);
@@ -64,9 +65,8 @@ const Cities = () => {
       label: 'Status',
       sortable: true,
       render: (value) => (
-        <span className={`px-2 py-1 rounded text-xs font-medium ${
-          value === 'active' ? 'bg-green-100 text-green-800' : 'bg-gray-100 text-gray-800'
-        }`}>
+        <span className={`px-2 py-1 rounded text-xs font-medium ${value === 'active' ? 'bg-green-100 text-green-800' : 'bg-gray-100 text-gray-800'
+          }`}>
           {value}
         </span>
       ),
@@ -106,7 +106,7 @@ const Cities = () => {
           <p className="text-sm sm:text-base text-gray-600">Manage serviceable cities</p>
         </div>
         <button
-          onClick={() => setEditingCity({})}
+          onClick={() => setEditingCity({ name: '', state: '', country: '', status: 'active' })}
           className="flex items-center gap-2 px-4 py-2 gradient-green text-white rounded-lg hover:shadow-glow-green transition-all font-semibold text-sm"
         >
           <FiPlus />
@@ -148,7 +148,7 @@ const Cities = () => {
               onClick={() => setEditingCity(null)}
               className="fixed inset-0 bg-black/50 z-[10000]"
             />
-            
+
             {/* Modal Content - Mobile: Slide up from bottom, Desktop: Center with scale */}
             <motion.div
               initial={{ opacity: 0 }}
@@ -158,27 +158,27 @@ const Cities = () => {
             >
               <motion.div
                 variants={{
-                  hidden: { 
+                  hidden: {
                     y: isAppRoute ? '-100%' : '100%',
                     scale: 0.95,
                     opacity: 0
                   },
-                  visible: { 
+                  visible: {
                     y: 0,
                     scale: 1,
                     opacity: 1,
-                    transition: { 
+                    transition: {
                       type: 'spring',
                       damping: 22,
                       stiffness: 350,
                       mass: 0.7
                     }
                   },
-                  exit: { 
+                  exit: {
                     y: isAppRoute ? '-100%' : '100%',
                     scale: 0.95,
                     opacity: 0,
-                    transition: { 
+                    transition: {
                       type: 'spring',
                       damping: 30,
                       stiffness: 400
@@ -195,74 +195,69 @@ const Cities = () => {
                 <h3 className="text-lg font-bold text-gray-800 mb-4">
                   {editingCity.id ? 'Edit City' : 'Add City'}
                 </h3>
-            <form
-              onSubmit={(e) => {
-                e.preventDefault();
-                const formData = new FormData(e.target);
-                handleSave({
-                  name: formData.get('name'),
-                  state: formData.get('state'),
-                  country: formData.get('country'),
-                  status: formData.get('status'),
-                });
-              }}
-              className="space-y-4"
-            >
-              <input
-                type="text"
-                name="name"
-                defaultValue={editingCity.name || ''}
-                placeholder="City Name"
-                required
-                className="w-full px-4 py-2 border border-gray-200 rounded-lg focus:outline-none focus:ring-2 focus:ring-primary-500"
-              />
-              <input
-                type="text"
-                name="state"
-                defaultValue={editingCity.state || ''}
-                placeholder="State"
-                required
-                className="w-full px-4 py-2 border border-gray-200 rounded-lg focus:outline-none focus:ring-2 focus:ring-primary-500"
-              />
-              <input
-                type="text"
-                name="country"
-                defaultValue={editingCity.country || ''}
-                placeholder="Country"
-                required
-                className="w-full px-4 py-2 border border-gray-200 rounded-lg focus:outline-none focus:ring-2 focus:ring-primary-500"
-              />
-              <AnimatedSelect
-                name="status"
-                value={editingCity.status || 'active'}
-                onChange={(e) => {
-                  const form = e.target.closest('form');
-                  if (form) {
-                    const statusInput = form.querySelector('[name="status"]');
-                    if (statusInput) statusInput.value = e.target.value;
-                  }
-                }}
-                options={[
-                  { value: 'active', label: 'Active' },
-                  { value: 'inactive', label: 'Inactive' },
-                ]}
-              />
-              <div className="flex items-center gap-2">
-                <button
-                  type="submit"
-                  className="flex-1 px-4 py-2 bg-primary-600 text-white rounded-lg hover:bg-primary-700 transition-colors font-semibold"
+                <form
+                  onSubmit={(e) => {
+                    e.preventDefault();
+                    const formData = new FormData(e.target);
+                    handleSave({
+                      name: formData.get('name'),
+                      state: formData.get('state'),
+                      country: formData.get('country'),
+                      status: formData.get('status'),
+                    });
+                  }}
+                  className="space-y-4"
                 >
-                  Save
-                </button>
-                <button
-                  type="button"
-                  onClick={() => setEditingCity(null)}
-                  className="flex-1 px-4 py-2 bg-gray-200 text-gray-800 rounded-lg hover:bg-gray-300 transition-colors font-semibold"
-                >
-                  Cancel
-                </button>
-              </div>
-            </form>
+                  <input
+                    type="text"
+                    name="name"
+                    defaultValue={editingCity.name || ''}
+                    placeholder="City Name"
+                    required
+                    className="w-full px-4 py-2 border border-gray-200 rounded-lg focus:outline-none focus:ring-2 focus:ring-primary-500"
+                  />
+                  <input
+                    type="text"
+                    name="state"
+                    defaultValue={editingCity.state || ''}
+                    placeholder="State"
+                    required
+                    className="w-full px-4 py-2 border border-gray-200 rounded-lg focus:outline-none focus:ring-2 focus:ring-primary-500"
+                  />
+                  <input
+                    type="text"
+                    name="country"
+                    defaultValue={editingCity.country || ''}
+                    placeholder="Country"
+                    required
+                    className="w-full px-4 py-2 border border-gray-200 rounded-lg focus:outline-none focus:ring-2 focus:ring-primary-500"
+                  />
+                  <AnimatedSelect
+                    name="status"
+                    value={editingCity.status || 'active'}
+                    onChange={(e) => setEditingCity({ ...editingCity, status: e.target.value })}
+                    options={[
+                      { value: 'active', label: 'Active' },
+                      { value: 'inactive', label: 'Inactive' },
+                    ]}
+                    required
+                  />
+                  <div className="flex items-center gap-2">
+                    <button
+                      type="submit"
+                      className="flex-1 px-4 py-2 bg-primary-600 text-white rounded-lg hover:bg-primary-700 transition-colors font-semibold"
+                    >
+                      Save
+                    </button>
+                    <button
+                      type="button"
+                      onClick={() => setEditingCity(null)}
+                      className="flex-1 px-4 py-2 bg-gray-200 text-gray-800 rounded-lg hover:bg-gray-300 transition-colors font-semibold"
+                    >
+                      Cancel
+                    </button>
+                  </div>
+                </form>
               </motion.div>
             </motion.div>
           </>

@@ -30,7 +30,8 @@ const Zipcodes = () => {
       setZipcodes(zipcodes.map((z) => (z.id === editingZipcode.id ? { ...zipcodeData, id: editingZipcode.id } : z)));
       toast.success('Zipcode updated');
     } else {
-      setZipcodes([...zipcodes, { ...zipcodeData, id: zipcodes.length + 1 }]);
+      const newId = zipcodes.length > 0 ? Math.max(...zipcodes.map(z => z.id)) + 1 : 1;
+      setZipcodes([...zipcodes, { ...zipcodeData, id: newId }]);
       toast.success('Zipcode added');
     }
     setEditingZipcode(null);
@@ -64,9 +65,8 @@ const Zipcodes = () => {
       label: 'Delivery Available',
       sortable: true,
       render: (value) => (
-        <span className={`px-2 py-1 rounded text-xs font-medium ${
-          value ? 'bg-green-100 text-green-800' : 'bg-red-100 text-red-800'
-        }`}>
+        <span className={`px-2 py-1 rounded text-xs font-medium ${value ? 'bg-green-100 text-green-800' : 'bg-red-100 text-red-800'
+          }`}>
           {value ? 'Yes' : 'No'}
         </span>
       ),
@@ -106,7 +106,7 @@ const Zipcodes = () => {
           <p className="text-sm sm:text-base text-gray-600">Manage serviceable zipcodes</p>
         </div>
         <button
-          onClick={() => setEditingZipcode({})}
+          onClick={() => setEditingZipcode({ zipcode: '', city: '', state: '', deliveryAvailable: true })}
           className="flex items-center gap-2 px-4 py-2 gradient-green text-white rounded-lg hover:shadow-glow-green transition-all font-semibold text-sm"
         >
           <FiPlus />
@@ -148,7 +148,7 @@ const Zipcodes = () => {
               onClick={() => setEditingZipcode(null)}
               className="fixed inset-0 bg-black/50 z-[10000]"
             />
-            
+
             {/* Modal Content - Mobile: Slide up from bottom, Desktop: Center with scale */}
             <motion.div
               initial={{ opacity: 0 }}
@@ -158,27 +158,27 @@ const Zipcodes = () => {
             >
               <motion.div
                 variants={{
-                  hidden: { 
+                  hidden: {
                     y: isAppRoute ? '-100%' : '100%',
                     scale: 0.95,
                     opacity: 0
                   },
-                  visible: { 
+                  visible: {
                     y: 0,
                     scale: 1,
                     opacity: 1,
-                    transition: { 
+                    transition: {
                       type: 'spring',
                       damping: 22,
                       stiffness: 350,
                       mass: 0.7
                     }
                   },
-                  exit: { 
+                  exit: {
                     y: isAppRoute ? '-100%' : '100%',
                     scale: 0.95,
                     opacity: 0,
-                    transition: { 
+                    transition: {
                       type: 'spring',
                       damping: 30,
                       stiffness: 400
@@ -195,74 +195,69 @@ const Zipcodes = () => {
                 <h3 className="text-lg font-bold text-gray-800 mb-4">
                   {editingZipcode.id ? 'Edit Zipcode' : 'Add Zipcode'}
                 </h3>
-            <form
-              onSubmit={(e) => {
-                e.preventDefault();
-                const formData = new FormData(e.target);
-                handleSave({
-                  zipcode: formData.get('zipcode'),
-                  city: formData.get('city'),
-                  state: formData.get('state'),
-                  deliveryAvailable: formData.get('deliveryAvailable') === 'true',
-                });
-              }}
-              className="space-y-4"
-            >
-              <input
-                type="text"
-                name="zipcode"
-                defaultValue={editingZipcode.zipcode || ''}
-                placeholder="Zipcode"
-                required
-                className="w-full px-4 py-2 border border-gray-200 rounded-lg focus:outline-none focus:ring-2 focus:ring-primary-500"
-              />
-              <input
-                type="text"
-                name="city"
-                defaultValue={editingZipcode.city || ''}
-                placeholder="City"
-                required
-                className="w-full px-4 py-2 border border-gray-200 rounded-lg focus:outline-none focus:ring-2 focus:ring-primary-500"
-              />
-              <input
-                type="text"
-                name="state"
-                defaultValue={editingZipcode.state || ''}
-                placeholder="State"
-                required
-                className="w-full px-4 py-2 border border-gray-200 rounded-lg focus:outline-none focus:ring-2 focus:ring-primary-500"
-              />
-              <AnimatedSelect
-                name="deliveryAvailable"
-                value={editingZipcode.deliveryAvailable ? 'true' : 'false'}
-                onChange={(e) => {
-                  const form = e.target.closest('form');
-                  if (form) {
-                    const deliveryInput = form.querySelector('[name="deliveryAvailable"]');
-                    if (deliveryInput) deliveryInput.value = e.target.value;
-                  }
-                }}
-                options={[
-                  { value: 'true', label: 'Delivery Available' },
-                  { value: 'false', label: 'Delivery Not Available' },
-                ]}
-              />
-              <div className="flex items-center gap-2">
-                <button
-                  type="submit"
-                  className="flex-1 px-4 py-2 bg-primary-600 text-white rounded-lg hover:bg-primary-700 transition-colors font-semibold"
+                <form
+                  onSubmit={(e) => {
+                    e.preventDefault();
+                    const formData = new FormData(e.target);
+                    handleSave({
+                      zipcode: formData.get('zipcode'),
+                      city: formData.get('city'),
+                      state: formData.get('state'),
+                      deliveryAvailable: formData.get('deliveryAvailable') === 'true',
+                    });
+                  }}
+                  className="space-y-4"
                 >
-                  Save
-                </button>
-                <button
-                  type="button"
-                  onClick={() => setEditingZipcode(null)}
-                  className="flex-1 px-4 py-2 bg-gray-200 text-gray-800 rounded-lg hover:bg-gray-300 transition-colors font-semibold"
-                >
-                  Cancel
-                </button>
-              </div>
-            </form>
+                  <input
+                    type="text"
+                    name="zipcode"
+                    defaultValue={editingZipcode.zipcode || ''}
+                    placeholder="Zipcode"
+                    required
+                    className="w-full px-4 py-2 border border-gray-200 rounded-lg focus:outline-none focus:ring-2 focus:ring-primary-500"
+                  />
+                  <input
+                    type="text"
+                    name="city"
+                    defaultValue={editingZipcode.city || ''}
+                    placeholder="City"
+                    required
+                    className="w-full px-4 py-2 border border-gray-200 rounded-lg focus:outline-none focus:ring-2 focus:ring-primary-500"
+                  />
+                  <input
+                    type="text"
+                    name="state"
+                    defaultValue={editingZipcode.state || ''}
+                    placeholder="State"
+                    required
+                    className="w-full px-4 py-2 border border-gray-200 rounded-lg focus:outline-none focus:ring-2 focus:ring-primary-500"
+                  />
+                  <AnimatedSelect
+                    name="deliveryAvailable"
+                    value={editingZipcode.deliveryAvailable ? 'true' : 'false'}
+                    onChange={(e) => setEditingZipcode({ ...editingZipcode, deliveryAvailable: e.target.value === 'true' })}
+                    options={[
+                      { value: 'true', label: 'Delivery Available' },
+                      { value: 'false', label: 'Delivery Not Available' },
+                    ]}
+                    required
+                  />
+                  <div className="flex items-center gap-2">
+                    <button
+                      type="submit"
+                      className="flex-1 px-4 py-2 bg-primary-600 text-white rounded-lg hover:bg-primary-700 transition-colors font-semibold"
+                    >
+                      Save
+                    </button>
+                    <button
+                      type="button"
+                      onClick={() => setEditingZipcode(null)}
+                      className="flex-1 px-4 py-2 bg-gray-200 text-gray-800 rounded-lg hover:bg-gray-300 transition-colors font-semibold"
+                    >
+                      Cancel
+                    </button>
+                  </div>
+                </form>
               </motion.div>
             </motion.div>
           </>

@@ -82,8 +82,8 @@ const PromoCodes = () => {
   const handleSave = (codeData) => {
     const updatedCodes = editingCode && editingCode.id
       ? promoCodes.map((c) => (c.id === editingCode.id ? { ...codeData, id: editingCode.id } : c))
-      : [...promoCodes, { ...codeData, id: promoCodes.length + 1, usedCount: 0 }];
-    
+      : [...promoCodes, { ...codeData, id: promoCodes.length > 0 ? Math.max(...promoCodes.map(c => c.id)) + 1 : 1, usedCount: 0 }];
+
     setPromoCodes(updatedCodes);
     localStorage.setItem('admin-promocodes', JSON.stringify(updatedCodes));
     setEditingCode(null);
@@ -184,11 +184,10 @@ const PromoCodes = () => {
       render: (value, row) => (
         <button
           onClick={() => toggleStatus(row.id)}
-          className={`px-3 py-1 rounded-lg text-xs font-semibold transition-colors ${
-            value === 'active'
+          className={`px-3 py-1 rounded-lg text-xs font-semibold transition-colors ${value === 'active'
               ? 'bg-green-100 text-green-800 hover:bg-green-200'
               : 'bg-gray-100 text-gray-800 hover:bg-gray-200'
-          }`}
+            }`}
         >
           {value}
         </button>
@@ -229,7 +228,7 @@ const PromoCodes = () => {
           <p className="text-sm sm:text-base text-gray-600">Create and manage discount codes</p>
         </div>
         <button
-          onClick={() => setEditingCode({})}
+          onClick={() => setEditingCode({ code: '', type: 'percentage', value: '', minPurchase: 0, maxDiscount: '', usageLimit: '', startDate: '', endDate: '', status: 'active' })}
           className="flex items-center gap-2 px-4 py-2 gradient-green text-white rounded-lg hover:shadow-glow-green transition-all font-semibold text-sm"
         >
           <FiPlus />
@@ -300,7 +299,7 @@ const PromoCodes = () => {
               onClick={() => setEditingCode(null)}
               className="fixed inset-0 bg-black/50 z-[10000]"
             />
-            
+
             {/* Modal Content - Mobile: Slide up from bottom, Desktop: Center with scale */}
             <motion.div
               initial={{ opacity: 0 }}
@@ -310,27 +309,27 @@ const PromoCodes = () => {
             >
               <motion.div
                 variants={{
-                  hidden: { 
+                  hidden: {
                     y: isAppRoute ? '-100%' : '100%',
                     scale: 0.95,
                     opacity: 0
                   },
-                  visible: { 
+                  visible: {
                     y: 0,
                     scale: 1,
                     opacity: 1,
-                    transition: { 
+                    transition: {
                       type: 'spring',
                       damping: 22,
                       stiffness: 350,
                       mass: 0.7
                     }
                   },
-                  exit: { 
+                  exit: {
                     y: isAppRoute ? '-100%' : '100%',
                     scale: 0.95,
                     opacity: 0,
-                    transition: { 
+                    transition: {
                       type: 'spring',
                       damping: 30,
                       stiffness: 400
@@ -347,172 +346,162 @@ const PromoCodes = () => {
                 <h3 className="text-lg font-bold text-gray-800 mb-4">
                   {editingCode.id ? 'Edit Promo Code' : 'Add Promo Code'}
                 </h3>
-            <form
-              onSubmit={(e) => {
-                e.preventDefault();
-                const formData = new FormData(e.target);
-                handleSave({
-                  code: formData.get('code').toUpperCase(),
-                  type: formData.get('type'),
-                  value: parseFloat(formData.get('value')),
-                  minPurchase: parseFloat(formData.get('minPurchase')),
-                  maxDiscount: parseFloat(formData.get('maxDiscount')),
-                  usageLimit: parseInt(formData.get('usageLimit')) || -1,
-                  startDate: formData.get('startDate'),
-                  endDate: formData.get('endDate'),
-                  status: formData.get('status'),
-                });
-              }}
-              className="space-y-4"
-            >
-              <div>
-                <label className="block text-sm font-medium text-gray-700 mb-2">
-                  <FiTag className="inline mr-2" />
-                  Promo Code
-                </label>
-                <input
-                  type="text"
-                  name="code"
-                  defaultValue={editingCode.code || ''}
-                  placeholder="SAVE20"
-                  required
-                  maxLength={20}
-                  className="w-full px-4 py-2 border border-gray-200 rounded-lg focus:outline-none focus:ring-2 focus:ring-primary-500 uppercase"
-                />
-              </div>
-
-              <div className="grid grid-cols-2 gap-4">
-                <div>
-                  <label className="block text-sm font-medium text-gray-700 mb-2">Type</label>
-                  <AnimatedSelect
-                    name="type"
-                    value={editingCode.type || 'percentage'}
-                    onChange={(e) => {
-                      const form = e.target.closest('form');
-                      if (form) {
-                        const typeInput = form.querySelector('[name="type"]');
-                        if (typeInput) typeInput.value = e.target.value;
-                      }
-                    }}
-                    options={[
-                      { value: 'percentage', label: 'Percentage' },
-                      { value: 'fixed', label: 'Fixed Amount' },
-                    ]}
-                  />
-                </div>
-                <div>
-                  <label className="block text-sm font-medium text-gray-700 mb-2">Discount Value</label>
-                  <input
-                    type="number"
-                    name="value"
-                    defaultValue={editingCode.value || ''}
-                    placeholder={editingCode.type === 'fixed' ? '50.00' : '20'}
-                    required
-                    min="0"
-                    step={editingCode.type === 'fixed' ? '0.01' : '1'}
-                    max={editingCode.type === 'percentage' ? '100' : ''}
-                    className="w-full px-4 py-2 border border-gray-200 rounded-lg focus:outline-none focus:ring-2 focus:ring-primary-500"
-                  />
-                </div>
-              </div>
-
-              <div className="grid grid-cols-2 gap-4">
-                <div>
-                  <label className="block text-sm font-medium text-gray-700 mb-2">Min Purchase</label>
-                  <input
-                    type="number"
-                    name="minPurchase"
-                    defaultValue={editingCode.minPurchase || '0'}
-                    required
-                    min="0"
-                    step="0.01"
-                    className="w-full px-4 py-2 border border-gray-200 rounded-lg focus:outline-none focus:ring-2 focus:ring-primary-500"
-                  />
-                </div>
-                <div>
-                  <label className="block text-sm font-medium text-gray-700 mb-2">Max Discount</label>
-                  <input
-                    type="number"
-                    name="maxDiscount"
-                    defaultValue={editingCode.maxDiscount || ''}
-                    min="0"
-                    step="0.01"
-                    className="w-full px-4 py-2 border border-gray-200 rounded-lg focus:outline-none focus:ring-2 focus:ring-primary-500"
-                  />
-                </div>
-              </div>
-
-              <div>
-                <label className="block text-sm font-medium text-gray-700 mb-2">Usage Limit</label>
-                <input
-                  type="number"
-                  name="usageLimit"
-                  defaultValue={editingCode.usageLimit || ''}
-                  placeholder="Leave empty for unlimited"
-                  min="-1"
-                  className="w-full px-4 py-2 border border-gray-200 rounded-lg focus:outline-none focus:ring-2 focus:ring-primary-500"
-                />
-                <p className="text-xs text-gray-500 mt-1">Enter -1 for unlimited usage</p>
-              </div>
-
-              <div className="grid grid-cols-2 gap-4">
-                <div>
-                  <label className="block text-sm font-medium text-gray-700 mb-2">Start Date</label>
-                  <input
-                    type="datetime-local"
-                    name="startDate"
-                    defaultValue={editingCode.startDate ? new Date(editingCode.startDate).toISOString().slice(0, 16) : ''}
-                    required
-                    className="w-full px-4 py-2 border border-gray-200 rounded-lg focus:outline-none focus:ring-2 focus:ring-primary-500"
-                  />
-                </div>
-                <div>
-                  <label className="block text-sm font-medium text-gray-700 mb-2">End Date</label>
-                  <input
-                    type="datetime-local"
-                    name="endDate"
-                    defaultValue={editingCode.endDate ? new Date(editingCode.endDate).toISOString().slice(0, 16) : ''}
-                    required
-                    className="w-full px-4 py-2 border border-gray-200 rounded-lg focus:outline-none focus:ring-2 focus:ring-primary-500"
-                  />
-                </div>
-              </div>
-
-              <div>
-                <label className="block text-sm font-medium text-gray-700 mb-2">Status</label>
-                <AnimatedSelect
-                  name="status"
-                  value={editingCode.status || 'active'}
-                  onChange={(e) => {
-                    const form = e.target.closest('form');
-                    if (form) {
-                      const statusInput = form.querySelector('[name="status"]');
-                      if (statusInput) statusInput.value = e.target.value;
-                    }
+                <form
+                  onSubmit={(e) => {
+                    e.preventDefault();
+                    const formData = new FormData(e.target);
+                    handleSave({
+                      code: formData.get('code').toUpperCase(),
+                      type: formData.get('type'),
+                      value: parseFloat(formData.get('value')),
+                      minPurchase: parseFloat(formData.get('minPurchase')),
+                      maxDiscount: parseFloat(formData.get('maxDiscount')),
+                      usageLimit: parseInt(formData.get('usageLimit')) || -1,
+                      startDate: formData.get('startDate'),
+                      endDate: formData.get('endDate'),
+                      status: formData.get('status'),
+                    });
                   }}
-                  options={[
-                    { value: 'active', label: 'Active' },
-                    { value: 'inactive', label: 'Inactive' },
-                  ]}
-                />
-              </div>
+                  className="space-y-4"
+                >
+                  <div>
+                    <label className="block text-sm font-medium text-gray-700 mb-2">
+                      <FiTag className="inline mr-2" />
+                      Promo Code
+                    </label>
+                    <input
+                      type="text"
+                      name="code"
+                      defaultValue={editingCode.code || ''}
+                      placeholder="SAVE20"
+                      required
+                      maxLength={20}
+                      className="w-full px-4 py-2 border border-gray-200 rounded-lg focus:outline-none focus:ring-2 focus:ring-primary-500 uppercase"
+                    />
+                  </div>
 
-              <div className="flex items-center gap-2">
-                <button
-                  type="submit"
-                  className="flex-1 px-4 py-2 bg-primary-600 text-white rounded-lg hover:bg-primary-700 transition-colors font-semibold"
-                >
-                  Save
-                </button>
-                <button
-                  type="button"
-                  onClick={() => setEditingCode(null)}
-                  className="flex-1 px-4 py-2 bg-gray-200 text-gray-800 rounded-lg hover:bg-gray-300 transition-colors font-semibold"
-                >
-                  Cancel
-                </button>
-              </div>
-            </form>
+                  <div className="grid grid-cols-2 gap-4">
+                    <div>
+                      <label className="block text-sm font-medium text-gray-700 mb-2">Type</label>
+                      <AnimatedSelect
+                        name="type"
+                        value={editingCode.type || 'percentage'}
+                        onChange={(e) => setEditingCode({ ...editingCode, type: e.target.value })}
+                        options={[
+                          { value: 'percentage', label: 'Percentage' },
+                          { value: 'fixed', label: 'Fixed Amount' },
+                        ]}
+                        required
+                      />
+                    </div>
+                    <div>
+                      <label className="block text-sm font-medium text-gray-700 mb-2">Discount Value</label>
+                      <input
+                        type="number"
+                        name="value"
+                        defaultValue={editingCode.value || ''}
+                        placeholder={editingCode.type === 'fixed' ? '50.00' : '20'}
+                        required
+                        min="0"
+                        step={editingCode.type === 'fixed' ? '0.01' : '1'}
+                        max={editingCode.type === 'percentage' ? '100' : ''}
+                        className="w-full px-4 py-2 border border-gray-200 rounded-lg focus:outline-none focus:ring-2 focus:ring-primary-500"
+                      />
+                    </div>
+                  </div>
+
+                  <div className="grid grid-cols-2 gap-4">
+                    <div>
+                      <label className="block text-sm font-medium text-gray-700 mb-2">Min Purchase</label>
+                      <input
+                        type="number"
+                        name="minPurchase"
+                        defaultValue={editingCode.minPurchase || '0'}
+                        required
+                        min="0"
+                        step="0.01"
+                        className="w-full px-4 py-2 border border-gray-200 rounded-lg focus:outline-none focus:ring-2 focus:ring-primary-500"
+                      />
+                    </div>
+                    <div>
+                      <label className="block text-sm font-medium text-gray-700 mb-2">Max Discount</label>
+                      <input
+                        type="number"
+                        name="maxDiscount"
+                        defaultValue={editingCode.maxDiscount || ''}
+                        min="0"
+                        step="0.01"
+                        className="w-full px-4 py-2 border border-gray-200 rounded-lg focus:outline-none focus:ring-2 focus:ring-primary-500"
+                      />
+                    </div>
+                  </div>
+
+                  <div>
+                    <label className="block text-sm font-medium text-gray-700 mb-2">Usage Limit</label>
+                    <input
+                      type="number"
+                      name="usageLimit"
+                      defaultValue={editingCode.usageLimit || ''}
+                      placeholder="Leave empty for unlimited"
+                      min="-1"
+                      className="w-full px-4 py-2 border border-gray-200 rounded-lg focus:outline-none focus:ring-2 focus:ring-primary-500"
+                    />
+                    <p className="text-xs text-gray-500 mt-1">Enter -1 for unlimited usage</p>
+                  </div>
+
+                  <div className="grid grid-cols-2 gap-4">
+                    <div>
+                      <label className="block text-sm font-medium text-gray-700 mb-2">Start Date</label>
+                      <input
+                        type="datetime-local"
+                        name="startDate"
+                        defaultValue={editingCode.startDate ? new Date(editingCode.startDate).toISOString().slice(0, 16) : ''}
+                        required
+                        className="w-full px-4 py-2 border border-gray-200 rounded-lg focus:outline-none focus:ring-2 focus:ring-primary-500"
+                      />
+                    </div>
+                    <div>
+                      <label className="block text-sm font-medium text-gray-700 mb-2">End Date</label>
+                      <input
+                        type="datetime-local"
+                        name="endDate"
+                        defaultValue={editingCode.endDate ? new Date(editingCode.endDate).toISOString().slice(0, 16) : ''}
+                        required
+                        className="w-full px-4 py-2 border border-gray-200 rounded-lg focus:outline-none focus:ring-2 focus:ring-primary-500"
+                      />
+                    </div>
+                  </div>
+
+                  <div>
+                    <label className="block text-sm font-medium text-gray-700 mb-2">Status</label>
+                    <AnimatedSelect
+                      name="status"
+                      value={editingCode.status || 'active'}
+                      onChange={(e) => setEditingCode({ ...editingCode, status: e.target.value })}
+                      options={[
+                        { value: 'active', label: 'Active' },
+                        { value: 'inactive', label: 'Inactive' },
+                      ]}
+                      required
+                    />
+                  </div>
+
+                  <div className="flex items-center gap-2">
+                    <button
+                      type="submit"
+                      className="flex-1 px-4 py-2 bg-primary-600 text-white rounded-lg hover:bg-primary-700 transition-colors font-semibold"
+                    >
+                      Save
+                    </button>
+                    <button
+                      type="button"
+                      onClick={() => setEditingCode(null)}
+                      className="flex-1 px-4 py-2 bg-gray-200 text-gray-800 rounded-lg hover:bg-gray-300 transition-colors font-semibold"
+                    >
+                      Cancel
+                    </button>
+                  </div>
+                </form>
               </motion.div>
             </motion.div>
           </>

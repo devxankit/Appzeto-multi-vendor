@@ -52,7 +52,8 @@ const ProductFAQs = () => {
       setFaqs(faqs.map((f) => (f.id === editingFaq.id ? { ...faqData, id: editingFaq.id } : f)));
       toast.success('FAQ updated');
     } else {
-      setFaqs([...faqs, { ...faqData, id: faqs.length + 1 }]);
+      const newId = faqs.length > 0 ? Math.max(...faqs.map(f => f.id)) + 1 : 1;
+      setFaqs([...faqs, { ...faqData, id: newId }]);
       toast.success('FAQ added');
     }
     setEditingFaq(null);
@@ -118,9 +119,8 @@ const ProductFAQs = () => {
                       <span className="text-xs font-medium text-primary-600 bg-primary-50 px-2 py-1 rounded">
                         {faq.productName}
                       </span>
-                      <span className={`text-xs px-2 py-1 rounded ${
-                        faq.status === 'active' ? 'bg-green-100 text-green-800' : 'bg-gray-100 text-gray-800'
-                      }`}>
+                      <span className={`text-xs px-2 py-1 rounded ${faq.status === 'active' ? 'bg-green-100 text-green-800' : 'bg-gray-100 text-gray-800'
+                        }`}>
                         {faq.status}
                       </span>
                     </div>
@@ -169,7 +169,7 @@ const ProductFAQs = () => {
               onClick={() => setEditingFaq(null)}
               className="fixed inset-0 bg-black/50 z-[10000]"
             />
-            
+
             {/* Modal Content - Mobile: Slide up from bottom, Desktop: Center with scale */}
             <motion.div
               initial={{ opacity: 0 }}
@@ -179,27 +179,27 @@ const ProductFAQs = () => {
             >
               <motion.div
                 variants={{
-                  hidden: { 
+                  hidden: {
                     y: isAppRoute ? '-100%' : '100%',
                     scale: 0.95,
                     opacity: 0
                   },
-                  visible: { 
+                  visible: {
                     y: 0,
                     scale: 1,
                     opacity: 1,
-                    transition: { 
+                    transition: {
                       type: 'spring',
                       damping: 22,
                       stiffness: 350,
                       mass: 0.7
                     }
                   },
-                  exit: { 
+                  exit: {
                     y: isAppRoute ? '-100%' : '100%',
                     scale: 0.95,
                     opacity: 0,
-                    transition: { 
+                    transition: {
                       type: 'spring',
                       damping: 30,
                       stiffness: 400
@@ -216,107 +216,104 @@ const ProductFAQs = () => {
                 <h3 className="text-lg font-bold text-gray-800 mb-4">
                   {editingFaq && editingFaq.id ? 'Edit FAQ' : 'Add FAQ'}
                 </h3>
-            <form
-              onSubmit={(e) => {
-                e.preventDefault();
-                const formData = new FormData(e.target);
-                handleSave({
-                  productId: parseInt(formData.get('productId')),
-                  productName: formData.get('productName'),
-                  question: formData.get('question'),
-                  answer: formData.get('answer'),
-                  order: parseInt(formData.get('order')),
-                  status: formData.get('status'),
-                });
-              }}
-              className="space-y-4"
-            >
-              <div>
-                <label className="block text-sm font-medium text-gray-700 mb-1">Product ID</label>
-                <input
-                  type="number"
-                  name="productId"
-                  defaultValue={editingFaq?.productId || ''}
-                  required
-                  className="w-full px-4 py-2 border border-gray-200 rounded-lg focus:outline-none focus:ring-2 focus:ring-primary-500"
-                />
-              </div>
-              <div>
-                <label className="block text-sm font-medium text-gray-700 mb-1">Product Name</label>
-                <input
-                  type="text"
-                  name="productName"
-                  defaultValue={editingFaq?.productName || ''}
-                  required
-                  className="w-full px-4 py-2 border border-gray-200 rounded-lg focus:outline-none focus:ring-2 focus:ring-primary-500"
-                />
-              </div>
-              <div>
-                <label className="block text-sm font-medium text-gray-700 mb-1">Question</label>
-                <textarea
-                  name="question"
-                  defaultValue={editingFaq?.question || ''}
-                  required
-                  rows={2}
-                  className="w-full px-4 py-2 border border-gray-200 rounded-lg focus:outline-none focus:ring-2 focus:ring-primary-500"
-                />
-              </div>
-              <div>
-                <label className="block text-sm font-medium text-gray-700 mb-1">Answer</label>
-                <textarea
-                  name="answer"
-                  defaultValue={editingFaq?.answer || ''}
-                  required
-                  rows={4}
-                  className="w-full px-4 py-2 border border-gray-200 rounded-lg focus:outline-none focus:ring-2 focus:ring-primary-500"
-                />
-              </div>
-              <div className="grid grid-cols-2 gap-4">
-                <div>
-                  <label className="block text-sm font-medium text-gray-700 mb-1">Order</label>
-                  <input
-                    type="number"
-                    name="order"
-                    defaultValue={editingFaq?.order || 1}
-                    required
-                    className="w-full px-4 py-2 border border-gray-200 rounded-lg focus:outline-none focus:ring-2 focus:ring-primary-500"
-                  />
-                </div>
-                <div>
-                  <label className="block text-sm font-medium text-gray-700 mb-1">Status</label>
-                  <AnimatedSelect
-                    name="status"
-                    value={editingFaq?.status || 'active'}
-                    onChange={(e) => {
-                      const form = e.target.closest('form');
-                      if (form) {
-                        const statusInput = form.querySelector('[name="status"]');
-                        if (statusInput) statusInput.value = e.target.value;
-                      }
-                    }}
-                    options={[
-                      { value: 'active', label: 'Active' },
-                      { value: 'inactive', label: 'Inactive' },
-                    ]}
-                  />
-                </div>
-              </div>
-              <div className="flex items-center gap-2">
-                <button
-                  type="submit"
-                  className="flex-1 px-4 py-2 bg-primary-600 text-white rounded-lg hover:bg-primary-700 transition-colors font-semibold"
+                <form
+                  onSubmit={(e) => {
+                    e.preventDefault();
+                    const formData = new FormData(e.target);
+                    handleSave({
+                      productId: parseInt(formData.get('productId')),
+                      productName: formData.get('productName'),
+                      question: formData.get('question'),
+                      answer: formData.get('answer'),
+                      order: parseInt(formData.get('order')),
+                      status: formData.get('status'),
+                    });
+                  }}
+                  className="space-y-4"
                 >
-                  Save
-                </button>
-                <button
-                  type="button"
-                  onClick={() => setEditingFaq(null)}
-                  className="flex-1 px-4 py-2 bg-gray-200 text-gray-800 rounded-lg hover:bg-gray-300 transition-colors font-semibold"
-                >
-                  Cancel
-                </button>
-              </div>
-            </form>
+                  <div>
+                    <label className="block text-sm font-medium text-gray-700 mb-1">Product ID</label>
+                    <input
+                      type="number"
+                      name="productId"
+                      defaultValue={editingFaq?.productId || ''}
+                      required
+                      className="w-full px-4 py-2 border border-gray-200 rounded-lg focus:outline-none focus:ring-2 focus:ring-primary-500"
+                    />
+                  </div>
+                  <div>
+                    <label className="block text-sm font-medium text-gray-700 mb-1">Product Name</label>
+                    <input
+                      type="text"
+                      name="productName"
+                      defaultValue={editingFaq?.productName || ''}
+                      required
+                      className="w-full px-4 py-2 border border-gray-200 rounded-lg focus:outline-none focus:ring-2 focus:ring-primary-500"
+                    />
+                  </div>
+                  <div>
+                    <label className="block text-sm font-medium text-gray-700 mb-1">Question</label>
+                    <textarea
+                      name="question"
+                      defaultValue={editingFaq?.question || ''}
+                      required
+                      rows={2}
+                      className="w-full px-4 py-2 border border-gray-200 rounded-lg focus:outline-none focus:ring-2 focus:ring-primary-500"
+                    />
+                  </div>
+                  <div>
+                    <label className="block text-sm font-medium text-gray-700 mb-1">Answer</label>
+                    <textarea
+                      name="answer"
+                      defaultValue={editingFaq?.answer || ''}
+                      required
+                      rows={4}
+                      className="w-full px-4 py-2 border border-gray-200 rounded-lg focus:outline-none focus:ring-2 focus:ring-primary-500"
+                    />
+                  </div>
+                  <div className="grid grid-cols-2 gap-4">
+                    <div>
+                      <label className="block text-sm font-medium text-gray-700 mb-1">Order</label>
+                      <input
+                        type="number"
+                        name="order"
+                        defaultValue={editingFaq?.order || 1}
+                        required
+                        className="w-full px-4 py-2 border border-gray-200 rounded-lg focus:outline-none focus:ring-2 focus:ring-primary-500"
+                      />
+                    </div>
+                    <div>
+                      <label className="block text-sm font-medium text-gray-700 mb-1">Status</label>
+                      <AnimatedSelect
+                        name="status"
+                        value={editingFaq?.status || 'active'}
+                        onChange={(e) => {
+                          setEditingFaq({ ...editingFaq, status: e.target.value });
+                        }}
+                        options={[
+                          { value: 'active', label: 'Active' },
+                          { value: 'inactive', label: 'Inactive' },
+                        ]}
+                        required
+                      />
+                    </div>
+                  </div>
+                  <div className="flex items-center gap-2">
+                    <button
+                      type="submit"
+                      className="flex-1 px-4 py-2 bg-primary-600 text-white rounded-lg hover:bg-primary-700 transition-colors font-semibold"
+                    >
+                      Save
+                    </button>
+                    <button
+                      type="button"
+                      onClick={() => setEditingFaq(null)}
+                      className="flex-1 px-4 py-2 bg-gray-200 text-gray-800 rounded-lg hover:bg-gray-300 transition-colors font-semibold"
+                    >
+                      Cancel
+                    </button>
+                  </div>
+                </form>
               </motion.div>
             </motion.div>
           </>

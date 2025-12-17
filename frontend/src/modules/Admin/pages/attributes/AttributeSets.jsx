@@ -22,7 +22,8 @@ const AttributeSets = () => {
       setAttributeSets(attributeSets.map((s) => (s.id === editingSet.id ? { ...setData, id: editingSet.id } : s)));
       toast.success('Attribute set updated');
     } else {
-      setAttributeSets([...attributeSets, { ...setData, id: attributeSets.length + 1 }]);
+      const newId = attributeSets.length > 0 ? Math.max(...attributeSets.map(s => s.id)) + 1 : 1;
+      setAttributeSets([...attributeSets, { ...setData, id: newId }]);
       toast.success('Attribute set added');
     }
     setEditingSet(null);
@@ -46,7 +47,7 @@ const AttributeSets = () => {
           <p className="text-sm sm:text-base text-gray-600">Manage product attribute sets</p>
         </div>
         <button
-          onClick={() => setEditingSet({})}
+          onClick={() => setEditingSet({ status: 'active', name: '', attributes: [] })}
           className="flex items-center gap-2 px-4 py-2 gradient-green text-white rounded-lg hover:shadow-glow-green transition-all font-semibold text-sm"
         >
           <FiPlus />
@@ -67,9 +68,8 @@ const AttributeSets = () => {
                     </span>
                   ))}
                 </div>
-                <span className={`inline-block mt-3 px-2 py-1 rounded text-xs font-medium ${
-                  set.status === 'active' ? 'bg-green-100 text-green-800' : 'bg-gray-100 text-gray-800'
-                }`}>
+                <span className={`inline-block mt-3 px-2 py-1 rounded text-xs font-medium ${set.status === 'active' ? 'bg-green-100 text-green-800' : 'bg-gray-100 text-gray-800'
+                  }`}>
                   {set.status}
                 </span>
               </div>
@@ -104,7 +104,7 @@ const AttributeSets = () => {
               onClick={() => setEditingSet(null)}
               className="fixed inset-0 bg-black/50 z-[10000]"
             />
-            
+
             {/* Modal Content - Mobile: Slide up from bottom, Desktop: Center with scale */}
             <motion.div
               initial={{ opacity: 0 }}
@@ -114,27 +114,27 @@ const AttributeSets = () => {
             >
               <motion.div
                 variants={{
-                  hidden: { 
+                  hidden: {
                     y: isAppRoute ? '-100%' : '100%',
                     scale: 0.95,
                     opacity: 0
                   },
-                  visible: { 
+                  visible: {
                     y: 0,
                     scale: 1,
                     opacity: 1,
-                    transition: { 
+                    transition: {
                       type: 'spring',
                       damping: 22,
                       stiffness: 350,
                       mass: 0.7
                     }
                   },
-                  exit: { 
+                  exit: {
                     y: isAppRoute ? '-100%' : '100%',
                     scale: 0.95,
                     opacity: 0,
-                    transition: { 
+                    transition: {
                       type: 'spring',
                       damping: 30,
                       stiffness: 400
@@ -151,66 +151,64 @@ const AttributeSets = () => {
                 <h3 className="text-lg font-bold text-gray-800 mb-4">
                   {editingSet.id ? 'Edit Attribute Set' : 'Add Attribute Set'}
                 </h3>
-            <form
-              onSubmit={(e) => {
-                e.preventDefault();
-                const formData = new FormData(e.target);
-                const attributes = formData.get('attributes').split(',').map(a => a.trim()).filter(a => a);
-                handleSave({
-                  name: formData.get('name'),
-                  attributes,
-                  status: formData.get('status'),
-                });
-              }}
-              className="space-y-4"
-            >
-              <input
-                type="text"
-                name="name"
-                defaultValue={editingSet.name || ''}
-                placeholder="Attribute Set Name"
-                required
-                className="w-full px-4 py-2 border border-gray-200 rounded-lg focus:outline-none focus:ring-2 focus:ring-primary-500"
-              />
-              <textarea
-                name="attributes"
-                defaultValue={editingSet.attributes?.join(', ') || ''}
-                placeholder="Attributes (comma-separated)"
-                required
-                rows={3}
-                className="w-full px-4 py-2 border border-gray-200 rounded-lg focus:outline-none focus:ring-2 focus:ring-primary-500"
-              />
-              <AnimatedSelect
-                name="status"
-                value={editingSet.status || 'active'}
-                onChange={(e) => {
-                  const form = e.target.closest('form');
-                  if (form) {
-                    const statusInput = form.querySelector('[name="status"]');
-                    if (statusInput) statusInput.value = e.target.value;
-                  }
-                }}
-                options={[
-                  { value: 'active', label: 'Active' },
-                  { value: 'inactive', label: 'Inactive' },
-                ]}
-              />
-              <div className="flex items-center gap-2">
-                <button
-                  type="submit"
-                  className="flex-1 px-4 py-2 bg-primary-600 text-white rounded-lg hover:bg-primary-700 transition-colors font-semibold"
+                <form
+                  onSubmit={(e) => {
+                    e.preventDefault();
+                    const formData = new FormData(e.target);
+                    const attributes = formData.get('attributes').split(',').map(a => a.trim()).filter(a => a);
+                    handleSave({
+                      name: formData.get('name'),
+                      attributes,
+                      status: formData.get('status'),
+                    });
+                  }}
+                  className="space-y-4"
                 >
-                  Save
-                </button>
-                <button
-                  type="button"
-                  onClick={() => setEditingSet(null)}
-                  className="flex-1 px-4 py-2 bg-gray-200 text-gray-800 rounded-lg hover:bg-gray-300 transition-colors font-semibold"
-                >
-                  Cancel
-                </button>
-              </div>
-            </form>
+                  <input
+                    type="text"
+                    name="name"
+                    defaultValue={editingSet.name || ''}
+                    placeholder="Attribute Set Name"
+                    required
+                    className="w-full px-4 py-2 border border-gray-200 rounded-lg focus:outline-none focus:ring-2 focus:ring-primary-500"
+                  />
+                  <textarea
+                    name="attributes"
+                    defaultValue={editingSet.attributes?.join(', ') || ''}
+                    placeholder="Attributes (comma-separated)"
+                    required
+                    rows={3}
+                    className="w-full px-4 py-2 border border-gray-200 rounded-lg focus:outline-none focus:ring-2 focus:ring-primary-500"
+                  />
+                  <AnimatedSelect
+                    name="status"
+                    value={editingSet.status || 'active'}
+                    onChange={(e) => {
+                      const val = e.target.value;
+                      setEditingSet(prev => ({ ...prev, status: val }));
+                    }}
+                    options={[
+                      { value: 'active', label: 'Active' },
+                      { value: 'inactive', label: 'Inactive' },
+                    ]}
+                    required
+                  />
+                  <div className="flex items-center gap-2">
+                    <button
+                      type="submit"
+                      className="flex-1 px-4 py-2 bg-primary-600 text-white rounded-lg hover:bg-primary-700 transition-colors font-semibold"
+                    >
+                      Save
+                    </button>
+                    <button
+                      type="button"
+                      onClick={() => setEditingSet(null)}
+                      className="flex-1 px-4 py-2 bg-gray-200 text-gray-800 rounded-lg hover:bg-gray-300 transition-colors font-semibold"
+                    >
+                      Cancel
+                    </button>
+                  </div>
+                </form>
               </motion.div>
             </motion.div>
           </>

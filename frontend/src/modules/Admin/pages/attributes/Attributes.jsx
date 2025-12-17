@@ -24,7 +24,8 @@ const Attributes = () => {
       setAttributes(attributes.map((a) => (a.id === editingAttribute.id ? { ...attrData, id: editingAttribute.id } : a)));
       toast.success('Attribute updated');
     } else {
-      setAttributes([...attributes, { ...attrData, id: attributes.length + 1 }]);
+      const newId = attributes.length > 0 ? Math.max(...attributes.map(a => a.id)) + 1 : 1;
+      setAttributes([...attributes, { ...attrData, id: newId }]);
       toast.success('Attribute added');
     }
     setEditingAttribute(null);
@@ -58,9 +59,8 @@ const Attributes = () => {
       label: 'Required',
       sortable: true,
       render: (value) => (
-        <span className={`px-2 py-1 rounded text-xs font-medium ${
-          value ? 'bg-green-100 text-green-800' : 'bg-gray-100 text-gray-800'
-        }`}>
+        <span className={`px-2 py-1 rounded text-xs font-medium ${value ? 'bg-green-100 text-green-800' : 'bg-gray-100 text-gray-800'
+          }`}>
           {value ? 'Yes' : 'No'}
         </span>
       ),
@@ -70,9 +70,8 @@ const Attributes = () => {
       label: 'Status',
       sortable: true,
       render: (value) => (
-        <span className={`px-2 py-1 rounded text-xs font-medium ${
-          value === 'active' ? 'bg-green-100 text-green-800' : 'bg-gray-100 text-gray-800'
-        }`}>
+        <span className={`px-2 py-1 rounded text-xs font-medium ${value === 'active' ? 'bg-green-100 text-green-800' : 'bg-gray-100 text-gray-800'
+          }`}>
           {value}
         </span>
       ),
@@ -112,7 +111,7 @@ const Attributes = () => {
           <p className="text-sm sm:text-base text-gray-600">Manage product attributes</p>
         </div>
         <button
-          onClick={() => setEditingAttribute({})}
+          onClick={() => setEditingAttribute({ name: '', type: 'select', required: false, status: 'active' })}
           className="flex items-center gap-2 px-4 py-2 gradient-green text-white rounded-lg hover:shadow-glow-green transition-all font-semibold text-sm"
         >
           <FiPlus />
@@ -141,7 +140,7 @@ const Attributes = () => {
               onClick={() => setEditingAttribute(null)}
               className="fixed inset-0 bg-black/50 z-[10000]"
             />
-            
+
             {/* Modal Content - Mobile: Slide up from bottom, Desktop: Center with scale */}
             <motion.div
               initial={{ opacity: 0 }}
@@ -151,27 +150,27 @@ const Attributes = () => {
             >
               <motion.div
                 variants={{
-                  hidden: { 
+                  hidden: {
                     y: isAppRoute ? '-100%' : '100%',
                     scale: 0.95,
                     opacity: 0
                   },
-                  visible: { 
+                  visible: {
                     y: 0,
                     scale: 1,
                     opacity: 1,
-                    transition: { 
+                    transition: {
                       type: 'spring',
                       damping: 22,
                       stiffness: 350,
                       mass: 0.7
                     }
                   },
-                  exit: { 
+                  exit: {
                     y: isAppRoute ? '-100%' : '100%',
                     scale: 0.95,
                     opacity: 0,
-                    transition: { 
+                    transition: {
                       type: 'spring',
                       damping: 30,
                       stiffness: 400
@@ -188,90 +187,75 @@ const Attributes = () => {
                 <h3 className="text-lg font-bold text-gray-800 mb-4">
                   {editingAttribute.id ? 'Edit Attribute' : 'Add Attribute'}
                 </h3>
-            <form
-              onSubmit={(e) => {
-                e.preventDefault();
-                const formData = new FormData(e.target);
-                handleSave({
-                  name: formData.get('name'),
-                  type: formData.get('type'),
-                  required: formData.get('required') === 'true',
-                  status: formData.get('status'),
-                });
-              }}
-              className="space-y-4"
-            >
-              <input
-                type="text"
-                name="name"
-                defaultValue={editingAttribute.name || ''}
-                placeholder="Attribute Name"
-                required
-                className="w-full px-4 py-2 border border-gray-200 rounded-lg focus:outline-none focus:ring-2 focus:ring-primary-500"
-              />
-              <AnimatedSelect
-                name="type"
-                value={editingAttribute.type || 'select'}
-                onChange={(e) => {
-                  const form = e.target.closest('form');
-                  if (form) {
-                    const typeInput = form.querySelector('[name="type"]');
-                    if (typeInput) typeInput.value = e.target.value;
-                  }
-                }}
-                options={[
-                  { value: 'select', label: 'Select' },
-                  { value: 'text', label: 'Text' },
-                  { value: 'number', label: 'Number' },
-                  { value: 'boolean', label: 'Boolean' },
-                ]}
-              />
-              <AnimatedSelect
-                name="required"
-                value={editingAttribute.required ? 'true' : 'false'}
-                onChange={(e) => {
-                  const form = e.target.closest('form');
-                  if (form) {
-                    const requiredInput = form.querySelector('[name="required"]');
-                    if (requiredInput) requiredInput.value = e.target.value;
-                  }
-                }}
-                options={[
-                  { value: 'false', label: 'Optional' },
-                  { value: 'true', label: 'Required' },
-                ]}
-              />
-              <AnimatedSelect
-                name="status"
-                value={editingAttribute.status || 'active'}
-                onChange={(e) => {
-                  const form = e.target.closest('form');
-                  if (form) {
-                    const statusInput = form.querySelector('[name="status"]');
-                    if (statusInput) statusInput.value = e.target.value;
-                  }
-                }}
-                options={[
-                  { value: 'active', label: 'Active' },
-                  { value: 'inactive', label: 'Inactive' },
-                ]}
-              />
-              <div className="flex items-center gap-2">
-                <button
-                  type="submit"
-                  className="flex-1 px-4 py-2 bg-primary-600 text-white rounded-lg hover:bg-primary-700 transition-colors font-semibold"
+                <form
+                  onSubmit={(e) => {
+                    e.preventDefault();
+                    const formData = new FormData(e.target);
+                    handleSave({
+                      name: formData.get('name'),
+                      type: formData.get('type'),
+                      required: formData.get('required') === 'true',
+                      status: formData.get('status'),
+                    });
+                  }}
+                  className="space-y-4"
                 >
-                  Save
-                </button>
-                <button
-                  type="button"
-                  onClick={() => setEditingAttribute(null)}
-                  className="flex-1 px-4 py-2 bg-gray-200 text-gray-800 rounded-lg hover:bg-gray-300 transition-colors font-semibold"
-                >
-                  Cancel
-                </button>
-              </div>
-            </form>
+                  <input
+                    type="text"
+                    name="name"
+                    defaultValue={editingAttribute.name || ''}
+                    placeholder="Attribute Name"
+                    required
+                    className="w-full px-4 py-2 border border-gray-200 rounded-lg focus:outline-none focus:ring-2 focus:ring-primary-500"
+                  />
+                  <AnimatedSelect
+                    name="type"
+                    value={editingAttribute.type || 'select'}
+                    onChange={(e) => setEditingAttribute({ ...editingAttribute, type: e.target.value })}
+                    options={[
+                      { value: 'select', label: 'Select' },
+                      { value: 'text', label: 'Text' },
+                      { value: 'number', label: 'Number' },
+                      { value: 'boolean', label: 'Boolean' },
+                    ]}
+                    required
+                  />
+                  <AnimatedSelect
+                    name="required"
+                    value={editingAttribute.required ? 'true' : 'false'}
+                    onChange={(e) => setEditingAttribute({ ...editingAttribute, required: e.target.value === 'true' })}
+                    options={[
+                      { value: 'false', label: 'Optional' },
+                      { value: 'true', label: 'Required' },
+                    ]}
+                    required
+                  />
+                  <AnimatedSelect
+                    name="status"
+                    value={editingAttribute.status || 'active'}
+                    onChange={(e) => setEditingAttribute({ ...editingAttribute, status: e.target.value })}
+                    options={[
+                      { value: 'active', label: 'Active' },
+                      { value: 'inactive', label: 'Inactive' },
+                    ]}
+                    required
+                  />
+                  <div className="flex items-center gap-2">
+                    <button
+                      type="submit"
+                      className="flex-1 px-4 py-2 bg-primary-600 text-white rounded-lg hover:bg-primary-700 transition-colors font-semibold"
+                    >
+                      Save
+                    </button>
+                    <button
+                      type="button"
+                      onClick={() => setEditingAttribute(null)}
+                      className="flex-1 px-4 py-2 bg-gray-200 text-gray-800 rounded-lg hover:bg-gray-300 transition-colors font-semibold"
+                    >
+                      Cancel
+                    </button>
+                  </div>
+                </form>
               </motion.div>
             </motion.div>
           </>

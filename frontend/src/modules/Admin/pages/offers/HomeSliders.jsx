@@ -44,7 +44,8 @@ const HomeSliders = () => {
       );
       toast.success("Slider updated");
     } else {
-      setSliders([...sliders, { ...sliderData, id: sliders.length + 1 }]);
+      const newId = sliders.length > 0 ? Math.max(...sliders.map(s => s.id)) + 1 : 1;
+      setSliders([...sliders, { ...sliderData, id: newId }]);
       toast.success("Slider added");
     }
     setEditingSlider(null);
@@ -92,11 +93,10 @@ const HomeSliders = () => {
       sortable: true,
       render: (value) => (
         <span
-          className={`px-2 py-1 rounded text-xs font-medium ${
-            value === "active"
+          className={`px-2 py-1 rounded text-xs font-medium ${value === "active"
               ? "bg-green-100 text-green-800"
               : "bg-gray-100 text-gray-800"
-          }`}>
+            }`}>
           {value}
         </span>
       ),
@@ -137,7 +137,7 @@ const HomeSliders = () => {
           </p>
         </div>
         <button
-          onClick={() => setEditingSlider({})}
+          onClick={() => setEditingSlider({ title: '', image: '', link: '', order: 1, status: 'active' })}
           className="flex items-center gap-2 px-4 py-2 gradient-green text-white rounded-lg hover:shadow-glow-green transition-all font-semibold text-sm">
           <FiPlus />
           <span>Add Slider</span>
@@ -171,9 +171,8 @@ const HomeSliders = () => {
               initial={{ opacity: 0 }}
               animate={{ opacity: 1 }}
               exit={{ opacity: 0 }}
-              className={`fixed inset-0 z-[10000] flex ${
-                isAppRoute ? "items-start pt-[10px]" : "items-end"
-              } sm:items-center justify-center p-4 pointer-events-none`}>
+              className={`fixed inset-0 z-[10000] flex ${isAppRoute ? "items-start pt-[10px]" : "items-end"
+                } sm:items-center justify-center p-4 pointer-events-none`}>
               <motion.div
                 variants={{
                   hidden: {
@@ -207,9 +206,8 @@ const HomeSliders = () => {
                 animate="visible"
                 exit="exit"
                 onClick={(e) => e.stopPropagation()}
-                className={`bg-white ${
-                  isAppRoute ? "rounded-b-3xl" : "rounded-t-3xl"
-                } sm:rounded-xl shadow-xl p-6 max-w-md w-full pointer-events-auto`}
+                className={`bg-white ${isAppRoute ? "rounded-b-3xl" : "rounded-t-3xl"
+                  } sm:rounded-xl shadow-xl p-6 max-w-md w-full pointer-events-auto`}
                 style={{ willChange: "transform" }}>
                 <h3 className="text-lg font-bold text-gray-800 mb-4">
                   {editingSlider.id ? "Edit Slider" : "Add Slider"}
@@ -263,18 +261,12 @@ const HomeSliders = () => {
                     <AnimatedSelect
                       name="status"
                       value={editingSlider.status || "active"}
-                      onChange={(e) => {
-                        const form = e.target.closest("form");
-                        if (form) {
-                          const statusInput =
-                            form.querySelector('[name="status"]');
-                          if (statusInput) statusInput.value = e.target.value;
-                        }
-                      }}
+                      onChange={(e) => setEditingSlider({ ...editingSlider, status: e.target.value })}
                       options={[
                         { value: "active", label: "Active" },
                         { value: "inactive", label: "Inactive" },
                       ]}
+                      required
                     />
                   </div>
                   <div className="flex items-center gap-2">

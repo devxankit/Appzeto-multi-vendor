@@ -1,14 +1,14 @@
-import { useState, useEffect } from 'react';
-import { FiSave, FiSettings, FiImage, FiGlobe } from 'react-icons/fi';
-import { motion } from 'framer-motion';
-import { useSettingsStore } from '../../../../shared/store/settingsStore';
-import AnimatedSelect from '../../components/AnimatedSelect';
-import toast from 'react-hot-toast';
+import { useState, useEffect } from "react";
+import { FiSave, FiSettings, FiImage, FiGlobe } from "react-icons/fi";
+import { motion } from "framer-motion";
+import { useSettingsStore } from "../../../../shared/store/settingsStore";
+import AnimatedSelect from "../../components/AnimatedSelect";
+import toast from "react-hot-toast";
 
 const GeneralSettings = () => {
   const { settings, updateSettings, initialize } = useSettingsStore();
   const [formData, setFormData] = useState({});
-  const [activeSection, setActiveSection] = useState('identity');
+  const [activeSection, setActiveSection] = useState("identity");
 
   useEffect(() => {
     initialize();
@@ -30,8 +30,8 @@ const GeneralSettings = () => {
   }, [settings]);
 
   const handleChange = (e) => {
-    const { name, value } = e.target;
-    setFormData({ ...formData, [name]: value });
+    const { name, value, type, checked } = e.target;
+    setFormData({ ...formData, [name]: type === "checkbox" ? checked : value });
   };
 
   const handleSocialMediaChange = (platform, value) => {
@@ -46,40 +46,51 @@ const GeneralSettings = () => {
 
   const handleSubmit = (e) => {
     e.preventDefault();
-    const { primaryColor, secondaryColor, accentColor, fontFamily, socialMedia, storeDescription, ...generalData } = formData;
+    const {
+      primaryColor,
+      secondaryColor,
+      accentColor,
+      fontFamily,
+      socialMedia,
+      storeDescription,
+      ...generalData
+    } = formData;
 
-    updateSettings('general', {
+    updateSettings("general", {
       ...generalData,
       socialMedia: socialMedia || {},
-      storeDescription: storeDescription || '',
+      storeDescription: storeDescription || "",
     });
 
-    updateSettings('theme', {
-      primaryColor: primaryColor || '#10B981',
-      secondaryColor: secondaryColor || '#3B82F6',
-      accentColor: accentColor || '#FFE11B',
-      fontFamily: fontFamily || 'Inter',
+    updateSettings("theme", {
+      primaryColor: primaryColor || "#10B981",
+      secondaryColor: secondaryColor || "#3B82F6",
+      accentColor: accentColor || "#FFE11B",
+      fontFamily: fontFamily || "Inter",
     });
 
-    toast.success('Settings saved successfully');
+    toast.success("Settings saved successfully");
   };
 
   const sections = [
-    { id: 'identity', label: 'Store Identity', icon: FiSettings },
-    { id: 'contact', label: 'Contact Info', icon: FiGlobe },
-    { id: 'theme', label: 'Theme & Colors', icon: FiImage },
-    { id: 'vendors', label: 'Vendor Settings', icon: FiSettings },
+    { id: "identity", label: "Store Identity", icon: FiSettings },
+    { id: "contact", label: "Contact Info", icon: FiGlobe },
+    { id: "theme", label: "Theme & Colors", icon: FiImage },
+    { id: "vendors", label: "Vendor Settings", icon: FiSettings },
   ];
 
   return (
     <motion.div
       initial={{ opacity: 0, y: 20 }}
       animate={{ opacity: 1, y: 0 }}
-      className="space-y-6 max-w-full overflow-x-hidden"
-    >
+      className="space-y-6 max-w-full overflow-x-hidden">
       <div className="lg:hidden">
-        <h1 className="text-2xl sm:text-3xl font-bold text-gray-800 mb-2">General Settings</h1>
-        <p className="text-sm sm:text-base text-gray-600">Configure store identity, contact info, and theme</p>
+        <h1 className="text-2xl sm:text-3xl font-bold text-gray-800 mb-2">
+          General Settings
+        </h1>
+        <p className="text-sm sm:text-base text-gray-600">
+          Configure store identity, contact info, and theme
+        </p>
       </div>
 
       {/* Section Tabs */}
@@ -92,11 +103,11 @@ const GeneralSettings = () => {
                 <button
                   key={section.id}
                   onClick={() => setActiveSection(section.id)}
-                  className={`flex items-center gap-1.5 sm:gap-2 px-3 sm:px-4 md:px-6 py-3 sm:py-4 border-b-2 transition-colors whitespace-nowrap text-xs sm:text-sm ${activeSection === section.id
-                      ? 'border-primary-600 text-primary-600 font-semibold'
-                      : 'border-transparent text-gray-600 hover:text-gray-800'
-                    }`}
-                >
+                  className={`flex items-center gap-1.5 sm:gap-2 px-3 sm:px-4 md:px-6 py-3 sm:py-4 border-b-2 transition-colors whitespace-nowrap text-xs sm:text-sm ${
+                    activeSection === section.id
+                      ? "border-primary-600 text-primary-600 font-semibold"
+                      : "border-transparent text-gray-600 hover:text-gray-800"
+                  }`}>
                   <Icon className="text-base sm:text-lg" />
                   <span>{section.label}</span>
                 </button>
@@ -107,7 +118,7 @@ const GeneralSettings = () => {
 
         <form onSubmit={handleSubmit} className="p-3 sm:p-4 md:p-6">
           {/* Store Identity Section */}
-          {activeSection === 'identity' && (
+          {activeSection === "identity" && (
             <div className="space-y-6">
               <div className="grid grid-cols-1 md:grid-cols-2 gap-4 sm:gap-6">
                 <div>
@@ -117,7 +128,7 @@ const GeneralSettings = () => {
                   <input
                     type="text"
                     name="storeName"
-                    value={formData.storeName || ''}
+                    value={formData.storeName || ""}
                     onChange={handleChange}
                     required
                     className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-primary-500"
@@ -131,7 +142,7 @@ const GeneralSettings = () => {
                   <input
                     type="text"
                     name="storeLogo"
-                    value={formData.storeLogo || ''}
+                    value={formData.storeLogo || ""}
                     onChange={handleChange}
                     className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-primary-500"
                   />
@@ -144,7 +155,7 @@ const GeneralSettings = () => {
                   <input
                     type="text"
                     name="favicon"
-                    value={formData.favicon || ''}
+                    value={formData.favicon || ""}
                     onChange={handleChange}
                     className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-primary-500"
                   />
@@ -156,7 +167,7 @@ const GeneralSettings = () => {
                   </label>
                   <textarea
                     name="storeDescription"
-                    value={formData.storeDescription || ''}
+                    value={formData.storeDescription || ""}
                     onChange={handleChange}
                     rows={3}
                     className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-primary-500"
@@ -168,7 +179,7 @@ const GeneralSettings = () => {
           )}
 
           {/* Contact Info Section */}
-          {activeSection === 'contact' && (
+          {activeSection === "contact" && (
             <div className="space-y-6">
               <div className="grid grid-cols-1 md:grid-cols-2 gap-4 sm:gap-6">
                 <div>
@@ -178,7 +189,7 @@ const GeneralSettings = () => {
                   <input
                     type="email"
                     name="contactEmail"
-                    value={formData.contactEmail || ''}
+                    value={formData.contactEmail || ""}
                     onChange={handleChange}
                     className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-primary-500"
                   />
@@ -191,7 +202,7 @@ const GeneralSettings = () => {
                   <input
                     type="tel"
                     name="contactPhone"
-                    value={formData.contactPhone || ''}
+                    value={formData.contactPhone || ""}
                     onChange={handleChange}
                     className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-primary-500"
                   />
@@ -203,7 +214,7 @@ const GeneralSettings = () => {
                   </label>
                   <textarea
                     name="address"
-                    value={formData.address || ''}
+                    value={formData.address || ""}
                     onChange={handleChange}
                     rows={2}
                     className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-primary-500"
@@ -217,7 +228,7 @@ const GeneralSettings = () => {
                   <input
                     type="text"
                     name="businessHours"
-                    value={formData.businessHours || ''}
+                    value={formData.businessHours || ""}
                     onChange={handleChange}
                     placeholder="Mon-Fri 9AM-6PM"
                     className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-primary-500"
@@ -230,15 +241,15 @@ const GeneralSettings = () => {
                   </label>
                   <AnimatedSelect
                     name="timezone"
-                    value={formData.timezone || 'UTC'}
+                    value={formData.timezone || "UTC"}
                     onChange={handleChange}
                     options={[
-                      { value: 'UTC', label: 'UTC' },
-                      { value: 'America/New_York', label: 'Eastern Time' },
-                      { value: 'America/Chicago', label: 'Central Time' },
-                      { value: 'America/Denver', label: 'Mountain Time' },
-                      { value: 'America/Los_Angeles', label: 'Pacific Time' },
-                      { value: 'Asia/Kolkata', label: 'IST (India)' },
+                      { value: "UTC", label: "UTC" },
+                      { value: "America/New_York", label: "Eastern Time" },
+                      { value: "America/Chicago", label: "Central Time" },
+                      { value: "America/Denver", label: "Mountain Time" },
+                      { value: "America/Los_Angeles", label: "Pacific Time" },
+                      { value: "Asia/Kolkata", label: "IST (India)" },
                     ]}
                   />
                 </div>
@@ -249,13 +260,13 @@ const GeneralSettings = () => {
                   </label>
                   <AnimatedSelect
                     name="currency"
-                    value={formData.currency || 'INR'}
+                    value={formData.currency || "INR"}
                     onChange={handleChange}
                     options={[
-                      { value: 'INR', label: 'INR (₹)' },
-                      { value: 'USD', label: 'USD ($)' },
-                      { value: 'EUR', label: 'EUR (€)' },
-                      { value: 'GBP', label: 'GBP (£)' },
+                      { value: "INR", label: "INR (₹)" },
+                      { value: "USD", label: "USD ($)" },
+                      { value: "EUR", label: "EUR (€)" },
+                      { value: "GBP", label: "GBP (£)" },
                     ]}
                   />
                 </div>
@@ -266,19 +277,21 @@ const GeneralSettings = () => {
                   </label>
                   <AnimatedSelect
                     name="language"
-                    value={formData.language || 'en'}
+                    value={formData.language || "en"}
                     onChange={handleChange}
                     options={[
-                      { value: 'en', label: 'English' },
-                      { value: 'es', label: 'Spanish' },
-                      { value: 'fr', label: 'French' },
+                      { value: "en", label: "English" },
+                      { value: "es", label: "Spanish" },
+                      { value: "fr", label: "French" },
                     ]}
                   />
                 </div>
               </div>
 
               <div className="border-t border-gray-200 pt-6">
-                <h3 className="text-lg font-bold text-gray-800 mb-4">Social Media Links</h3>
+                <h3 className="text-lg font-bold text-gray-800 mb-4">
+                  Social Media Links
+                </h3>
                 <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
                   <div>
                     <label className="block text-sm font-semibold text-gray-700 mb-2">
@@ -286,8 +299,10 @@ const GeneralSettings = () => {
                     </label>
                     <input
                       type="url"
-                      value={formData.socialMedia?.facebook || ''}
-                      onChange={(e) => handleSocialMediaChange('facebook', e.target.value)}
+                      value={formData.socialMedia?.facebook || ""}
+                      onChange={(e) =>
+                        handleSocialMediaChange("facebook", e.target.value)
+                      }
                       placeholder="https://facebook.com/yourpage"
                       className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-primary-500"
                     />
@@ -298,8 +313,10 @@ const GeneralSettings = () => {
                     </label>
                     <input
                       type="url"
-                      value={formData.socialMedia?.instagram || ''}
-                      onChange={(e) => handleSocialMediaChange('instagram', e.target.value)}
+                      value={formData.socialMedia?.instagram || ""}
+                      onChange={(e) =>
+                        handleSocialMediaChange("instagram", e.target.value)
+                      }
                       placeholder="https://instagram.com/yourpage"
                       className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-primary-500"
                     />
@@ -310,8 +327,10 @@ const GeneralSettings = () => {
                     </label>
                     <input
                       type="url"
-                      value={formData.socialMedia?.twitter || ''}
-                      onChange={(e) => handleSocialMediaChange('twitter', e.target.value)}
+                      value={formData.socialMedia?.twitter || ""}
+                      onChange={(e) =>
+                        handleSocialMediaChange("twitter", e.target.value)
+                      }
                       placeholder="https://twitter.com/yourpage"
                       className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-primary-500"
                     />
@@ -322,8 +341,10 @@ const GeneralSettings = () => {
                     </label>
                     <input
                       type="url"
-                      value={formData.socialMedia?.linkedin || ''}
-                      onChange={(e) => handleSocialMediaChange('linkedin', e.target.value)}
+                      value={formData.socialMedia?.linkedin || ""}
+                      onChange={(e) =>
+                        handleSocialMediaChange("linkedin", e.target.value)
+                      }
                       placeholder="https://linkedin.com/company/yourpage"
                       className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-primary-500"
                     />
@@ -334,7 +355,7 @@ const GeneralSettings = () => {
           )}
 
           {/* Theme & Colors Section */}
-          {activeSection === 'theme' && (
+          {activeSection === "theme" && (
             <div className="space-y-6">
               <div className="grid grid-cols-1 md:grid-cols-2 gap-4 sm:gap-6">
                 <div>
@@ -345,14 +366,14 @@ const GeneralSettings = () => {
                     <input
                       type="color"
                       name="primaryColor"
-                      value={formData.primaryColor || '#10B981'}
+                      value={formData.primaryColor || "#10B981"}
                       onChange={handleChange}
                       className="w-12 sm:w-16 h-9 sm:h-10 border border-gray-300 rounded cursor-pointer flex-shrink-0"
                     />
                     <input
                       type="text"
                       name="primaryColor"
-                      value={formData.primaryColor || '#10B981'}
+                      value={formData.primaryColor || "#10B981"}
                       onChange={handleChange}
                       className="flex-1 min-w-0 px-3 sm:px-4 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-primary-500 text-sm"
                     />
@@ -367,14 +388,14 @@ const GeneralSettings = () => {
                     <input
                       type="color"
                       name="secondaryColor"
-                      value={formData.secondaryColor || '#3B82F6'}
+                      value={formData.secondaryColor || "#3B82F6"}
                       onChange={handleChange}
                       className="w-12 sm:w-16 h-9 sm:h-10 border border-gray-300 rounded cursor-pointer flex-shrink-0"
                     />
                     <input
                       type="text"
                       name="secondaryColor"
-                      value={formData.secondaryColor || '#3B82F6'}
+                      value={formData.secondaryColor || "#3B82F6"}
                       onChange={handleChange}
                       className="flex-1 min-w-0 px-3 sm:px-4 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-primary-500 text-sm"
                     />
@@ -389,14 +410,14 @@ const GeneralSettings = () => {
                     <input
                       type="color"
                       name="accentColor"
-                      value={formData.accentColor || '#FFE11B'}
+                      value={formData.accentColor || "#FFE11B"}
                       onChange={handleChange}
                       className="w-12 sm:w-16 h-9 sm:h-10 border border-gray-300 rounded cursor-pointer flex-shrink-0"
                     />
                     <input
                       type="text"
                       name="accentColor"
-                      value={formData.accentColor || '#FFE11B'}
+                      value={formData.accentColor || "#FFE11B"}
                       onChange={handleChange}
                       className="flex-1 min-w-0 px-3 sm:px-4 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-primary-500 text-sm"
                     />
@@ -409,14 +430,14 @@ const GeneralSettings = () => {
                   </label>
                   <AnimatedSelect
                     name="fontFamily"
-                    value={formData.fontFamily || 'Inter'}
+                    value={formData.fontFamily || "Inter"}
                     onChange={handleChange}
                     options={[
-                      { value: 'Inter', label: 'Inter' },
-                      { value: 'Roboto', label: 'Roboto' },
-                      { value: 'Open Sans', label: 'Open Sans' },
-                      { value: 'Poppins', label: 'Poppins' },
-                      { value: 'Lato', label: 'Lato' },
+                      { value: "Inter", label: "Inter" },
+                      { value: "Roboto", label: "Roboto" },
+                      { value: "Open Sans", label: "Open Sans" },
+                      { value: "Poppins", label: "Poppins" },
+                      { value: "Lato", label: "Lato" },
                     ]}
                   />
                 </div>
@@ -427,15 +448,21 @@ const GeneralSettings = () => {
                 <div className="flex gap-2">
                   <div
                     className="w-20 h-20 rounded-lg"
-                    style={{ backgroundColor: formData.primaryColor || '#10B981' }}
+                    style={{
+                      backgroundColor: formData.primaryColor || "#10B981",
+                    }}
                   />
                   <div
                     className="w-20 h-20 rounded-lg"
-                    style={{ backgroundColor: formData.secondaryColor || '#3B82F6' }}
+                    style={{
+                      backgroundColor: formData.secondaryColor || "#3B82F6",
+                    }}
                   />
                   <div
                     className="w-20 h-20 rounded-lg"
-                    style={{ backgroundColor: formData.accentColor || '#FFE11B' }}
+                    style={{
+                      backgroundColor: formData.accentColor || "#FFE11B",
+                    }}
                   />
                 </div>
               </div>
@@ -443,7 +470,7 @@ const GeneralSettings = () => {
           )}
 
           {/* Vendor Settings Section */}
-          {activeSection === 'vendors' && (
+          {activeSection === "vendors" && (
             <div className="space-y-6">
               <div className="grid grid-cols-1 md:grid-cols-2 gap-4 sm:gap-6">
                 <div>
@@ -460,7 +487,9 @@ const GeneralSettings = () => {
                     step="0.1"
                     className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-primary-500"
                   />
-                  <p className="text-xs text-gray-500 mt-1">Default commission rate for new vendors</p>
+                  <p className="text-xs text-gray-500 mt-1">
+                    Default commission rate for new vendors
+                  </p>
                 </div>
 
                 <div>
@@ -477,15 +506,21 @@ const GeneralSettings = () => {
                     step="0.1"
                     className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-primary-500"
                   />
-                  <p className="text-xs text-gray-500 mt-1">Minimum rating required for vendor approval</p>
+                  <p className="text-xs text-gray-500 mt-1">
+                    Minimum rating required for vendor approval
+                  </p>
                 </div>
               </div>
 
               <div className="space-y-3">
                 <div className="flex items-center justify-between gap-3 p-4 border border-gray-200 rounded-lg">
                   <div>
-                    <span className="text-sm font-semibold text-gray-700">Vendor Approval Required</span>
-                    <p className="text-xs text-gray-500 mt-1">New vendors must be approved by admin</p>
+                    <span className="text-sm font-semibold text-gray-700">
+                      Vendor Approval Required
+                    </span>
+                    <p className="text-xs text-gray-500 mt-1">
+                      New vendors must be approved by admin
+                    </p>
                   </div>
                   <label className="relative inline-flex items-center cursor-pointer">
                     <input
@@ -501,8 +536,12 @@ const GeneralSettings = () => {
 
                 <div className="flex items-center justify-between gap-3 p-4 border border-gray-200 rounded-lg">
                   <div>
-                    <span className="text-sm font-semibold text-gray-700">Auto-approve Verified Vendors</span>
-                    <p className="text-xs text-gray-500 mt-1">Automatically approve verified vendors</p>
+                    <span className="text-sm font-semibold text-gray-700">
+                      Auto-approve Verified Vendors
+                    </span>
+                    <p className="text-xs text-gray-500 mt-1">
+                      Automatically approve verified vendors
+                    </p>
                   </div>
                   <label className="relative inline-flex items-center cursor-pointer">
                     <input
@@ -518,12 +557,18 @@ const GeneralSettings = () => {
               </div>
 
               <div className="border-t border-gray-200 pt-6">
-                <h3 className="text-lg font-bold text-gray-800 mb-4">Vendor Features</h3>
+                <h3 className="text-lg font-bold text-gray-800 mb-4">
+                  Vendor Features
+                </h3>
                 <div className="space-y-3">
                   <div className="flex items-center justify-between gap-3 p-4 border border-gray-200 rounded-lg">
                     <div>
-                      <span className="text-sm font-semibold text-gray-700">Vendor Product Management</span>
-                      <p className="text-xs text-gray-500 mt-1">Allow vendors to manage their own products</p>
+                      <span className="text-sm font-semibold text-gray-700">
+                        Vendor Product Management
+                      </span>
+                      <p className="text-xs text-gray-500 mt-1">
+                        Allow vendors to manage their own products
+                      </p>
                     </div>
                     <label className="relative inline-flex items-center cursor-pointer">
                       <input
@@ -539,8 +584,12 @@ const GeneralSettings = () => {
 
                   <div className="flex items-center justify-between gap-3 p-4 border border-gray-200 rounded-lg">
                     <div>
-                      <span className="text-sm font-semibold text-gray-700">Vendor Order Management</span>
-                      <p className="text-xs text-gray-500 mt-1">Allow vendors to manage their own orders</p>
+                      <span className="text-sm font-semibold text-gray-700">
+                        Vendor Order Management
+                      </span>
+                      <p className="text-xs text-gray-500 mt-1">
+                        Allow vendors to manage their own orders
+                      </p>
                     </div>
                     <label className="relative inline-flex items-center cursor-pointer">
                       <input
@@ -556,8 +605,12 @@ const GeneralSettings = () => {
 
                   <div className="flex items-center justify-between gap-3 p-4 border border-gray-200 rounded-lg">
                     <div>
-                      <span className="text-sm font-semibold text-gray-700">Vendor Analytics</span>
-                      <p className="text-xs text-gray-500 mt-1">Allow vendors to view their analytics</p>
+                      <span className="text-sm font-semibold text-gray-700">
+                        Vendor Analytics
+                      </span>
+                      <p className="text-xs text-gray-500 mt-1">
+                        Allow vendors to view their analytics
+                      </p>
                     </div>
                     <label className="relative inline-flex items-center cursor-pointer">
                       <input
@@ -578,8 +631,7 @@ const GeneralSettings = () => {
           <div className="flex justify-end pt-4 sm:pt-6 border-t border-gray-200 mt-4 sm:mt-6">
             <button
               type="submit"
-              className="flex items-center gap-2 px-4 sm:px-6 py-2 gradient-green text-white rounded-lg hover:shadow-glow-green transition-all font-semibold text-sm sm:text-base w-full sm:w-auto"
-            >
+              className="flex items-center gap-2 px-4 sm:px-6 py-2 gradient-green text-white rounded-lg hover:shadow-glow-green transition-all font-semibold text-sm sm:text-base w-full sm:w-auto">
               <FiSave />
               Save Settings
             </button>
@@ -591,4 +643,3 @@ const GeneralSettings = () => {
 };
 
 export default GeneralSettings;
-

@@ -29,14 +29,17 @@ const AttributeValues = () => {
     return matchesSearch && matchesAttribute;
   });
 
-  const uniqueAttributes = [...new Set(attributeValues.map((v) => ({ id: v.attributeId, name: v.attributeName })))];
+  const uniqueAttributes = Array.from(
+    new Map(attributeValues.map((v) => [v.attributeId, { id: v.attributeId, name: v.attributeName }])).values()
+  );
 
   const handleSave = (valueData) => {
     if (editingValue && editingValue.id) {
       setAttributeValues(attributeValues.map((v) => (v.id === editingValue.id ? { ...valueData, id: editingValue.id } : v)));
       toast.success('Attribute value updated');
     } else {
-      setAttributeValues([...attributeValues, { ...valueData, id: attributeValues.length + 1 }]);
+      const newId = attributeValues.length > 0 ? Math.max(...attributeValues.map(v => v.id)) + 1 : 1;
+      setAttributeValues([...attributeValues, { ...valueData, id: newId }]);
       toast.success('Attribute value added');
     }
     setEditingValue(null);
@@ -71,9 +74,8 @@ const AttributeValues = () => {
       label: 'Status',
       sortable: true,
       render: (value) => (
-        <span className={`px-2 py-1 rounded text-xs font-medium ${
-          value === 'active' ? 'bg-green-100 text-green-800' : 'bg-gray-100 text-gray-800'
-        }`}>
+        <span className={`px-2 py-1 rounded text-xs font-medium ${value === 'active' ? 'bg-green-100 text-green-800' : 'bg-gray-100 text-gray-800'
+          }`}>
           {value}
         </span>
       ),
@@ -113,7 +115,7 @@ const AttributeValues = () => {
           <p className="text-sm sm:text-base text-gray-600">Manage values for product attributes</p>
         </div>
         <button
-          onClick={() => setEditingValue({})}
+          onClick={() => setEditingValue({ attributeId: '', attributeName: '', value: '', displayOrder: 1, status: 'active' })}
           className="flex items-center gap-2 px-4 py-2 gradient-green text-white rounded-lg hover:shadow-glow-green transition-all font-semibold text-sm"
         >
           <FiPlus />
@@ -169,7 +171,7 @@ const AttributeValues = () => {
               onClick={() => setEditingValue(null)}
               className="fixed inset-0 bg-black/50 z-[10000]"
             />
-            
+
             {/* Modal Content - Mobile: Slide up from bottom, Desktop: Center with scale */}
             <motion.div
               initial={{ opacity: 0 }}
@@ -179,27 +181,27 @@ const AttributeValues = () => {
             >
               <motion.div
                 variants={{
-                  hidden: { 
+                  hidden: {
                     y: isAppRoute ? '-100%' : '100%',
                     scale: 0.95,
                     opacity: 0
                   },
-                  visible: { 
+                  visible: {
                     y: 0,
                     scale: 1,
                     opacity: 1,
-                    transition: { 
+                    transition: {
                       type: 'spring',
                       damping: 22,
                       stiffness: 350,
                       mass: 0.7
                     }
                   },
-                  exit: { 
+                  exit: {
                     y: isAppRoute ? '-100%' : '100%',
                     scale: 0.95,
                     opacity: 0,
-                    transition: { 
+                    transition: {
                       type: 'spring',
                       damping: 30,
                       stiffness: 400
@@ -216,96 +218,91 @@ const AttributeValues = () => {
                 <h3 className="text-lg font-bold text-gray-800 mb-4">
                   {editingValue.id ? 'Edit Attribute Value' : 'Add Attribute Value'}
                 </h3>
-            <form
-              onSubmit={(e) => {
-                e.preventDefault();
-                const formData = new FormData(e.target);
-                handleSave({
-                  attributeId: parseInt(formData.get('attributeId')),
-                  attributeName: formData.get('attributeName'),
-                  value: formData.get('value'),
-                  displayOrder: parseInt(formData.get('displayOrder')),
-                  status: formData.get('status'),
-                });
-              }}
-              className="space-y-4"
-            >
-              <div>
-                <label className="block text-sm font-medium text-gray-700 mb-1">Attribute ID</label>
-                <input
-                  type="number"
-                  name="attributeId"
-                  defaultValue={editingValue.attributeId || ''}
-                  required
-                  className="w-full px-4 py-2 border border-gray-200 rounded-lg focus:outline-none focus:ring-2 focus:ring-primary-500"
-                />
-              </div>
-              <div>
-                <label className="block text-sm font-medium text-gray-700 mb-1">Attribute Name</label>
-                <input
-                  type="text"
-                  name="attributeName"
-                  defaultValue={editingValue.attributeName || ''}
-                  required
-                  className="w-full px-4 py-2 border border-gray-200 rounded-lg focus:outline-none focus:ring-2 focus:ring-primary-500"
-                />
-              </div>
-              <div>
-                <label className="block text-sm font-medium text-gray-700 mb-1">Value</label>
-                <input
-                  type="text"
-                  name="value"
-                  defaultValue={editingValue.value || ''}
-                  required
-                  className="w-full px-4 py-2 border border-gray-200 rounded-lg focus:outline-none focus:ring-2 focus:ring-primary-500"
-                />
-              </div>
-              <div className="grid grid-cols-2 gap-4">
-                <div>
-                  <label className="block text-sm font-medium text-gray-700 mb-1">Display Order</label>
-                  <input
-                    type="number"
-                    name="displayOrder"
-                    defaultValue={editingValue.displayOrder || 1}
-                    required
-                    className="w-full px-4 py-2 border border-gray-200 rounded-lg focus:outline-none focus:ring-2 focus:ring-primary-500"
-                  />
-                </div>
-                <div>
-                  <label className="block text-sm font-medium text-gray-700 mb-1">Status</label>
-                  <AnimatedSelect
-                    name="status"
-                    value={editingValue.status || 'active'}
-                    onChange={(e) => {
-                      const form = e.target.closest('form');
-                      if (form) {
-                        const statusInput = form.querySelector('[name="status"]');
-                        if (statusInput) statusInput.value = e.target.value;
-                      }
-                    }}
-                    options={[
-                      { value: 'active', label: 'Active' },
-                      { value: 'inactive', label: 'Inactive' },
-                    ]}
-                  />
-                </div>
-              </div>
-              <div className="flex items-center gap-2">
-                <button
-                  type="submit"
-                  className="flex-1 px-4 py-2 bg-primary-600 text-white rounded-lg hover:bg-primary-700 transition-colors font-semibold"
+                <form
+                  onSubmit={(e) => {
+                    e.preventDefault();
+                    const formData = new FormData(e.target);
+                    handleSave({
+                      attributeId: parseInt(formData.get('attributeId')),
+                      attributeName: formData.get('attributeName'),
+                      value: formData.get('value'),
+                      displayOrder: parseInt(formData.get('displayOrder')),
+                      status: formData.get('status'),
+                    });
+                  }}
+                  className="space-y-4"
                 >
-                  Save
-                </button>
-                <button
-                  type="button"
-                  onClick={() => setEditingValue(null)}
-                  className="flex-1 px-4 py-2 bg-gray-200 text-gray-800 rounded-lg hover:bg-gray-300 transition-colors font-semibold"
-                >
-                  Cancel
-                </button>
-              </div>
-            </form>
+                  <div>
+                    <label className="block text-sm font-medium text-gray-700 mb-1">Attribute ID</label>
+                    <input
+                      type="number"
+                      name="attributeId"
+                      defaultValue={editingValue.attributeId || ''}
+                      required
+                      className="w-full px-4 py-2 border border-gray-200 rounded-lg focus:outline-none focus:ring-2 focus:ring-primary-500"
+                    />
+                  </div>
+                  <div>
+                    <label className="block text-sm font-medium text-gray-700 mb-1">Attribute Name</label>
+                    <input
+                      type="text"
+                      name="attributeName"
+                      defaultValue={editingValue.attributeName || ''}
+                      required
+                      className="w-full px-4 py-2 border border-gray-200 rounded-lg focus:outline-none focus:ring-2 focus:ring-primary-500"
+                    />
+                  </div>
+                  <div>
+                    <label className="block text-sm font-medium text-gray-700 mb-1">Value</label>
+                    <input
+                      type="text"
+                      name="value"
+                      defaultValue={editingValue.value || ''}
+                      required
+                      className="w-full px-4 py-2 border border-gray-200 rounded-lg focus:outline-none focus:ring-2 focus:ring-primary-500"
+                    />
+                  </div>
+                  <div className="grid grid-cols-2 gap-4">
+                    <div>
+                      <label className="block text-sm font-medium text-gray-700 mb-1">Display Order</label>
+                      <input
+                        type="number"
+                        name="displayOrder"
+                        defaultValue={editingValue.displayOrder || 1}
+                        required
+                        className="w-full px-4 py-2 border border-gray-200 rounded-lg focus:outline-none focus:ring-2 focus:ring-primary-500"
+                      />
+                    </div>
+                    <div>
+                      <label className="block text-sm font-medium text-gray-700 mb-1">Status</label>
+                      <AnimatedSelect
+                        name="status"
+                        value={editingValue.status || 'active'}
+                        onChange={(e) => setEditingValue({ ...editingValue, status: e.target.value })}
+                        options={[
+                          { value: 'active', label: 'Active' },
+                          { value: 'inactive', label: 'Inactive' },
+                        ]}
+                        required
+                      />
+                    </div>
+                  </div>
+                  <div className="flex items-center gap-2">
+                    <button
+                      type="submit"
+                      className="flex-1 px-4 py-2 bg-primary-600 text-white rounded-lg hover:bg-primary-700 transition-colors font-semibold"
+                    >
+                      Save
+                    </button>
+                    <button
+                      type="button"
+                      onClick={() => setEditingValue(null)}
+                      className="flex-1 px-4 py-2 bg-gray-200 text-gray-800 rounded-lg hover:bg-gray-300 transition-colors font-semibold"
+                    >
+                      Cancel
+                    </button>
+                  </div>
+                </form>
               </motion.div>
             </motion.div>
           </>

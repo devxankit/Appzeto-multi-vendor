@@ -1,50 +1,53 @@
-import { useState, useEffect } from 'react';
-import { FiStar, FiSearch, FiEye, FiX, FiTrash2 } from 'react-icons/fi';
-import { motion } from 'framer-motion';
-import DataTable from '../../components/DataTable';
-import Badge from '../../../../shared/components/Badge';
-import ConfirmModal from '../../components/ConfirmModal';
-import AnimatedSelect from '../../components/AnimatedSelect';
-// import { formatDateTime } from '../../../utils/adminHelpers';
-import toast from 'react-hot-toast';
+import { useState, useEffect } from "react";
+import { FiStar, FiSearch, FiEye, FiX, FiTrash2 } from "react-icons/fi";
+import { motion } from "framer-motion";
+import DataTable from "../../components/DataTable";
+import Badge from "../../../../shared/components/Badge";
+import ConfirmModal from "../../components/ConfirmModal";
+import AnimatedSelect from "../../components/AnimatedSelect";
+import { formatDateTime } from '../../utils/adminHelpers';
+import toast from "react-hot-toast";
 
 const ProductRatings = () => {
   const [ratings, setRatings] = useState([
     {
       id: 1,
       productId: 1,
-      productName: 'Sample Product',
-      customerName: 'John Doe',
+      productName: "Sample Product",
+      customerName: "John Doe",
       rating: 5,
-      review: 'Great product! Highly recommended.',
+      review: "Great product! Highly recommended.",
       date: new Date().toISOString(),
-      status: 'approved',
+      status: "approved",
     },
     {
       id: 2,
       productId: 2,
-      productName: 'Another Product',
-      customerName: 'Jane Smith',
+      productName: "Another Product",
+      customerName: "Jane Smith",
       rating: 4,
-      review: 'Good quality, fast shipping.',
+      review: "Good quality, fast shipping.",
       date: new Date(Date.now() - 86400000).toISOString(),
-      status: 'pending',
+      status: "pending",
     },
     {
       id: 3,
       productId: 3,
-      productName: 'Third Product',
-      customerName: 'Bob Johnson',
+      productName: "Third Product",
+      customerName: "Bob Johnson",
       rating: 3,
-      review: 'Average product, could be better.',
+      review: "Average product, could be better.",
       date: new Date(Date.now() - 172800000).toISOString(),
-      status: 'approved',
+      status: "approved",
     },
   ]);
-  const [searchQuery, setSearchQuery] = useState('');
-  const [statusFilter, setStatusFilter] = useState('all');
+  const [searchQuery, setSearchQuery] = useState("");
+  const [statusFilter, setStatusFilter] = useState("all");
   const [selectedRating, setSelectedRating] = useState(null);
-  const [deleteModal, setDeleteModal] = useState({ isOpen: false, ratingId: null });
+  const [deleteModal, setDeleteModal] = useState({
+    isOpen: false,
+    ratingId: null,
+  });
 
   const filteredRatings = ratings.filter((rating) => {
     const matchesSearch =
@@ -53,19 +56,22 @@ const ProductRatings = () => {
       rating.customerName.toLowerCase().includes(searchQuery.toLowerCase()) ||
       rating.review.toLowerCase().includes(searchQuery.toLowerCase());
 
-    const matchesStatus = statusFilter === 'all' || rating.status === statusFilter;
+    const matchesStatus =
+      statusFilter === "all" || rating.status === statusFilter;
 
     return matchesSearch && matchesStatus;
   });
 
   const handleStatusChange = (id, newStatus) => {
-    setRatings(ratings.map((r) => (r.id === id ? { ...r, status: newStatus } : r)));
+    setRatings(
+      ratings.map((r) => (r.id === id ? { ...r, status: newStatus } : r))
+    );
   };
 
   const handleDelete = () => {
     if (deleteModal.ratingId) {
       setRatings(ratings.filter((r) => r.id !== deleteModal.ratingId));
-      toast.success('Rating deleted successfully');
+      toast.success("Rating deleted successfully");
       setDeleteModal({ isOpen: false, ratingId: null });
     }
   };
@@ -76,7 +82,7 @@ const ProductRatings = () => {
         {[1, 2, 3, 4, 5].map((star) => (
           <FiStar
             key={star}
-            className={`text-sm ${star <= rating ? 'text-yellow-400 fill-current' : 'text-gray-300'
+            className={`text-sm ${star <= rating ? "text-yellow-400 fill-current" : "text-gray-300"
               }`}
           />
         ))}
@@ -87,8 +93,8 @@ const ProductRatings = () => {
 
   const columns = [
     {
-      key: 'productName',
-      label: 'Product',
+      key: "productName",
+      label: "Product",
       sortable: true,
       render: (value, row) => (
         <div>
@@ -98,50 +104,50 @@ const ProductRatings = () => {
       ),
     },
     {
-      key: 'customerName',
-      label: 'Customer',
+      key: "customerName",
+      label: "Customer",
       sortable: true,
     },
     {
-      key: 'rating',
-      label: 'Rating',
+      key: "rating",
+      label: "Rating",
       sortable: true,
       render: (value) => renderStars(value),
     },
     {
-      key: 'review',
-      label: 'Review',
+      key: "review",
+      label: "Review",
       sortable: false,
       render: (value) => (
         <p className="max-w-xs truncate text-sm text-gray-600">{value}</p>
       ),
     },
     {
-      key: 'date',
-      label: 'Date',
+      key: "date",
+      label: "Date",
       sortable: true,
       render: (value) => new Date(value).toLocaleString(),
     },
     {
-      key: 'status',
-      label: 'Status',
+      key: "status",
+      label: "Status",
       sortable: true,
       render: (value, row) => (
         <AnimatedSelect
           value={value}
           onChange={(e) => handleStatusChange(row.id, e.target.value)}
           options={[
-            { value: 'approved', label: 'Approved' },
-            { value: 'pending', label: 'Pending' },
-            { value: 'rejected', label: 'Rejected' },
+            { value: "approved", label: "Approved" },
+            { value: "pending", label: "Pending" },
+            { value: "rejected", label: "Rejected" },
           ]}
           className="min-w-[120px]"
         />
       ),
     },
     {
-      key: 'actions',
-      label: 'Actions',
+      key: "actions",
+      label: "Actions",
       sortable: false,
       render: (_, row) => (
         <div className="flex items-center gap-2">
@@ -151,8 +157,7 @@ const ProductRatings = () => {
               setSelectedRating(row);
             }}
             className="p-2 text-blue-600 hover:bg-blue-50 rounded-lg transition-colors"
-            title="View Details"
-          >
+            title="View Details">
             <FiEye />
           </button>
           <button
@@ -161,8 +166,7 @@ const ProductRatings = () => {
               setDeleteModal({ isOpen: true, ratingId: row.id });
             }}
             className="p-2 text-red-600 hover:bg-red-50 rounded-lg transition-colors"
-            title="Delete Rating"
-          >
+            title="Delete Rating">
             <FiTrash2 />
           </button>
         </div>
@@ -174,11 +178,14 @@ const ProductRatings = () => {
     <motion.div
       initial={{ opacity: 0, y: 20 }}
       animate={{ opacity: 1, y: 0 }}
-      className="space-y-6"
-    >
+      className="space-y-6">
       <div className="lg:hidden">
-        <h1 className="text-2xl sm:text-3xl font-bold text-gray-800 mb-2">Product Ratings</h1>
-        <p className="text-sm sm:text-base text-gray-600">Manage customer reviews and ratings</p>
+        <h1 className="text-2xl sm:text-3xl font-bold text-gray-800 mb-2">
+          Product Ratings
+        </h1>
+        <p className="text-sm sm:text-base text-gray-600">
+          Manage customer reviews and ratings
+        </p>
       </div>
 
       <div className="bg-white rounded-xl p-6 shadow-sm border border-gray-200">
@@ -199,10 +206,10 @@ const ProductRatings = () => {
               value={statusFilter}
               onChange={(e) => setStatusFilter(e.target.value)}
               options={[
-                { value: 'all', label: 'All Status' },
-                { value: 'approved', label: 'Approved' },
-                { value: 'pending', label: 'Pending' },
-                { value: 'rejected', label: 'Rejected' },
+                { value: "all", label: "All Status" },
+                { value: "approved", label: "Approved" },
+                { value: "pending", label: "Pending" },
+                { value: "rejected", label: "Rejected" },
               ]}
               className="min-w-[140px]"
             />
@@ -220,69 +227,87 @@ const ProductRatings = () => {
       {selectedRating && (
         <div
           className="fixed inset-0 bg-black/50 z-[10000] flex items-center justify-center p-4"
-          onClick={() => setSelectedRating(null)}
-        >
+          onClick={() => setSelectedRating(null)}>
           <div
             className="bg-white rounded-xl p-6 max-w-2xl w-full max-h-[90vh] overflow-y-auto"
-            onClick={(e) => e.stopPropagation()}
-          >
+            onClick={(e) => e.stopPropagation()}>
             <div className="flex items-center justify-between mb-4">
-              <h3 className="text-lg font-bold text-gray-800">Rating Details</h3>
+              <h3 className="text-lg font-bold text-gray-800">
+                Rating Details
+              </h3>
               <button
                 onClick={() => setSelectedRating(null)}
-                className="p-2 hover:bg-gray-100 rounded-lg transition-colors"
-              >
+                className="p-2 hover:bg-gray-100 rounded-lg transition-colors">
                 <FiX className="text-xl text-gray-600" />
               </button>
             </div>
 
             <div className="space-y-4">
               <div>
-                <label className="text-sm font-semibold text-gray-600">Product</label>
-                <p className="text-base text-gray-800 mt-1">{selectedRating.productName}</p>
-                <p className="text-sm text-gray-500">ID: {selectedRating.productId}</p>
+                <label className="text-sm font-semibold text-gray-600">
+                  Product
+                </label>
+                <p className="text-base text-gray-800 mt-1">
+                  {selectedRating.productName}
+                </p>
+                <p className="text-sm text-gray-500">
+                  ID: {selectedRating.productId}
+                </p>
               </div>
 
               <div>
-                <label className="text-sm font-semibold text-gray-600">Customer</label>
-                <p className="text-base text-gray-800 mt-1">{selectedRating.customerName}</p>
+                <label className="text-sm font-semibold text-gray-600">
+                  Customer
+                </label>
+                <p className="text-base text-gray-800 mt-1">
+                  {selectedRating.customerName}
+                </p>
               </div>
 
               <div>
-                <label className="text-sm font-semibold text-gray-600">Rating</label>
-                <div className="mt-1">
-                  {renderStars(selectedRating.rating)}
-                </div>
+                <label className="text-sm font-semibold text-gray-600">
+                  Rating
+                </label>
+                <div className="mt-1">{renderStars(selectedRating.rating)}</div>
               </div>
 
               <div>
-                <label className="text-sm font-semibold text-gray-600">Review</label>
+                <label className="text-sm font-semibold text-gray-600">
+                  Review
+                </label>
                 <p className="text-base text-gray-800 mt-1 whitespace-pre-wrap">
                   {selectedRating.review}
                 </p>
               </div>
 
               <div>
-                <label className="text-sm font-semibold text-gray-600">Date</label>
+                <label className="text-sm font-semibold text-gray-600">
+                  Date
+                </label>
                 <p className="text-base text-gray-800 mt-1">
                   {formatDateTime(selectedRating.date)}
                 </p>
               </div>
 
               <div>
-                <label className="text-sm font-semibold text-gray-600">Status</label>
+                <label className="text-sm font-semibold text-gray-600">
+                  Status
+                </label>
                 <div className="mt-1">
                   <AnimatedSelect
                     value={selectedRating.status}
                     onChange={(e) => {
                       const newStatus = e.target.value;
                       handleStatusChange(selectedRating.id, newStatus);
-                      setSelectedRating({ ...selectedRating, status: newStatus });
+                      setSelectedRating({
+                        ...selectedRating,
+                        status: newStatus,
+                      });
                     }}
                     options={[
-                      { value: 'approved', label: 'Approved' },
-                      { value: 'pending', label: 'Pending' },
-                      { value: 'rejected', label: 'Rejected' },
+                      { value: "approved", label: "Approved" },
+                      { value: "pending", label: "Pending" },
+                      { value: "rejected", label: "Rejected" },
                     ]}
                     className="min-w-[120px]"
                   />
@@ -292,8 +317,7 @@ const ProductRatings = () => {
               <div className="flex justify-end pt-4 border-t border-gray-200">
                 <button
                   onClick={() => setSelectedRating(null)}
-                  className="px-6 py-2 bg-gray-100 text-gray-700 rounded-lg hover:bg-gray-200 transition-colors font-semibold"
-                >
+                  className="px-6 py-2 bg-gray-100 text-gray-700 rounded-lg hover:bg-gray-200 transition-colors font-semibold">
                   Close
                 </button>
               </div>
@@ -318,4 +342,3 @@ const ProductRatings = () => {
 };
 
 export default ProductRatings;
-

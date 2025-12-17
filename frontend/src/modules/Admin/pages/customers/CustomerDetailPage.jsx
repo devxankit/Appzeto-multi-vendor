@@ -22,8 +22,9 @@ import { useCustomerStore } from '../../../../shared/store/customerStore';
 import Badge from '../../../../shared/components/Badge';
 import DataTable from '../../components/DataTable';
 import { formatPrice } from '../../../../shared/utils/helpers';
-// import { formatDateTime } from '../../../utils/adminHelpers';
+import { formatDateTime } from '../../utils/adminHelpers';
 import { mockOrders } from '../../../../data/adminMockData';
+
 import toast from 'react-hot-toast';
 
 const CustomerDetailPage = () => {
@@ -391,7 +392,7 @@ const CustomerDetailPage = () => {
             </div>
             <div className="bg-gray-50 rounded-lg p-4">
               <p className="text-sm text-gray-500 mb-1">Total Spent</p>
-              <p className="text-2xl font-bold text-primary-600">{formatCurrency(totalSpent)}</p>
+              <p className="text-2xl font-bold text-primary-600">{formatPrice(totalSpent)}</p>
             </div>
             <div className="bg-gray-50 rounded-lg p-4">
               <p className="text-sm text-gray-500 mb-1">Last Order</p>
@@ -476,7 +477,7 @@ const CustomerDetailPage = () => {
                     <FiDollarSign />
                     <span className="text-sm font-semibold">Total Spent</span>
                   </div>
-                  <p className="text-2xl font-bold text-gray-800">{formatCurrency(totalSpent)}</p>
+                  <p className="text-2xl font-bold text-gray-800">{formatPrice(totalSpent)}</p>
                 </div>
                 <div className="bg-purple-50 rounded-lg p-4">
                   <div className="flex items-center gap-2 text-purple-600 mb-2">
@@ -512,7 +513,7 @@ const CustomerDetailPage = () => {
                           <p className="text-sm text-gray-500">{formatDateTime(order.date)}</p>
                         </div>
                         <div className="text-right">
-                          <p className="font-semibold text-gray-800">{formatCurrency(order.total)}</p>
+                          <p className="font-semibold text-gray-800">{formatPrice(order.total)}</p>
                           {getStatusBadge(order.status)}
                         </div>
                       </div>

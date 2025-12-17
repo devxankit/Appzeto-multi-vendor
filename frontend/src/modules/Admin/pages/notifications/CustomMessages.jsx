@@ -41,7 +41,8 @@ const CustomMessages = () => {
       setMessages(messages.map((m) => (m.id === editingMessage.id ? { ...messageData, id: editingMessage.id } : m)));
       toast.success('Message updated');
     } else {
-      setMessages([...messages, { ...messageData, id: messages.length + 1 }]);
+      const newId = messages.length > 0 ? Math.max(...messages.map(m => m.id)) + 1 : 1;
+      setMessages([...messages, { ...messageData, id: newId }]);
       toast.success('Message added');
     }
     setEditingMessage(null);
@@ -81,9 +82,8 @@ const CustomMessages = () => {
       label: 'Status',
       sortable: true,
       render: (value) => (
-        <span className={`px-2 py-1 rounded text-xs font-medium ${
-          value === 'active' ? 'bg-green-100 text-green-800' : 'bg-gray-100 text-gray-800'
-        }`}>
+        <span className={`px-2 py-1 rounded text-xs font-medium ${value === 'active' ? 'bg-green-100 text-green-800' : 'bg-gray-100 text-gray-800'
+          }`}>
           {value}
         </span>
       ),
@@ -123,7 +123,7 @@ const CustomMessages = () => {
           <p className="text-sm sm:text-base text-gray-600">Manage automated customer messages</p>
         </div>
         <button
-          onClick={() => setEditingMessage({})}
+          onClick={() => setEditingMessage({ title: '', content: '', type: 'welcome', status: 'active' })}
           className="flex items-center gap-2 px-4 py-2 gradient-green text-white rounded-lg hover:shadow-glow-green transition-all font-semibold text-sm"
         >
           <FiPlus />
@@ -165,7 +165,7 @@ const CustomMessages = () => {
               onClick={() => setEditingMessage(null)}
               className="fixed inset-0 bg-black/50 z-[10000]"
             />
-            
+
             {/* Modal Content - Mobile: Slide up from bottom, Desktop: Center with scale */}
             <motion.div
               initial={{ opacity: 0 }}
@@ -175,27 +175,27 @@ const CustomMessages = () => {
             >
               <motion.div
                 variants={{
-                  hidden: { 
+                  hidden: {
                     y: isAppRoute ? '-100%' : '100%',
                     scale: 0.95,
                     opacity: 0
                   },
-                  visible: { 
+                  visible: {
                     y: 0,
                     scale: 1,
                     opacity: 1,
-                    transition: { 
+                    transition: {
                       type: 'spring',
                       damping: 22,
                       stiffness: 350,
                       mass: 0.7
                     }
                   },
-                  exit: { 
+                  exit: {
                     y: isAppRoute ? '-100%' : '100%',
                     scale: 0.95,
                     opacity: 0,
-                    transition: { 
+                    transition: {
                       type: 'spring',
                       damping: 30,
                       stiffness: 400
@@ -212,83 +212,73 @@ const CustomMessages = () => {
                 <h3 className="text-lg font-bold text-gray-800 mb-4">
                   {editingMessage.id ? 'Edit Message' : 'Add Message'}
                 </h3>
-            <form
-              onSubmit={(e) => {
-                e.preventDefault();
-                const formData = new FormData(e.target);
-                handleSave({
-                  title: formData.get('title'),
-                  content: formData.get('content'),
-                  type: formData.get('type'),
-                  status: formData.get('status'),
-                });
-              }}
-              className="space-y-4"
-            >
-              <input
-                type="text"
-                name="title"
-                defaultValue={editingMessage.title || ''}
-                placeholder="Message Title"
-                required
-                className="w-full px-4 py-2 border border-gray-200 rounded-lg focus:outline-none focus:ring-2 focus:ring-primary-500"
-              />
-              <textarea
-                name="content"
-                defaultValue={editingMessage.content || ''}
-                placeholder="Message Content"
-                required
-                rows={6}
-                className="w-full px-4 py-2 border border-gray-200 rounded-lg focus:outline-none focus:ring-2 focus:ring-primary-500"
-              />
-              <AnimatedSelect
-                name="type"
-                value={editingMessage.type || 'welcome'}
-                onChange={(e) => {
-                  const form = e.target.closest('form');
-                  if (form) {
-                    const typeInput = form.querySelector('[name="type"]');
-                    if (typeInput) typeInput.value = e.target.value;
-                  }
-                }}
-                options={[
-                  { value: 'welcome', label: 'Welcome' },
-                  { value: 'order', label: 'Order' },
-                  { value: 'promotional', label: 'Promotional' },
-                  { value: 'reminder', label: 'Reminder' },
-                ]}
-              />
-              <AnimatedSelect
-                name="status"
-                value={editingMessage.status || 'active'}
-                onChange={(e) => {
-                  const form = e.target.closest('form');
-                  if (form) {
-                    const statusInput = form.querySelector('[name="status"]');
-                    if (statusInput) statusInput.value = e.target.value;
-                  }
-                }}
-                options={[
-                  { value: 'active', label: 'Active' },
-                  { value: 'inactive', label: 'Inactive' },
-                ]}
-              />
-              <div className="flex items-center gap-2">
-                <button
-                  type="submit"
-                  className="flex-1 px-4 py-2 bg-primary-600 text-white rounded-lg hover:bg-primary-700 transition-colors font-semibold"
+                <form
+                  onSubmit={(e) => {
+                    e.preventDefault();
+                    const formData = new FormData(e.target);
+                    handleSave({
+                      title: formData.get('title'),
+                      content: formData.get('content'),
+                      type: formData.get('type'),
+                      status: formData.get('status'),
+                    });
+                  }}
+                  className="space-y-4"
                 >
-                  Save
-                </button>
-                <button
-                  type="button"
-                  onClick={() => setEditingMessage(null)}
-                  className="flex-1 px-4 py-2 bg-gray-200 text-gray-800 rounded-lg hover:bg-gray-300 transition-colors font-semibold"
-                >
-                  Cancel
-                </button>
-              </div>
-            </form>
+                  <input
+                    type="text"
+                    name="title"
+                    defaultValue={editingMessage.title || ''}
+                    placeholder="Message Title"
+                    required
+                    className="w-full px-4 py-2 border border-gray-200 rounded-lg focus:outline-none focus:ring-2 focus:ring-primary-500"
+                  />
+                  <textarea
+                    name="content"
+                    defaultValue={editingMessage.content || ''}
+                    placeholder="Message Content"
+                    required
+                    rows={6}
+                    className="w-full px-4 py-2 border border-gray-200 rounded-lg focus:outline-none focus:ring-2 focus:ring-primary-500"
+                  />
+                  <AnimatedSelect
+                    name="type"
+                    value={editingMessage.type || 'welcome'}
+                    onChange={(e) => setEditingMessage({ ...editingMessage, type: e.target.value })}
+                    options={[
+                      { value: 'welcome', label: 'Welcome' },
+                      { value: 'order', label: 'Order' },
+                      { value: 'promotional', label: 'Promotional' },
+                      { value: 'reminder', label: 'Reminder' },
+                    ]}
+                    required
+                  />
+                  <AnimatedSelect
+                    name="status"
+                    value={editingMessage.status || 'active'}
+                    onChange={(e) => setEditingMessage({ ...editingMessage, status: e.target.value })}
+                    options={[
+                      { value: 'active', label: 'Active' },
+                      { value: 'inactive', label: 'Inactive' },
+                    ]}
+                    required
+                  />
+                  <div className="flex items-center gap-2">
+                    <button
+                      type="submit"
+                      className="flex-1 px-4 py-2 bg-primary-600 text-white rounded-lg hover:bg-primary-700 transition-colors font-semibold"
+                    >
+                      Save
+                    </button>
+                    <button
+                      type="button"
+                      onClick={() => setEditingMessage(null)}
+                      className="flex-1 px-4 py-2 bg-gray-200 text-gray-800 rounded-lg hover:bg-gray-300 transition-colors font-semibold"
+                    >
+                      Cancel
+                    </button>
+                  </div>
+                </form>
               </motion.div>
             </motion.div>
           </>
