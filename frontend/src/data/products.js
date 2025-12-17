@@ -415,14 +415,14 @@ export const getRecommendedProducts = (limit = 6) => {
   // Try to get wishlist and cart data from localStorage
   let wishlistItems = [];
   let cartItems = [];
-  
+
   try {
     const wishlistStorage = localStorage.getItem('wishlist-storage');
     if (wishlistStorage) {
       const parsed = JSON.parse(wishlistStorage);
       wishlistItems = parsed.state?.items || [];
     }
-    
+
     const cartStorage = localStorage.getItem('cart-storage');
     if (cartStorage) {
       const parsed = JSON.parse(cartStorage);
@@ -496,3 +496,5 @@ export const getRecommendedProducts = (limit = 6) => {
   return recommended.slice(0, limit);
 };
 
+// Get all products
+export const getAllProducts = () => products;
