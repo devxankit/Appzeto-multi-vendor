@@ -1,6 +1,6 @@
-import { useState, useEffect } from 'react';
-import { FiSave } from 'react-icons/fi';
-import { useSettingsStore } from '../../../../shared/store/settingsStore';
+import { useState, useEffect } from "react";
+import { FiSave } from "react-icons/fi";
+import { useSettingsStore } from "../../../../shared/store/settingsStore";
 
 const SEOSettings = () => {
   const { settings, updateSettings, initialize } = useSettingsStore();
@@ -26,7 +26,7 @@ const SEOSettings = () => {
 
   const handleSubmit = (e) => {
     e.preventDefault();
-    updateSettings('seo', formData);
+    updateSettings("seo", formData);
   };
 
   return (
@@ -38,7 +38,7 @@ const SEOSettings = () => {
         <input
           type="text"
           name="metaTitle"
-          value={formData.metaTitle || ''}
+          value={formData.metaTitle || ""}
           onChange={handleChange}
           maxLength={60}
           className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-primary-500"
@@ -54,7 +54,7 @@ const SEOSettings = () => {
         </label>
         <textarea
           name="metaDescription"
-          value={formData.metaDescription || ''}
+          value={formData.metaDescription || ""}
           onChange={handleChange}
           rows={3}
           maxLength={160}
@@ -72,7 +72,7 @@ const SEOSettings = () => {
         <input
           type="text"
           name="metaKeywords"
-          value={formData.metaKeywords || ''}
+          value={formData.metaKeywords || ""}
           onChange={handleChange}
           className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-primary-500"
           placeholder="keyword1, keyword2, keyword3"
@@ -86,10 +86,10 @@ const SEOSettings = () => {
         <input
           type="text"
           name="ogImage"
-          value={formData.ogImage || ''}
+          value={formData.ogImage || ""}
           onChange={handleChange}
           className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-primary-500"
-          placeholder="/images/og-image.png"
+          placeholder="data/logos/og-image.png"
         />
         {formData.ogImage && (
           <img
@@ -97,7 +97,7 @@ const SEOSettings = () => {
             alt="OG Preview"
             className="mt-4 w-32 h-32 object-cover rounded-lg border border-gray-200"
             onError={(e) => {
-              e.target.style.display = 'none';
+              e.target.style.display = "none";
             }}
           />
         )}
@@ -106,8 +106,7 @@ const SEOSettings = () => {
       <div className="flex justify-end">
         <button
           type="submit"
-          className="flex items-center gap-2 px-6 py-2 gradient-green text-white rounded-lg hover:shadow-glow-green transition-all font-semibold"
-        >
+          className="flex items-center gap-2 px-6 py-2 gradient-green text-white rounded-lg hover:shadow-glow-green transition-all font-semibold">
           <FiSave />
           Save Settings
         </button>
@@ -117,4 +116,3 @@ const SEOSettings = () => {
 };
 
 export default SEOSettings;
-

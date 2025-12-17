@@ -1,6 +1,13 @@
 import { useState, useMemo, useEffect } from "react";
 import { useNavigate } from "react-router-dom";
-import { FiSearch, FiEdit, FiEye, FiCheckCircle, FiXCircle, FiDollarSign } from "react-icons/fi";
+import {
+  FiSearch,
+  FiEdit,
+  FiEye,
+  FiCheckCircle,
+  FiXCircle,
+  FiDollarSign,
+} from "react-icons/fi";
 import { motion } from "framer-motion";
 import DataTable from "../../components/DataTable";
 import ExportButton from "../../components/ExportButton";
@@ -8,14 +15,15 @@ import Badge from "../../../../shared/components/Badge";
 import ConfirmModal from "../../components/ConfirmModal";
 import AnimatedSelect from "../../components/AnimatedSelect";
 import { formatPrice } from "../../../../shared/utils/helpers";
-import { useVendorAuthStore } from "../../../Vendor/store/vendorAuthStore";
+import { useVendorStore } from "../../../Vendor/store/vendorStore";
 import { useOrderStore } from "../../../../shared/store/orderStore";
 import { useCommissionStore } from "../../../../shared/store/commissionStore";
 import toast from "react-hot-toast";
 
 const ManageVendors = () => {
   const navigate = useNavigate();
-  const { vendors, updateVendorStatus, updateCommissionRate } = useVendorAuthStore();
+  const { vendors, updateVendorStatus, updateCommissionRate } =
+    useVendorStore();
   const { orders } = useOrderStore();
   const { getVendorEarningsSummary } = useCommissionStore();
 
@@ -91,7 +99,9 @@ const ManageVendors = () => {
             />
           )}
           <div>
-            <span className="font-medium text-gray-800">{value || row.name}</span>
+            <span className="font-medium text-gray-800">
+              {value || row.name}
+            </span>
             <p className="text-xs text-gray-500">{row.name}</p>
           </div>
         </div>
@@ -113,8 +123,8 @@ const ManageVendors = () => {
             value === "approved"
               ? "success"
               : value === "pending"
-                ? "warning"
-                : "error"
+              ? "warning"
+              : "error"
           }>
           {value?.toUpperCase() || "N/A"}
         </Badge>
@@ -202,7 +212,9 @@ const ManageVendors = () => {
             onClick={(e) => {
               e.stopPropagation();
               const vendor = vendors.find((v) => v.id === row.id);
-              setCommissionRate(((vendor?.commissionRate || 0) * 100).toFixed(1));
+              setCommissionRate(
+                ((vendor?.commissionRate || 0) * 100).toFixed(1)
+              );
               setActionModal({
                 isOpen: true,
                 type: "commission",
@@ -221,13 +233,23 @@ const ManageVendors = () => {
 
   const handleApprove = () => {
     updateVendorStatus(actionModal.vendorId, "approved");
-    setActionModal({ isOpen: false, type: null, vendorId: null, vendorName: null });
+    setActionModal({
+      isOpen: false,
+      type: null,
+      vendorId: null,
+      vendorName: null,
+    });
     toast.success("Vendor approved successfully");
   };
 
   const handleSuspend = () => {
     updateVendorStatus(actionModal.vendorId, "suspended");
-    setActionModal({ isOpen: false, type: null, vendorId: null, vendorName: null });
+    setActionModal({
+      isOpen: false,
+      type: null,
+      vendorId: null,
+      vendorName: null,
+    });
     toast.success("Vendor suspended successfully");
   };
 
@@ -238,7 +260,12 @@ const ManageVendors = () => {
       return;
     }
     updateCommissionRate(actionModal.vendorId, rate);
-    setActionModal({ isOpen: false, type: null, vendorId: null, vendorName: null });
+    setActionModal({
+      isOpen: false,
+      type: null,
+      vendorId: null,
+      vendorName: null,
+    });
     setCommissionRate("");
     toast.success("Commission rate updated successfully");
   };
@@ -344,11 +371,22 @@ const ManageVendors = () => {
                 data={filteredVendors}
                 headers={[
                   { label: "ID", accessor: (row) => row.id },
-                  { label: "Store Name", accessor: (row) => row.storeName || row.name },
+                  {
+                    label: "Store Name",
+                    accessor: (row) => row.storeName || row.name,
+                  },
                   { label: "Email", accessor: (row) => row.email },
                   { label: "Status", accessor: (row) => row.status },
-                  { label: "Commission Rate", accessor: (row) => `${((row.commissionRate || 0) * 100).toFixed(1)}%` },
-                  { label: "Join Date", accessor: (row) => new Date(row.joinDate).toLocaleDateString() },
+                  {
+                    label: "Commission Rate",
+                    accessor: (row) =>
+                      `${((row.commissionRate || 0) * 100).toFixed(1)}%`,
+                  },
+                  {
+                    label: "Join Date",
+                    accessor: (row) =>
+                      new Date(row.joinDate).toLocaleDateString(),
+                  },
                 ]}
                 filename="vendors"
               />
@@ -371,7 +409,12 @@ const ManageVendors = () => {
         <ConfirmModal
           isOpen={actionModal.isOpen}
           onClose={() => {
-            setActionModal({ isOpen: false, type: null, vendorId: null, vendorName: null });
+            setActionModal({
+              isOpen: false,
+              type: null,
+              vendorId: null,
+              vendorName: null,
+            });
             setCommissionRate("");
           }}
           onConfirm={modalContent.onConfirm}
@@ -388,4 +431,3 @@ const ManageVendors = () => {
 };
 
 export default ManageVendors;
-

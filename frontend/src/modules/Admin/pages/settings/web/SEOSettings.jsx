@@ -11,7 +11,7 @@ const SEOSettings = () => {
     metaKeywords: "ecommerce, online shopping, products, deals",
     ogTitle: "My E-commerce Store",
     ogDescription: "Your trusted online shopping destination",
-    ogImage: "/images/og-image.jpg",
+    ogImage: "data/logos/og-image.jpg",
     twitterCard: "summary_large_image",
     canonicalUrl: "https://mystore.com",
     robots: "index, follow",

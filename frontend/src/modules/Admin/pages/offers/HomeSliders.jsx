@@ -1,31 +1,33 @@
-import { useState } from 'react';
-import { useLocation } from 'react-router-dom';
-import { FiPlus, FiEdit, FiTrash2, FiImage } from 'react-icons/fi';
-import { motion, AnimatePresence } from 'framer-motion';
-import DataTable from '../../components/DataTable';
-import ConfirmModal from '../../components/ConfirmModal';
-import AnimatedSelect from '../../components/AnimatedSelect';
-import toast from 'react-hot-toast';
+import { useState } from "react";
+import { useLocation } from "react-router-dom";
+import { FiPlus, FiEdit, FiTrash2, FiImage } from "react-icons/fi";
+import { motion, AnimatePresence } from "framer-motion";
+import DataTable from "../../components/DataTable";
+import ConfirmModal from "../../components/ConfirmModal";
+import AnimatedSelect from "../../components/AnimatedSelect";
+import toast from "react-hot-toast";
+import heroSlide1 from "../../../../../data/hero/slide1.png";
+import heroSlide2 from "../../../../../data/hero/slide2.png";
 
 const HomeSliders = () => {
   const location = useLocation();
-  const isAppRoute = location.pathname.startsWith('/app');
+  const isAppRoute = location.pathname.startsWith("/app");
   const [sliders, setSliders] = useState([
     {
       id: 1,
-      title: 'Summer Sale',
-      image: '/images/hero/slide1.png',
-      link: '/offers',
+      title: "Summer Sale",
+      image: "/images/hero/slide1.png",
+      link: "/offers",
       order: 1,
-      status: 'active',
+      status: "active",
     },
     {
       id: 2,
-      title: 'New Arrivals',
-      image: '/images/hero/slide2.png',
-      link: '/products',
+      title: "New Arrivals",
+      image: heroSlide2,
+      link: "/products",
       order: 2,
-      status: 'active',
+      status: "active",
     },
   ]);
   const [editingSlider, setEditingSlider] = useState(null);
@@ -33,11 +35,17 @@ const HomeSliders = () => {
 
   const handleSave = (sliderData) => {
     if (editingSlider && editingSlider.id) {
-      setSliders(sliders.map((s) => (s.id === editingSlider.id ? { ...sliderData, id: editingSlider.id } : s)));
-      toast.success('Slider updated');
+      setSliders(
+        sliders.map((s) =>
+          s.id === editingSlider.id
+            ? { ...sliderData, id: editingSlider.id }
+            : s
+        )
+      );
+      toast.success("Slider updated");
     } else {
       setSliders([...sliders, { ...sliderData, id: sliders.length + 1 }]);
-      toast.success('Slider added');
+      toast.success("Slider added");
     }
     setEditingSlider(null);
   };
@@ -45,13 +53,13 @@ const HomeSliders = () => {
   const handleDelete = () => {
     setSliders(sliders.filter((s) => s.id !== deleteModal.id));
     setDeleteModal({ isOpen: false, id: null });
-    toast.success('Slider deleted');
+    toast.success("Slider deleted");
   };
 
   const columns = [
     {
-      key: 'image',
-      label: 'Image',
+      key: "image",
+      label: "Image",
       sortable: false,
       render: (value, row) => (
         <div className="flex items-center gap-3">
@@ -60,7 +68,7 @@ const HomeSliders = () => {
             alt={row.title}
             className="w-16 h-16 object-cover rounded-lg"
             onError={(e) => {
-              e.target.src = 'https://via.placeholder.com/64x64?text=Image';
+              e.target.src = "https://via.placeholder.com/64x64?text=Image";
             }}
           />
           <span className="font-medium text-gray-800">{row.title}</span>
@@ -68,44 +76,45 @@ const HomeSliders = () => {
       ),
     },
     {
-      key: 'link',
-      label: 'Link',
+      key: "link",
+      label: "Link",
       sortable: false,
       render: (value) => <span className="text-sm text-gray-600">{value}</span>,
     },
     {
-      key: 'order',
-      label: 'Order',
+      key: "order",
+      label: "Order",
       sortable: true,
     },
     {
-      key: 'status',
-      label: 'Status',
+      key: "status",
+      label: "Status",
       sortable: true,
       render: (value) => (
-        <span className={`px-2 py-1 rounded text-xs font-medium ${
-          value === 'active' ? 'bg-green-100 text-green-800' : 'bg-gray-100 text-gray-800'
-        }`}>
+        <span
+          className={`px-2 py-1 rounded text-xs font-medium ${
+            value === "active"
+              ? "bg-green-100 text-green-800"
+              : "bg-gray-100 text-gray-800"
+          }`}>
           {value}
         </span>
       ),
     },
     {
-      key: 'actions',
-      label: 'Actions',
+      key: "actions",
+      label: "Actions",
       sortable: false,
       render: (_, row) => (
         <div className="flex items-center gap-2">
           <button
             onClick={() => setEditingSlider(row)}
-            className="p-2 text-blue-600 hover:bg-blue-50 rounded-lg transition-colors"
-          >
+            className="p-2 text-blue-600 hover:bg-blue-50 rounded-lg transition-colors">
             <FiEdit />
           </button>
           <button
             onClick={() => setDeleteModal({ isOpen: true, id: row.id })}
-            className="p-2 text-red-600 hover:bg-red-50 rounded-lg transition-colors"
-          >
+            className="p-2 text-red-600 hover:bg-red-50 rounded-lg transition-colors">
             <FiTrash2 />
           </button>
         </div>
@@ -117,17 +126,19 @@ const HomeSliders = () => {
     <motion.div
       initial={{ opacity: 0, y: 20 }}
       animate={{ opacity: 1, y: 0 }}
-      className="space-y-6"
-    >
+      className="space-y-6">
       <div className="flex flex-col sm:flex-row items-start sm:items-center justify-between gap-4">
         <div className="lg:hidden">
-          <h1 className="text-2xl sm:text-3xl font-bold text-gray-800 mb-2">Home Sliders</h1>
-          <p className="text-sm sm:text-base text-gray-600">Manage homepage banner sliders</p>
+          <h1 className="text-2xl sm:text-3xl font-bold text-gray-800 mb-2">
+            Home Sliders
+          </h1>
+          <p className="text-sm sm:text-base text-gray-600">
+            Manage homepage banner sliders
+          </p>
         </div>
         <button
           onClick={() => setEditingSlider({})}
-          className="flex items-center gap-2 px-4 py-2 gradient-green text-white rounded-lg hover:shadow-glow-green transition-all font-semibold text-sm"
-        >
+          className="flex items-center gap-2 px-4 py-2 gradient-green text-white rounded-lg hover:shadow-glow-green transition-all font-semibold text-sm">
           <FiPlus />
           <span>Add Slider</span>
         </button>
@@ -154,132 +165,132 @@ const HomeSliders = () => {
               onClick={() => setEditingSlider(null)}
               className="fixed inset-0 bg-black/50 z-[10000]"
             />
-            
+
             {/* Modal Content - Mobile: Slide up from bottom, Desktop: Center with scale */}
             <motion.div
               initial={{ opacity: 0 }}
               animate={{ opacity: 1 }}
               exit={{ opacity: 0 }}
-              className={`fixed inset-0 z-[10000] flex ${isAppRoute ? 'items-start pt-[10px]' : 'items-end'} sm:items-center justify-center p-4 pointer-events-none`}
-            >
+              className={`fixed inset-0 z-[10000] flex ${
+                isAppRoute ? "items-start pt-[10px]" : "items-end"
+              } sm:items-center justify-center p-4 pointer-events-none`}>
               <motion.div
                 variants={{
-                  hidden: { 
-                    y: isAppRoute ? '-100%' : '100%',
+                  hidden: {
+                    y: isAppRoute ? "-100%" : "100%",
                     scale: 0.95,
-                    opacity: 0
+                    opacity: 0,
                   },
-                  visible: { 
+                  visible: {
                     y: 0,
                     scale: 1,
                     opacity: 1,
-                    transition: { 
-                      type: 'spring',
+                    transition: {
+                      type: "spring",
                       damping: 22,
                       stiffness: 350,
-                      mass: 0.7
-                    }
+                      mass: 0.7,
+                    },
                   },
-                  exit: { 
-                    y: isAppRoute ? '-100%' : '100%',
+                  exit: {
+                    y: isAppRoute ? "-100%" : "100%",
                     scale: 0.95,
                     opacity: 0,
-                    transition: { 
-                      type: 'spring',
+                    transition: {
+                      type: "spring",
                       damping: 30,
-                      stiffness: 400
-                    }
-                  }
+                      stiffness: 400,
+                    },
+                  },
                 }}
                 initial="hidden"
                 animate="visible"
                 exit="exit"
                 onClick={(e) => e.stopPropagation()}
-                className={`bg-white ${isAppRoute ? 'rounded-b-3xl' : 'rounded-t-3xl'} sm:rounded-xl shadow-xl p-6 max-w-md w-full pointer-events-auto`}
-                style={{ willChange: 'transform' }}
-              >
+                className={`bg-white ${
+                  isAppRoute ? "rounded-b-3xl" : "rounded-t-3xl"
+                } sm:rounded-xl shadow-xl p-6 max-w-md w-full pointer-events-auto`}
+                style={{ willChange: "transform" }}>
                 <h3 className="text-lg font-bold text-gray-800 mb-4">
-                  {editingSlider.id ? 'Edit Slider' : 'Add Slider'}
+                  {editingSlider.id ? "Edit Slider" : "Add Slider"}
                 </h3>
-            <form
-              onSubmit={(e) => {
-                e.preventDefault();
-                const formData = new FormData(e.target);
-                handleSave({
-                  title: formData.get('title'),
-                  image: formData.get('image'),
-                  link: formData.get('link'),
-                  order: parseInt(formData.get('order')),
-                  status: formData.get('status'),
-                });
-              }}
-              className="space-y-4"
-            >
-              <input
-                type="text"
-                name="title"
-                defaultValue={editingSlider.title || ''}
-                placeholder="Title"
-                required
-                className="w-full px-4 py-2 border border-gray-200 rounded-lg focus:outline-none focus:ring-2 focus:ring-primary-500"
-              />
-              <input
-                type="text"
-                name="image"
-                defaultValue={editingSlider.image || ''}
-                placeholder="Image URL"
-                required
-                className="w-full px-4 py-2 border border-gray-200 rounded-lg focus:outline-none focus:ring-2 focus:ring-primary-500"
-              />
-              <input
-                type="text"
-                name="link"
-                defaultValue={editingSlider.link || ''}
-                placeholder="Link URL"
-                required
-                className="w-full px-4 py-2 border border-gray-200 rounded-lg focus:outline-none focus:ring-2 focus:ring-primary-500"
-              />
-              <div className="grid grid-cols-2 gap-4">
-                <input
-                  type="number"
-                  name="order"
-                  defaultValue={editingSlider.order || 1}
-                  placeholder="Order"
-                  required
-                  className="w-full px-4 py-2 border border-gray-200 rounded-lg focus:outline-none focus:ring-2 focus:ring-primary-500"
-                />
-                <AnimatedSelect
-                  name="status"
-                  value={editingSlider.status || 'active'}
-                  onChange={(e) => {
-                    const form = e.target.closest('form');
-                    if (form) {
-                      const statusInput = form.querySelector('[name="status"]');
-                      if (statusInput) statusInput.value = e.target.value;
-                    }
+                <form
+                  onSubmit={(e) => {
+                    e.preventDefault();
+                    const formData = new FormData(e.target);
+                    handleSave({
+                      title: formData.get("title"),
+                      image: formData.get("image"),
+                      link: formData.get("link"),
+                      order: parseInt(formData.get("order")),
+                      status: formData.get("status"),
+                    });
                   }}
-                  options={[
-                    { value: 'active', label: 'Active' },
-                    { value: 'inactive', label: 'Inactive' },
-                  ]}
-                />
-              </div>
-              <div className="flex items-center gap-2">
-                <button
-                  type="submit"
-                  className="flex-1 px-4 py-2 bg-primary-600 text-white rounded-lg hover:bg-primary-700 transition-colors font-semibold"
-                >
-                  Save
-                </button>
-                <button
-                  type="button"
-                  onClick={() => setEditingSlider(null)}
-                  className="flex-1 px-4 py-2 bg-gray-200 text-gray-800 rounded-lg hover:bg-gray-300 transition-colors font-semibold"
-                >
-                  Cancel
-                </button>
-              </div>
-            </form>
+                  className="space-y-4">
+                  <input
+                    type="text"
+                    name="title"
+                    defaultValue={editingSlider.title || ""}
+                    placeholder="Title"
+                    required
+                    className="w-full px-4 py-2 border border-gray-200 rounded-lg focus:outline-none focus:ring-2 focus:ring-primary-500"
+                  />
+                  <input
+                    type="text"
+                    name="image"
+                    defaultValue={editingSlider.image || ""}
+                    placeholder="Image URL"
+                    required
+                    className="w-full px-4 py-2 border border-gray-200 rounded-lg focus:outline-none focus:ring-2 focus:ring-primary-500"
+                  />
+                  <input
+                    type="text"
+                    name="link"
+                    defaultValue={editingSlider.link || ""}
+                    placeholder="Link URL"
+                    required
+                    className="w-full px-4 py-2 border border-gray-200 rounded-lg focus:outline-none focus:ring-2 focus:ring-primary-500"
+                  />
+                  <div className="grid grid-cols-2 gap-4">
+                    <input
+                      type="number"
+                      name="order"
+                      defaultValue={editingSlider.order || 1}
+                      placeholder="Order"
+                      required
+                      className="w-full px-4 py-2 border border-gray-200 rounded-lg focus:outline-none focus:ring-2 focus:ring-primary-500"
+                    />
+                    <AnimatedSelect
+                      name="status"
+                      value={editingSlider.status || "active"}
+                      onChange={(e) => {
+                        const form = e.target.closest("form");
+                        if (form) {
+                          const statusInput =
+                            form.querySelector('[name="status"]');
+                          if (statusInput) statusInput.value = e.target.value;
+                        }
+                      }}
+                      options={[
+                        { value: "active", label: "Active" },
+                        { value: "inactive", label: "Inactive" },
+                      ]}
+                    />
+                  </div>
+                  <div className="flex items-center gap-2">
+                    <button
+                      type="submit"
+                      className="flex-1 px-4 py-2 bg-primary-600 text-white rounded-lg hover:bg-primary-700 transition-colors font-semibold">
+                      Save
+                    </button>
+                    <button
+                      type="button"
+                      onClick={() => setEditingSlider(null)}
+                      className="flex-1 px-4 py-2 bg-gray-200 text-gray-800 rounded-lg hover:bg-gray-300 transition-colors font-semibold">
+                      Cancel
+                    </button>
+                  </div>
+                </form>
               </motion.div>
             </motion.div>
           </>
@@ -301,4 +312,3 @@ const HomeSliders = () => {
 };
 
 export default HomeSliders;
-

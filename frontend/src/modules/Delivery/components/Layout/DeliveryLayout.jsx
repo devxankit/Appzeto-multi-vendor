@@ -48,17 +48,33 @@ const DeliveryLayout = () => {
             to="/delivery/dashboard"
             className="flex items-center flex-shrink-0 overflow-visible relative z-10">
             <div className="overflow-visible">
-              <img
-                src={appLogo.src}
-                alt={appLogo.alt}
-                className="h-8 w-auto object-contain origin-left"
-                style={{ transform: "scale(4) translateX(-3px)" }}
-                onError={(e) => {
-                  // Fallback to placeholder if logo doesn't exist
-                  e.target.src =
-                    "https://via.placeholder.com/120x40/2874F0/FFFFFF?text=LOGO";
-                }}
-              />
+              {appLogo.src ? (
+                <img
+                  src={appLogo.src}
+                  alt={appLogo.alt}
+                  className="h-6 sm:h-8 w-auto object-contain origin-left"
+                  onError={(e) => {
+                    // Hide image if logo doesn't exist
+                    e.target.style.display = "none";
+                    // Show text fallback
+                    const parent = e.target.parentElement;
+                    if (
+                      parent &&
+                      !parent.querySelector(".logo-text-fallback")
+                    ) {
+                      const fallback = document.createElement("span");
+                      fallback.className =
+                        "logo-text-fallback text-primary-600 font-bold text-sm sm:text-lg";
+                      fallback.textContent = "LOGO";
+                      parent.appendChild(fallback);
+                    }
+                  }}
+                />
+              ) : (
+                <span className="logo-text-fallback text-primary-600 font-bold text-sm sm:text-lg">
+                  LOGO
+                </span>
+              )}
             </div>
           </Link>
 
@@ -126,10 +142,11 @@ const DeliveryLayout = () => {
                         navigate(item.path);
                         setSidebarOpen(false);
                       }}
-                      className={`w-full flex items-center gap-3 px-4 py-3 rounded-xl mb-1 transition-colors ${isActive
+                      className={`w-full flex items-center gap-3 px-4 py-3 rounded-xl mb-1 transition-colors ${
+                        isActive
                           ? "bg-primary-50 text-primary-700"
                           : "text-gray-700 hover:bg-gray-100"
-                        }`}>
+                      }`}>
                       <Icon className="text-xl" />
                       <span className="font-medium">{item.label}</span>
                     </button>

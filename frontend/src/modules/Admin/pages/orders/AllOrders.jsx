@@ -1,5 +1,5 @@
-import { useState, useMemo, useEffect, useRef } from 'react';
-import { useNavigate } from 'react-router-dom';
+import { useState, useMemo, useEffect, useRef } from "react";
+import { useNavigate } from "react-router-dom";
 import {
   FiSearch,
   FiEye,
@@ -16,17 +16,18 @@ import {
   FiTrash2,
   FiMoreVertical,
   FiCalendar,
-  FiX
-} from 'react-icons/fi';
-import { motion, AnimatePresence } from 'framer-motion';
-import DataTable from '../../components/DataTable';
-import ExportButton from '../../components/ExportButton';
-import Badge from '../../../../shared/components/Badge';
-import ConfirmModal from '../../components/ConfirmModal';
-import AnimatedSelect from '../../components/AnimatedSelect';
-import { formatPrice } from '../../../../shared/utils/helpers';
-import { mockOrders } from '../../../../data/adminMockData';
-import toast from 'react-hot-toast';
+  FiX,
+} from "react-icons/fi";
+import { motion, AnimatePresence } from "framer-motion";
+import DataTable from "../../components/DataTable";
+import ExportButton from "../../components/ExportButton";
+import Badge from "../../../../shared/components/Badge";
+import ConfirmModal from "../../components/ConfirmModal";
+import AnimatedSelect from "../../components/AnimatedSelect";
+import { formatPrice } from "../../../../shared/utils/helpers";
+import { formatCurrency, formatDateTime } from "../../utils/adminHelpers";
+import { mockOrders } from "../../../../data/adminMockData";
+import toast from "react-hot-toast";
 
 // OrderItemsDropdown component
 const OrderItemsDropdown = ({ items, orderTotal }) => {
@@ -41,7 +42,7 @@ const OrderItemsDropdown = ({ items, orderTotal }) => {
       return items;
     }
     // If items is a number, generate mock items
-    if (typeof items === 'number' && items > 0) {
+    if (typeof items === "number" && items > 0) {
       const itemCount = items;
       const avgPrice = orderTotal / itemCount;
       return Array.from({ length: itemCount }, (_, i) => ({
@@ -83,13 +84,13 @@ const OrderItemsDropdown = ({ items, orderTotal }) => {
     };
 
     if (isOpen) {
-      document.addEventListener('mousedown', handleClickOutside);
-      document.addEventListener('touchstart', handleClickOutside);
+      document.addEventListener("mousedown", handleClickOutside);
+      document.addEventListener("touchstart", handleClickOutside);
     }
 
     return () => {
-      document.removeEventListener('mousedown', handleClickOutside);
-      document.removeEventListener('touchstart', handleClickOutside);
+      document.removeEventListener("mousedown", handleClickOutside);
+      document.removeEventListener("touchstart", handleClickOutside);
     };
   }, [isOpen]);
 
@@ -107,9 +108,10 @@ const OrderItemsDropdown = ({ items, orderTotal }) => {
           e.stopPropagation();
           setIsOpen(!isOpen);
         }}
-        className="flex items-center gap-1 text-blue-600 hover:text-blue-700 font-medium text-sm transition-colors"
-      >
-        <span>{itemCount} {itemCount === 1 ? 'item' : 'items'}</span>
+        className="flex items-center gap-1 text-blue-600 hover:text-blue-700 font-medium text-sm transition-colors">
+        <span>
+          {itemCount} {itemCount === 1 ? "item" : "items"}
+        </span>
         {isOpen ? (
           <FiChevronUp className="text-xs" />
         ) : (
@@ -124,31 +126,35 @@ const OrderItemsDropdown = ({ items, orderTotal }) => {
             initial={{
               opacity: 0,
               y: openUpward ? 10 : -10,
-              scale: 0.95
+              scale: 0.95,
             }}
             animate={{
               opacity: 1,
               y: 0,
-              scale: 1
+              scale: 1,
             }}
             exit={{
               opacity: 0,
               y: openUpward ? 10 : -10,
-              scale: 0.95
+              scale: 0.95,
             }}
             transition={{
               duration: 0.25,
               ease: [0.4, 0, 0.2, 1],
               type: "spring",
               stiffness: 300,
-              damping: 30
+              damping: 30,
             }}
-            className={`absolute left-0 z-50 bg-white rounded-xl shadow-2xl border border-gray-200 w-[85vw] sm:w-[500px] max-w-[600px] max-h-[400px] overflow-hidden ${openUpward ? 'bottom-full mb-2' : 'top-full mt-2'
-              }`}
-            style={{ transformOrigin: openUpward ? 'bottom left' : 'top left' }}
-          >
+            className={`absolute left-0 z-50 bg-white rounded-xl shadow-2xl border border-gray-200 w-[85vw] sm:w-[500px] max-w-[600px] max-h-[400px] overflow-hidden ${
+              openUpward ? "bottom-full mb-2" : "top-full mt-2"
+            }`}
+            style={{
+              transformOrigin: openUpward ? "bottom left" : "top left",
+            }}>
             <div className="p-4 border-b border-gray-200 bg-gray-50">
-              <h3 className="font-semibold text-gray-800 text-sm">Order Items</h3>
+              <h3 className="font-semibold text-gray-800 text-sm">
+                Order Items
+              </h3>
             </div>
             <div className="overflow-y-auto overflow-x-auto max-h-[320px] scrollbar-admin">
               <table className="w-full min-w-[600px] sm:min-w-0">
@@ -174,7 +180,8 @@ const OrderItemsDropdown = ({ items, orderTotal }) => {
                 <tbody className="divide-y divide-gray-200">
                   {normalizedItems.map((item, index) => {
                     const itemTotal = (item.price || 0) * (item.quantity || 1);
-                    const itemId = item.id || item.itemId || `ITEM-${index + 1}`;
+                    const itemId =
+                      item.id || item.itemId || `ITEM-${index + 1}`;
                     return (
                       <tr key={item.id || index} className="hover:bg-gray-50">
                         <td className="px-2 sm:px-4 py-2 text-sm text-gray-800 font-medium whitespace-nowrap">
@@ -214,7 +221,7 @@ const OrderActionsDropdown = ({
   onDeleteOrder,
   isOpen,
   onToggle,
-  onClose
+  onClose,
 }) => {
   const [openUpward, setOpenUpward] = useState(false);
   const dropdownRef = useRef(null);
@@ -249,56 +256,56 @@ const OrderActionsDropdown = ({
     };
 
     if (isOpen) {
-      document.addEventListener('mousedown', handleClickOutside);
-      document.addEventListener('touchstart', handleClickOutside);
+      document.addEventListener("mousedown", handleClickOutside);
+      document.addEventListener("touchstart", handleClickOutside);
     }
 
     return () => {
-      document.removeEventListener('mousedown', handleClickOutside);
-      document.removeEventListener('touchstart', handleClickOutside);
+      document.removeEventListener("mousedown", handleClickOutside);
+      document.removeEventListener("touchstart", handleClickOutside);
     };
   }, [isOpen, onClose]);
 
   const menuItems = [
     {
-      label: 'Order Details',
+      label: "Order Details",
       icon: FiEye,
       onClick: () => {
         onOrderDetails(order.id);
         onClose();
       },
-      color: 'text-blue-600',
-      hoverBg: 'hover:bg-blue-50',
+      color: "text-blue-600",
+      hoverBg: "hover:bg-blue-50",
     },
     {
-      label: 'Generate Invoice',
+      label: "Generate Invoice",
       icon: FiFileText,
       onClick: () => {
         onGenerateInvoice(order);
         onClose();
       },
-      color: 'text-green-600',
-      hoverBg: 'hover:bg-green-50',
+      color: "text-green-600",
+      hoverBg: "hover:bg-green-50",
     },
     {
-      label: 'Order Tracking',
+      label: "Order Tracking",
       icon: FiTruck,
       onClick: () => {
         onOrderTracking(order.id);
         onClose();
       },
-      color: 'text-indigo-600',
-      hoverBg: 'hover:bg-indigo-50',
+      color: "text-indigo-600",
+      hoverBg: "hover:bg-indigo-50",
     },
     {
-      label: 'Delete Order',
+      label: "Delete Order",
       icon: FiTrash2,
       onClick: () => {
         onDeleteOrder(order.id);
         onClose();
       },
-      color: 'text-red-600',
-      hoverBg: 'hover:bg-red-50',
+      color: "text-red-600",
+      hoverBg: "hover:bg-red-50",
     },
   ];
 
@@ -311,8 +318,7 @@ const OrderActionsDropdown = ({
           onToggle();
         }}
         className="p-2 text-blue-600 hover:bg-blue-50 rounded-lg transition-colors"
-        title="View Details"
-      >
+        title="View Details">
         <FiMoreVertical />
       </button>
 
@@ -323,23 +329,25 @@ const OrderActionsDropdown = ({
             initial={{
               opacity: 0,
               y: openUpward ? 10 : -10,
-              scale: 0.95
+              scale: 0.95,
             }}
             animate={{
               opacity: 1,
               y: 0,
-              scale: 1
+              scale: 1,
             }}
             exit={{
               opacity: 0,
               y: openUpward ? 10 : -10,
-              scale: 0.95
+              scale: 0.95,
             }}
             transition={{ duration: 0.2 }}
-            className={`absolute right-0 z-50 bg-white rounded-lg shadow-xl border border-gray-200 min-w-[180px] overflow-hidden ${openUpward ? 'bottom-full mb-2' : 'top-full mt-2'
-              }`}
-            style={{ transformOrigin: openUpward ? 'bottom right' : 'top right' }}
-          >
+            className={`absolute right-0 z-50 bg-white rounded-lg shadow-xl border border-gray-200 min-w-[180px] overflow-hidden ${
+              openUpward ? "bottom-full mb-2" : "top-full mt-2"
+            }`}
+            style={{
+              transformOrigin: openUpward ? "bottom right" : "top right",
+            }}>
             <div className="py-1">
               {menuItems.map((item, index) => {
                 const Icon = item.icon;
@@ -350,8 +358,7 @@ const OrderActionsDropdown = ({
                       e.stopPropagation();
                       item.onClick();
                     }}
-                    className={`w-full flex items-center gap-3 px-4 py-2.5 text-sm font-medium transition-colors ${item.color} ${item.hoverBg}`}
-                  >
+                    className={`w-full flex items-center gap-3 px-4 py-2.5 text-sm font-medium transition-colors ${item.color} ${item.hoverBg}`}>
                     <Icon className="text-base" />
                     <span>{item.label}</span>
                   </button>
@@ -368,11 +375,11 @@ const OrderActionsDropdown = ({
 const AllOrders = () => {
   const navigate = useNavigate();
   const [orders, setOrders] = useState([]);
-  const [searchQuery, setSearchQuery] = useState('');
-  const [selectedStatus, setSelectedStatus] = useState('all');
+  const [searchQuery, setSearchQuery] = useState("");
+  const [selectedStatus, setSelectedStatus] = useState("all");
   const [dateRange, setDateRange] = useState({
-    startDate: '',
-    endDate: '',
+    startDate: "",
+    endDate: "",
   });
   const [openDropdownId, setOpenDropdownId] = useState(null);
   const [deleteModal, setDeleteModal] = useState({
@@ -381,12 +388,12 @@ const AllOrders = () => {
   });
 
   useEffect(() => {
-    const savedOrders = localStorage.getItem('admin-orders');
+    const savedOrders = localStorage.getItem("admin-orders");
     if (savedOrders) {
       setOrders(JSON.parse(savedOrders));
     } else {
       setOrders(mockOrders);
-      localStorage.setItem('admin-orders', JSON.stringify(mockOrders));
+      localStorage.setItem("admin-orders", JSON.stringify(mockOrders));
     }
   }, []);
 
@@ -404,22 +411,22 @@ const AllOrders = () => {
     };
 
     orders.forEach((order) => {
-      const status = order.status?.toLowerCase() || '';
+      const status = order.status?.toLowerCase() || "";
 
       // Map statuses to our categories
-      if (status === 'pending' || status === 'awaiting') {
+      if (status === "pending" || status === "awaiting") {
         stats.awaiting++;
-      } else if (status === 'received') {
+      } else if (status === "received") {
         stats.received++;
-      } else if (status === 'processing' || status === 'processed') {
+      } else if (status === "processing" || status === "processed") {
         stats.processed++;
-      } else if (status === 'shipped') {
+      } else if (status === "shipped") {
         stats.shipped++;
-      } else if (status === 'delivered') {
+      } else if (status === "delivered") {
         stats.delivered++;
-      } else if (status === 'cancelled' || status === 'canceled') {
+      } else if (status === "cancelled" || status === "canceled") {
         stats.cancelled++;
-      } else if (status === 'returned') {
+      } else if (status === "returned") {
         stats.returned++;
       }
     });
@@ -434,12 +441,14 @@ const AllOrders = () => {
       filtered = filtered.filter(
         (order) =>
           order.id.toLowerCase().includes(searchQuery.toLowerCase()) ||
-          order.customer.name.toLowerCase().includes(searchQuery.toLowerCase()) ||
+          order.customer.name
+            .toLowerCase()
+            .includes(searchQuery.toLowerCase()) ||
           order.customer.email.toLowerCase().includes(searchQuery.toLowerCase())
       );
     }
 
-    if (selectedStatus !== 'all') {
+    if (selectedStatus !== "all") {
       filtered = filtered.filter((order) => order.status === selectedStatus);
     }
 
@@ -473,15 +482,18 @@ const AllOrders = () => {
 
   // Helper function to format payment method
   const formatPaymentMethod = (method) => {
-    if (!method) return 'N/A';
+    if (!method) return "N/A";
     const methodMap = {
-      card: 'Credit Card',
-      cod: 'Cash on Delivery',
-      wallet: 'Wallet',
-      creditCard: 'Credit Card',
-      cash: 'Cash on Delivery',
+      card: "Credit Card",
+      cod: "Cash on Delivery",
+      wallet: "Wallet",
+      creditCard: "Credit Card",
+      cash: "Cash on Delivery",
     };
-    return methodMap[method.toLowerCase()] || method.charAt(0).toUpperCase() + method.slice(1);
+    return (
+      methodMap[method.toLowerCase()] ||
+      method.charAt(0).toUpperCase() + method.slice(1)
+    );
   };
 
   // Helper function to calculate final total
@@ -515,9 +527,9 @@ const AllOrders = () => {
   const confirmDeleteOrder = () => {
     const updatedOrders = orders.filter((o) => o.id !== deleteModal.orderId);
     setOrders(updatedOrders);
-    localStorage.setItem('admin-orders', JSON.stringify(updatedOrders));
+    localStorage.setItem("admin-orders", JSON.stringify(updatedOrders));
     setDeleteModal({ isOpen: false, orderId: null });
-    toast.success('Order deleted successfully');
+    toast.success("Order deleted successfully");
   };
 
   const handleDropdownToggle = (orderId) => {
@@ -530,14 +542,14 @@ const AllOrders = () => {
 
   const columns = [
     {
-      key: 'id',
-      label: 'Order ID',
+      key: "id",
+      label: "Order ID",
       sortable: true,
       render: (value) => <span className="font-semibold">{value}</span>,
     },
     {
-      key: 'customer',
-      label: 'Customer',
+      key: "customer",
+      label: "Customer",
       sortable: true,
       render: (value) => (
         <div>
@@ -547,35 +559,37 @@ const AllOrders = () => {
       ),
     },
     {
-      key: 'items',
-      label: 'Items',
+      key: "items",
+      label: "Items",
       sortable: false,
       render: (value, row) => (
         <OrderItemsDropdown items={value} orderTotal={row.total || 0} />
       ),
     },
     {
-      key: 'total',
-      label: 'Total ($)',
+      key: "total",
+      label: "Total ($)",
       sortable: true,
       render: (value) => (
         <span className="font-bold text-gray-800">{formatCurrency(value)}</span>
       ),
     },
     {
-      key: 'finalTotal',
-      label: 'Final Total ($)',
+      key: "finalTotal",
+      label: "Final Total ($)",
       sortable: true,
       render: (value, row) => {
         const finalTotal = calculateFinalTotal(row);
         return (
-          <span className="font-bold text-gray-800">{formatCurrency(finalTotal)}</span>
+          <span className="font-bold text-gray-800">
+            {formatCurrency(finalTotal)}
+          </span>
         );
       },
     },
     {
-      key: 'paymentMethod',
-      label: 'Payment',
+      key: "paymentMethod",
+      label: "Payment",
       sortable: true,
       render: (value) => (
         <span className="text-gray-700 capitalize">
@@ -584,14 +598,14 @@ const AllOrders = () => {
       ),
     },
     {
-      key: 'date',
-      label: 'Order Date',
+      key: "date",
+      label: "Order Date",
       sortable: true,
       render: (value) => new Date(value).toLocaleString(),
     },
     {
-      key: 'actions',
-      label: 'Actions',
+      key: "actions",
+      label: "Actions",
       sortable: false,
       render: (_, row) => (
         <OrderActionsDropdown
@@ -611,60 +625,60 @@ const AllOrders = () => {
   // Order status cards configuration
   const statusCards = [
     {
-      title: 'Awaiting',
+      title: "Awaiting",
       value: orderStats.awaiting,
       icon: FiClock,
-      bgColor: 'bg-gradient-to-br from-yellow-500 to-amber-600',
-      cardBg: 'bg-gradient-to-br from-yellow-50 to-amber-50',
+      bgColor: "bg-gradient-to-br from-yellow-500 to-amber-600",
+      cardBg: "bg-gradient-to-br from-yellow-50 to-amber-50",
     },
     {
-      title: 'Received',
+      title: "Received",
       value: orderStats.received,
       icon: FiCheckCircle,
-      bgColor: 'bg-gradient-to-br from-blue-500 to-cyan-600',
-      cardBg: 'bg-gradient-to-br from-blue-50 to-cyan-50',
+      bgColor: "bg-gradient-to-br from-blue-500 to-cyan-600",
+      cardBg: "bg-gradient-to-br from-blue-50 to-cyan-50",
     },
     {
-      title: 'Processed',
+      title: "Processed",
       value: orderStats.processed,
       icon: FiPackage,
-      bgColor: 'bg-gradient-to-br from-indigo-500 to-purple-600',
-      cardBg: 'bg-gradient-to-br from-indigo-50 to-purple-50',
+      bgColor: "bg-gradient-to-br from-indigo-500 to-purple-600",
+      cardBg: "bg-gradient-to-br from-indigo-50 to-purple-50",
     },
     {
-      title: 'Shipped',
+      title: "Shipped",
       value: orderStats.shipped,
       icon: FiTruck,
-      bgColor: 'bg-gradient-to-br from-blue-500 to-indigo-600',
-      cardBg: 'bg-gradient-to-br from-blue-50 to-indigo-50',
+      bgColor: "bg-gradient-to-br from-blue-500 to-indigo-600",
+      cardBg: "bg-gradient-to-br from-blue-50 to-indigo-50",
     },
     {
-      title: 'Delivered',
+      title: "Delivered",
       value: orderStats.delivered,
       icon: FiCheckCircle,
-      bgColor: 'bg-gradient-to-br from-green-500 to-emerald-600',
-      cardBg: 'bg-gradient-to-br from-green-50 to-emerald-50',
+      bgColor: "bg-gradient-to-br from-green-500 to-emerald-600",
+      cardBg: "bg-gradient-to-br from-green-50 to-emerald-50",
     },
     {
-      title: 'Cancelled',
+      title: "Cancelled",
       value: orderStats.cancelled,
       icon: FiXCircle,
-      bgColor: 'bg-gradient-to-br from-red-500 to-rose-600',
-      cardBg: 'bg-gradient-to-br from-red-50 to-rose-50',
+      bgColor: "bg-gradient-to-br from-red-500 to-rose-600",
+      cardBg: "bg-gradient-to-br from-red-50 to-rose-50",
     },
     {
-      title: 'Returned',
+      title: "Returned",
       value: orderStats.returned,
       icon: FiRotateCw,
-      bgColor: 'bg-gradient-to-br from-orange-500 to-amber-600',
-      cardBg: 'bg-gradient-to-br from-orange-50 to-amber-50',
+      bgColor: "bg-gradient-to-br from-orange-500 to-amber-600",
+      cardBg: "bg-gradient-to-br from-orange-50 to-amber-50",
     },
     {
-      title: 'Total Orders',
+      title: "Total Orders",
       value: orderStats.total,
       icon: FiShoppingBag,
-      bgColor: 'bg-gradient-to-br from-gray-600 to-gray-800',
-      cardBg: 'bg-gradient-to-br from-gray-50 to-gray-100',
+      bgColor: "bg-gradient-to-br from-gray-600 to-gray-800",
+      cardBg: "bg-gradient-to-br from-gray-50 to-gray-100",
     },
   ];
 
@@ -672,12 +686,15 @@ const AllOrders = () => {
     <motion.div
       initial={{ opacity: 0, y: 20 }}
       animate={{ opacity: 1, y: 0 }}
-      className="space-y-6"
-    >
+      className="space-y-6">
       <div className="flex flex-col sm:flex-row items-start sm:items-center justify-between gap-4">
         <div className="lg:hidden">
-          <h1 className="text-2xl sm:text-3xl font-bold text-gray-800 mb-2">All Orders</h1>
-          <p className="text-sm sm:text-base text-gray-600">View and manage all customer orders</p>
+          <h1 className="text-2xl sm:text-3xl font-bold text-gray-800 mb-2">
+            All Orders
+          </h1>
+          <p className="text-sm sm:text-base text-gray-600">
+            View and manage all customer orders
+          </p>
         </div>
       </div>
 
@@ -691,19 +708,24 @@ const AllOrders = () => {
               initial={{ opacity: 0, y: 20 }}
               animate={{ opacity: 1, y: 0 }}
               transition={{ delay: index * 0.05 }}
-              className={`${card.cardBg} rounded-xl p-3 sm:p-4 shadow-md border-2 border-transparent hover:shadow-lg transition-all duration-300 relative overflow-hidden`}
-            >
+              className={`${card.cardBg} rounded-xl p-3 sm:p-4 shadow-md border-2 border-transparent hover:shadow-lg transition-all duration-300 relative overflow-hidden`}>
               {/* Decorative gradient overlay */}
-              <div className={`absolute top-0 right-0 w-24 h-24 sm:w-32 sm:h-32 ${card.bgColor} opacity-10 rounded-full -mr-12 -mt-12 sm:-mr-16 sm:-mt-16`}></div>
+              <div
+                className={`absolute top-0 right-0 w-24 h-24 sm:w-32 sm:h-32 ${card.bgColor} opacity-10 rounded-full -mr-12 -mt-12 sm:-mr-16 sm:-mt-16`}></div>
 
               <div className="flex items-center justify-between mb-2 sm:mb-3 relative z-10">
-                <div className={`${card.bgColor} bg-white/20 p-2 sm:p-2.5 rounded-lg shadow-md`}>
+                <div
+                  className={`${card.bgColor} bg-white/20 p-2 sm:p-2.5 rounded-lg shadow-md`}>
                   <Icon className="text-white text-base sm:text-lg" />
                 </div>
               </div>
               <div className="relative z-10">
-                <h3 className="text-gray-600 text-xs sm:text-sm font-medium mb-1">{card.title}</h3>
-                <p className="text-gray-800 text-lg sm:text-xl font-bold">{card.value.toLocaleString()}</p>
+                <h3 className="text-gray-600 text-xs sm:text-sm font-medium mb-1">
+                  {card.title}
+                </h3>
+                <p className="text-gray-800 text-lg sm:text-xl font-bold">
+                  {card.value.toLocaleString()}
+                </p>
               </div>
             </motion.div>
           );
@@ -727,12 +749,12 @@ const AllOrders = () => {
             value={selectedStatus}
             onChange={(e) => setSelectedStatus(e.target.value)}
             options={[
-              { value: 'all', label: 'All Status' },
-              { value: 'pending', label: 'Pending' },
-              { value: 'processing', label: 'Processing' },
-              { value: 'shipped', label: 'Shipped' },
-              { value: 'delivered', label: 'Delivered' },
-              { value: 'cancelled', label: 'Cancelled' },
+              { value: "all", label: "All Status" },
+              { value: "pending", label: "Pending" },
+              { value: "processing", label: "Processing" },
+              { value: "shipped", label: "Shipped" },
+              { value: "delivered", label: "Delivered" },
+              { value: "cancelled", label: "Cancelled" },
             ]}
             className="w-full sm:w-auto min-w-[140px]"
           />
@@ -745,7 +767,9 @@ const AllOrders = () => {
                 <input
                   type="date"
                   value={dateRange.startDate}
-                  onChange={(e) => setDateRange({ ...dateRange, startDate: e.target.value })}
+                  onChange={(e) =>
+                    setDateRange({ ...dateRange, startDate: e.target.value })
+                  }
                   max={dateRange.endDate || undefined}
                   className="w-full sm:w-auto pl-10 pr-4 py-2.5 bg-gray-50 border border-gray-200 rounded-lg focus:outline-none focus:ring-2 focus:ring-primary-500 text-sm sm:text-base min-w-[140px]"
                   placeholder="Start Date"
@@ -756,7 +780,9 @@ const AllOrders = () => {
                 <input
                   type="date"
                   value={dateRange.endDate}
-                  onChange={(e) => setDateRange({ ...dateRange, endDate: e.target.value })}
+                  onChange={(e) =>
+                    setDateRange({ ...dateRange, endDate: e.target.value })
+                  }
                   min={dateRange.startDate || undefined}
                   className="w-full sm:w-auto px-4 py-2.5 bg-gray-50 border border-gray-200 rounded-lg focus:outline-none focus:ring-2 focus:ring-primary-500 text-sm sm:text-base min-w-[140px]"
                   placeholder="End Date"
@@ -764,10 +790,9 @@ const AllOrders = () => {
               </div>
               {(dateRange.startDate || dateRange.endDate) && (
                 <button
-                  onClick={() => setDateRange({ startDate: '', endDate: '' })}
+                  onClick={() => setDateRange({ startDate: "", endDate: "" })}
                   className="p-2 text-gray-500 hover:text-gray-700 hover:bg-gray-100 rounded-lg transition-colors"
-                  title="Clear Date Range"
-                >
+                  title="Clear Date Range">
                   <FiX className="text-lg" />
                 </button>
               )}
@@ -778,29 +803,37 @@ const AllOrders = () => {
             <ExportButton
               data={filteredOrders}
               headers={[
-                { label: 'Order ID', accessor: (row) => row.id },
-                { label: 'Customer', accessor: (row) => row.customer.name },
-                { label: 'Email', accessor: (row) => row.customer.email },
+                { label: "Order ID", accessor: (row) => row.id },
+                { label: "Customer", accessor: (row) => row.customer.name },
+                { label: "Email", accessor: (row) => row.customer.email },
                 {
-                  label: 'Items',
+                  label: "Items",
                   accessor: (row) => {
                     if (Array.isArray(row.items)) {
-                      return row.items.map((item) => `${item.name} (Qty: ${item.quantity})`).join(', ');
+                      return row.items
+                        .map((item) => `${item.name} (Qty: ${item.quantity})`)
+                        .join(", ");
                     }
                     return `${row.items} items`;
                   },
                 },
-                { label: 'Total ($)', accessor: (row) => formatCurrency(row.total || 0) },
                 {
-                  label: 'Final Total ($)',
+                  label: "Total ($)",
+                  accessor: (row) => formatCurrency(row.total || 0),
+                },
+                {
+                  label: "Final Total ($)",
                   accessor: (row) => formatCurrency(calculateFinalTotal(row)),
                 },
                 {
-                  label: 'Payment',
+                  label: "Payment",
                   accessor: (row) => formatPaymentMethod(row.paymentMethod),
                 },
-                { label: 'Order Date', accessor: (row) => formatDateTime(row.date) },
-                { label: 'Status', accessor: (row) => row.status },
+                {
+                  label: "Order Date",
+                  accessor: (row) => formatDateTime(row.date),
+                },
+                { label: "Status", accessor: (row) => row.status },
               ]}
               filename="all-orders"
             />
@@ -830,4 +863,3 @@ const AllOrders = () => {
 };
 
 export default AllOrders;
-

@@ -11,11 +11,23 @@ import RecommendedSection from "../components/Mobile/RecommendedSection";
 import FeaturedVendorsSection from "../components/Mobile/FeaturedVendorsSection";
 import BrandLogosScroll from "../../UserWeb/components/Home/BrandLogosScroll";
 import LazyImage from "../../../shared/components/LazyImage";
-import { getMostPopular, getTrending, getFlashSale } from '../../../data/products';
-import { categories } from '../../../data/categories';
+import {
+  getMostPopular,
+  getTrending,
+  getFlashSale,
+} from "../../../data/products";
+import { categories } from "../../../data/categories";
 import PageTransition from "../../../shared/components/PageTransition";
 import usePullToRefresh from "../hooks/usePullToRefresh";
 import toast from "react-hot-toast";
+import heroSlide1 from "../../../../data/hero/slide1.png";
+import heroSlide2 from "../../../../data/hero/slide2.png";
+import heroSlide3 from "../../../../data/hero/slide3.png";
+import heroSlide4 from "../../../../data/hero/slide4.png";
+import heroBanner2 from "../../../../data/hero/banner2.png";
+import babycareBanner from "../../../../data/banners/babycare-WEB.avif";
+import pharmacyBanner from "../../../../data/banners/pharmacy-WEB.avif";
+import petCareBanner from "../../../../data/banners/Pet-Care_WEB.avif";
 
 const MobileHome = () => {
   const [currentSlide, setCurrentSlide] = useState(0);
@@ -25,10 +37,10 @@ const MobileHome = () => {
   const [autoSlidePaused, setAutoSlidePaused] = useState(false);
 
   const slides = [
-    { image: "/images/hero/slide1.png" },
-    { image: "/images/hero/slide2.png" },
-    { image: "/images/hero/slide3.png" },
-    { image: "/images/hero/slide4.png" },
+    { image: heroSlide1 },
+    { image: heroSlide2 },
+    { image: heroSlide3 },
+    { image: heroSlide4 },
   ];
 
   const mostPopular = getMostPopular();
@@ -38,7 +50,7 @@ const MobileHome = () => {
   // Auto-slide functionality (pauses when user is dragging)
   useEffect(() => {
     if (autoSlidePaused) return;
-    
+
     const interval = setInterval(() => {
       setCurrentSlide((prev) => (prev + 1) % slides.length);
     }, 5000);
@@ -75,7 +87,7 @@ const MobileHome = () => {
 
   const onTouchEnd = (e) => {
     if (e) e.stopPropagation(); // Prevent pull-to-refresh from interfering
-    
+
     if (touchStart === null) {
       setAutoSlidePaused(false);
       return;
@@ -83,7 +95,7 @@ const MobileHome = () => {
 
     // Calculate swipe distance: positive = left swipe, negative = right swipe
     const distance = touchStart - (touchEnd || touchStart);
-    const isLeftSwipe = distance > minSwipeDistance;  // Finger moved left = show next slide
+    const isLeftSwipe = distance > minSwipeDistance; // Finger moved left = show next slide
     const isRightSwipe = distance < -minSwipeDistance; // Finger moved right = show previous slide
 
     if (isLeftSwipe) {
@@ -98,7 +110,7 @@ const MobileHome = () => {
     setTouchStart(null);
     setTouchEnd(null);
     setDragOffset(0);
-    
+
     // Resume auto-slide after a short delay
     setTimeout(() => {
       setAutoSlidePaused(false);
@@ -140,13 +152,13 @@ const MobileHome = () => {
           }}>
           {/* Hero Banner */}
           <div className="px-4 py-4">
-            <div 
+            <div
               className="relative w-full h-48 rounded-2xl overflow-hidden"
               data-carousel
               onTouchStart={onTouchStart}
               onTouchMove={onTouchMove}
               onTouchEnd={onTouchEnd}
-              style={{ touchAction: 'pan-y', userSelect: 'none' }}>
+              style={{ touchAction: "pan-y", userSelect: "none" }}>
               {/* Slider Container - All slides in a row */}
               <motion.div
                 className="flex h-full"
@@ -155,9 +167,12 @@ const MobileHome = () => {
                   height: "100%",
                 }}
                 animate={{
-                  x: dragOffset !== 0 
-                    ? `calc(-${currentSlide * (100 / slides.length)}% - ${dragOffset}px)`
-                    : `-${currentSlide * (100 / slides.length)}%`,
+                  x:
+                    dragOffset !== 0
+                      ? `calc(-${
+                          currentSlide * (100 / slides.length)
+                        }% - ${dragOffset}px)`
+                      : `-${currentSlide * (100 / slides.length)}%`,
                 }}
                 transition={{
                   duration: dragOffset !== 0 ? 0 : 0.6,
@@ -228,7 +243,7 @@ const MobileHome = () => {
                   transition={{ delay: 0.1 }}
                   className="relative w-[calc(50vw-1.5rem)] h-32 rounded-xl overflow-hidden shadow-lg">
                   <LazyImage
-                    src="/images/banners/babycare-WEB.avif"
+                    src={babycareBanner}
                     alt="Baby Care"
                     className="w-full h-full object-cover"
                     onError={(e) => {
@@ -245,7 +260,7 @@ const MobileHome = () => {
                   transition={{ delay: 0.2 }}
                   className="relative w-[calc(50vw-1.5rem)] h-32 rounded-xl overflow-hidden shadow-lg">
                   <LazyImage
-                    src="/images/banners/pharmacy-WEB.avif"
+                    src={pharmacyBanner}
                     alt="Pharmacy"
                     className="w-full h-full object-cover"
                     onError={(e) => {
@@ -262,7 +277,7 @@ const MobileHome = () => {
                   transition={{ delay: 0.3 }}
                   className="relative w-[calc(50vw-1.5rem)] h-32 rounded-xl overflow-hidden shadow-lg">
                   <LazyImage
-                    src="/images/banners/Pet-Care_WEB.avif"
+                    src={petCareBanner}
                     alt="Pet Care"
                     className="w-full h-full object-cover"
                     onError={(e) => {
@@ -309,7 +324,7 @@ const MobileHome = () => {
               transition={{ delay: 0.3 }}
               className="relative w-full h-40 rounded-xl overflow-hidden shadow-lg">
               <LazyImage
-                src="/images/hero/banner2.png"
+                src={heroBanner2}
                 alt="Trending Items Banner"
                 className="w-full h-full object-cover object-center"
                 onError={(e) => {
@@ -382,15 +397,13 @@ const MobileHome = () => {
             whileInView={{ opacity: 1, y: 0 }}
             viewport={{ once: true }}
             transition={{ duration: 0.6 }}
-            className="px-4 py-12 text-left"
-          >
+            className="px-4 py-12 text-left">
             <motion.h2
               className="text-4xl sm:text-5xl md:text-6xl lg:text-7xl font-black text-gray-400 leading-tight flex items-center justify-start gap-3 flex-wrap"
               initial={{ opacity: 0 }}
               whileInView={{ opacity: 1 }}
               viewport={{ once: true }}
-              transition={{ duration: 0.8, delay: 0.2 }}
-            >
+              transition={{ duration: 0.8, delay: 0.2 }}>
               <span>Shop from 50+ Trusted Vendors</span>
               <motion.span
                 animate={{
@@ -401,8 +414,7 @@ const MobileHome = () => {
                   repeat: Infinity,
                   repeatDelay: 2,
                 }}
-                className="text-primary-500 inline-block"
-              >
+                className="text-primary-500 inline-block">
                 <FiHeart className="text-5xl sm:text-6xl md:text-7xl lg:text-8xl fill-primary-500" />
               </motion.span>
             </motion.h2>

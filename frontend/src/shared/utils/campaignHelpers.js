@@ -1,4 +1,5 @@
-import { useBannerStore } from '../store/bannerStore';
+import { useBannerStore } from "../store/bannerStore";
+import beautyPromoImg from "../../../data/promotional/beauty.jpg";
 
 /**
  * Creates a banner automatically for a campaign
@@ -13,23 +14,25 @@ export const createCampaignBanner = (campaign, bannerConfig = null) => {
   }
 
   const bannerStore = useBannerStore.getState();
-  
+
   // Get existing promotional banners to determine order
-  const existingPromoBanners = bannerStore.getBannersByType('promotional');
-  const nextOrder = existingPromoBanners.length > 0 
-    ? Math.max(...existingPromoBanners.map(b => b.order || 0)) + 1 
-    : 1;
+  const existingPromoBanners = bannerStore.getBannersByType("promotional");
+  const nextOrder =
+    existingPromoBanners.length > 0
+      ? Math.max(...existingPromoBanners.map((b) => b.order || 0)) + 1
+      : 1;
 
   // Generate banner data
   const bannerData = {
-    type: 'promotional',
+    type: "promotional",
     title: bannerConfig?.title || campaign.name,
-    subtitle: bannerConfig?.subtitle || 
-      (campaign.discountType === 'percentage' 
-        ? `${campaign.discountValue}% OFF` 
-        : campaign.description || 'Special Offer'),
-    description: bannerConfig?.description || campaign.description || '',
-    image: bannerConfig?.image || '/images/promotional/beauty.jpg', // Default promotional image
+    subtitle:
+      bannerConfig?.subtitle ||
+      (campaign.discountType === "percentage"
+        ? `${campaign.discountValue}% OFF`
+        : campaign.description || "Special Offer"),
+    description: bannerConfig?.description || campaign.description || "",
+    image: bannerConfig?.image || beautyPromoImg, // Default promotional image
     link: campaign.route || `/sale/${campaign.slug}`,
     order: nextOrder,
     isActive: campaign.isActive,
@@ -41,8 +44,7 @@ export const createCampaignBanner = (campaign, bannerConfig = null) => {
     const banner = bannerStore.createBanner(bannerData);
     return banner;
   } catch (error) {
-    console.error('Failed to create campaign banner:', error);
+    console.error("Failed to create campaign banner:", error);
     return null;
   }
 };
-

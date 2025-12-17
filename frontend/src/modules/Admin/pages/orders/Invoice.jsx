@@ -1,30 +1,31 @@
-import { useState, useEffect } from 'react';
-import { useNavigate, useParams } from 'react-router-dom';
-import { FiArrowLeft, FiDownload, FiPrinter } from 'react-icons/fi';
-import { motion } from 'framer-motion';
-import { formatPrice } from '../../../../shared/utils/helpers';
-import { mockOrders } from '../../../../data/adminMockData';
-import { useSettingsStore } from '../../../../shared/store/settingsStore';
-import toast from 'react-hot-toast';
+import { useState, useEffect } from "react";
+import { useNavigate, useParams } from "react-router-dom";
+import { FiArrowLeft, FiDownload, FiPrinter } from "react-icons/fi";
+import { motion } from "framer-motion";
+import { formatPrice } from "../../../../shared/utils/helpers";
+import { mockOrders } from "../../../../data/adminMockData";
+import { useSettingsStore } from "../../../../shared/store/settingsStore";
+import toast from "react-hot-toast";
+import logoImage from "../../../../../data/logos/ChatGPT Image Dec 2, 2025, 03_01_19 PM.png";
 
 const Invoice = () => {
   const navigate = useNavigate();
   const { id } = useParams();
   const [order, setOrder] = useState(null);
   const { settings } = useSettingsStore();
-  const storeLogo = settings?.general?.storeLogo || '/images/logos/logo.png';
-  const storeName = settings?.general?.storeName || 'Appzeto E-commerce';
+  const storeLogo = settings?.general?.storeLogo || logoImage;
+  const storeName = settings?.general?.storeName || "Appzeto E-commerce";
 
   useEffect(() => {
-    const savedOrders = localStorage.getItem('admin-orders');
+    const savedOrders = localStorage.getItem("admin-orders");
     const orders = savedOrders ? JSON.parse(savedOrders) : mockOrders;
     const foundOrder = orders.find((o) => o.id === id);
 
     if (foundOrder) {
       setOrder(foundOrder);
     } else {
-      toast.error('Order not found');
-      navigate('/admin/orders/all-orders');
+      toast.error("Order not found");
+      navigate("/admin/orders/all-orders");
     }
   }, [id, navigate]);
 
@@ -40,32 +41,36 @@ const Invoice = () => {
   const items = Array.isArray(order.items)
     ? order.items
     : Array.from({ length: order.items || 1 }, (_, i) => ({
-      id: i + 1,
-      name: `Item ${i + 1}`,
-      quantity: 1,
-      price: (order.total || 0) / (order.items || 1),
-    }));
+        id: i + 1,
+        name: `Item ${i + 1}`,
+        quantity: 1,
+        price: (order.total || 0) / (order.items || 1),
+      }));
 
   // Calculate totals
   const subtotal = order.subtotal || order.total || 0;
   const tax = order.tax || 0;
   const discount = order.discount || 0;
   const shipping = order.shipping || 0;
-  const finalTotal = order.finalTotal !== undefined
-    ? order.finalTotal
-    : subtotal + tax + shipping - discount;
+  const finalTotal =
+    order.finalTotal !== undefined
+      ? order.finalTotal
+      : subtotal + tax + shipping - discount;
 
   // Format payment method
   const formatPaymentMethod = (method) => {
-    if (!method) return 'N/A';
+    if (!method) return "N/A";
     const methodMap = {
-      card: 'Credit Card',
-      cod: 'Cash on Delivery',
-      wallet: 'Wallet',
-      creditCard: 'Credit Card',
-      cash: 'Cash on Delivery',
+      card: "Credit Card",
+      cod: "Cash on Delivery",
+      wallet: "Wallet",
+      creditCard: "Credit Card",
+      cash: "Cash on Delivery",
     };
-    return methodMap[method.toLowerCase()] || method.charAt(0).toUpperCase() + method.slice(1);
+    return (
+      methodMap[method.toLowerCase()] ||
+      method.charAt(0).toUpperCase() + method.slice(1)
+    );
   };
 
   const handleDownload = () => {
@@ -75,40 +80,49 @@ Order #${order.id}
 Date: ${new Date(order.date).toLocaleString()}
 
 Customer Information:
-${order.customer?.name || 'N/A'}
-${order.customer?.email || 'N/A'}
-${order.customer?.phone || order.shippingAddress?.phone || ''}
+${order.customer?.name || "N/A"}
+${order.customer?.email || "N/A"}
+${order.customer?.phone || order.shippingAddress?.phone || ""}
 
 Shipping Address:
-${order.shippingAddress?.name || order.customer?.name || 'N/A'}
-${order.shippingAddress?.address || 'N/A'}
-${order.shippingAddress?.city || ''}, ${order.shippingAddress?.state || ''} ${order.shippingAddress?.zipCode || ''}
-${order.shippingAddress?.country || ''}
+${order.shippingAddress?.name || order.customer?.name || "N/A"}
+${order.shippingAddress?.address || "N/A"}
+${order.shippingAddress?.city || ""}, ${order.shippingAddress?.state || ""} ${
+      order.shippingAddress?.zipCode || ""
+    }
+${order.shippingAddress?.country || ""}
 
 Items:
-${items.map(item => `- ${item.name || 'Item'} x${item.quantity || 1} - ${formatPrice((item.price || 0) * (item.quantity || 1))}`).join('\n')}
+${items
+  .map(
+    (item) =>
+      `- ${item.name || "Item"} x${item.quantity || 1} - ${formatPrice(
+        (item.price || 0) * (item.quantity || 1)
+      )}`
+  )
+  .join("\n")}
 
 Subtotal: ${formatPrice(subtotal)}
-${discount > 0 ? `Discount: -${formatPrice(discount)}\n` : ''}
-${tax > 0 ? `Tax: ${formatPrice(tax)}\n` : ''}
-${shipping > 0 ? `Shipping: ${formatPrice(shipping)}\n` : ''}
+${discount > 0 ? `Discount: -${formatPrice(discount)}\n` : ""}
+${tax > 0 ? `Tax: ${formatPrice(tax)}\n` : ""}
+${shipping > 0 ? `Shipping: ${formatPrice(shipping)}\n` : ""}
 Total: ${formatPrice(finalTotal)}
 
 Payment Method: ${formatPaymentMethod(order.paymentMethod)}
 Status: ${order.status}
-${order.trackingNumber ? `Tracking Number: ${order.trackingNumber}` : ''}
+${order.trackingNumber ? `Tracking Number: ${order.trackingNumber}` : ""}
     `.trim();
 
-    const blob = new Blob([invoiceText], { type: 'text/plain' });
+    const blob = new Blob([invoiceText], { type: "text/plain" });
     const url = URL.createObjectURL(blob);
-    const a = document.createElement('a');
+    const a = document.createElement("a");
     a.href = url;
     a.download = `invoice-${order.id}.txt`;
     document.body.appendChild(a);
     a.click();
     document.body.removeChild(a);
     URL.revokeObjectURL(url);
-    toast.success('Invoice downloaded successfully!');
+    toast.success("Invoice downloaded successfully!");
   };
 
   const handlePrint = () => {
@@ -122,33 +136,31 @@ ${order.trackingNumber ? `Tracking Number: ${order.trackingNumber}` : ''}
         <motion.div
           initial={{ opacity: 0, y: 20 }}
           animate={{ opacity: 1, y: 0 }}
-          className="space-y-6"
-        >
+          className="space-y-6">
           <div className="flex items-center justify-between bg-white rounded-lg p-4 shadow-sm border border-gray-200">
             <div className="flex items-center gap-3">
               <button
                 onClick={() => navigate(-1)}
-                className="p-1.5 hover:bg-gray-100 rounded-lg transition-colors"
-              >
+                className="p-1.5 hover:bg-gray-100 rounded-lg transition-colors">
                 <FiArrowLeft className="text-lg text-gray-600" />
               </button>
               <div>
-                <h1 className="text-xl sm:text-2xl font-bold text-gray-800">Invoice</h1>
+                <h1 className="text-xl sm:text-2xl font-bold text-gray-800">
+                  Invoice
+                </h1>
                 <p className="text-xs text-gray-500">Order #{order.id}</p>
               </div>
             </div>
             <div className="flex items-center gap-2">
               <button
                 onClick={handleDownload}
-                className="flex items-center gap-2 px-4 py-2 bg-gray-100 text-gray-700 rounded-lg hover:bg-gray-200 transition-colors text-sm font-semibold"
-              >
+                className="flex items-center gap-2 px-4 py-2 bg-gray-100 text-gray-700 rounded-lg hover:bg-gray-200 transition-colors text-sm font-semibold">
                 <FiDownload />
                 Download
               </button>
               <button
                 onClick={handlePrint}
-                className="flex items-center gap-2 px-4 py-2 bg-blue-600 text-white rounded-lg hover:bg-blue-700 transition-colors text-sm font-semibold"
-              >
+                className="flex items-center gap-2 px-4 py-2 bg-blue-600 text-white rounded-lg hover:bg-blue-700 transition-colors text-sm font-semibold">
                 <FiPrinter />
                 Print
               </button>
@@ -169,7 +181,7 @@ ${order.trackingNumber ? `Tracking Number: ${order.trackingNumber}` : ''}
                 alt={storeName}
                 className="h-24 sm:h-32 md:h-40 w-auto object-contain"
                 onError={(e) => {
-                  e.target.src = '/images/logos/logo.png';
+                  e.target.src = logoImage;
                 }}
               />
             </div>
@@ -184,37 +196,55 @@ ${order.trackingNumber ? `Tracking Number: ${order.trackingNumber}` : ''}
           {/* Invoice Title */}
           <div className="mt-6">
             <h2 className="text-3xl font-bold text-gray-800 mb-2">INVOICE</h2>
-            <p className="text-gray-600">Order #<span className="font-semibold">{order.id}</span></p>
-            <p className="text-sm text-gray-500 mt-1">Date: {new Date(order.date).toLocaleString()}</p>
+            <p className="text-gray-600">
+              Order #<span className="font-semibold">{order.id}</span>
+            </p>
+            <p className="text-sm text-gray-500 mt-1">
+              Date: {new Date(order.date).toLocaleString()}
+            </p>
           </div>
         </div>
 
         {/* Customer & Shipping Info */}
         <div className="grid grid-cols-1 md:grid-cols-2 gap-6 mb-8">
           <div>
-            <h3 className="text-sm font-bold text-gray-800 mb-3 uppercase">Bill To</h3>
+            <h3 className="text-sm font-bold text-gray-800 mb-3 uppercase">
+              Bill To
+            </h3>
             <div className="text-sm text-gray-700 space-y-1">
-              <p className="font-semibold">{order.customer?.name || 'N/A'}</p>
-              <p>{order.customer?.email || 'N/A'}</p>
+              <p className="font-semibold">{order.customer?.name || "N/A"}</p>
+              <p>{order.customer?.email || "N/A"}</p>
               {order.customer?.phone && <p>{order.customer.phone}</p>}
             </div>
           </div>
           {order.shippingAddress && (
             <div>
-              <h3 className="text-sm font-bold text-gray-800 mb-3 uppercase">Ship To</h3>
+              <h3 className="text-sm font-bold text-gray-800 mb-3 uppercase">
+                Ship To
+              </h3>
               <div className="text-sm text-gray-700 space-y-1">
-                <p className="font-semibold">{order.shippingAddress.name || order.customer?.name || 'N/A'}</p>
-                {order.shippingAddress.address && <p>{order.shippingAddress.address}</p>}
-                {(order.shippingAddress.city || order.shippingAddress.state || order.shippingAddress.zipCode) && (
+                <p className="font-semibold">
+                  {order.shippingAddress.name || order.customer?.name || "N/A"}
+                </p>
+                {order.shippingAddress.address && (
+                  <p>{order.shippingAddress.address}</p>
+                )}
+                {(order.shippingAddress.city ||
+                  order.shippingAddress.state ||
+                  order.shippingAddress.zipCode) && (
                   <p>
                     {[
                       order.shippingAddress.city,
                       order.shippingAddress.state,
-                      order.shippingAddress.zipCode
-                    ].filter(Boolean).join(', ')}
+                      order.shippingAddress.zipCode,
+                    ]
+                      .filter(Boolean)
+                      .join(", ")}
                   </p>
                 )}
-                {order.shippingAddress.country && <p>{order.shippingAddress.country}</p>}
+                {order.shippingAddress.country && (
+                  <p>{order.shippingAddress.country}</p>
+                )}
               </div>
             </div>
           )}
@@ -225,10 +255,18 @@ ${order.trackingNumber ? `Tracking Number: ${order.trackingNumber}` : ''}
           <table className="w-full">
             <thead className="bg-gray-50 border-b border-gray-200">
               <tr>
-                <th className="px-4 py-3 text-left text-xs font-semibold text-gray-700 uppercase">Item</th>
-                <th className="px-4 py-3 text-center text-xs font-semibold text-gray-700 uppercase">Quantity</th>
-                <th className="px-4 py-3 text-right text-xs font-semibold text-gray-700 uppercase">Unit Price</th>
-                <th className="px-4 py-3 text-right text-xs font-semibold text-gray-700 uppercase">Total</th>
+                <th className="px-4 py-3 text-left text-xs font-semibold text-gray-700 uppercase">
+                  Item
+                </th>
+                <th className="px-4 py-3 text-center text-xs font-semibold text-gray-700 uppercase">
+                  Quantity
+                </th>
+                <th className="px-4 py-3 text-right text-xs font-semibold text-gray-700 uppercase">
+                  Unit Price
+                </th>
+                <th className="px-4 py-3 text-right text-xs font-semibold text-gray-700 uppercase">
+                  Total
+                </th>
               </tr>
             </thead>
             <tbody className="divide-y divide-gray-200">
@@ -236,10 +274,18 @@ ${order.trackingNumber ? `Tracking Number: ${order.trackingNumber}` : ''}
                 const itemTotal = (item.price || 0) * (item.quantity || 1);
                 return (
                   <tr key={item.id || index} className="hover:bg-gray-50">
-                    <td className="px-4 py-3 text-sm text-gray-800">{item.name || `Item ${index + 1}`}</td>
-                    <td className="px-4 py-3 text-sm text-gray-700 text-center">{item.quantity || 1}</td>
-                    <td className="px-4 py-3 text-sm text-gray-700 text-right">{formatPrice(item.price || 0)}</td>
-                    <td className="px-4 py-3 text-sm font-semibold text-gray-800 text-right">{formatPrice(itemTotal)}</td>
+                    <td className="px-4 py-3 text-sm text-gray-800">
+                      {item.name || `Item ${index + 1}`}
+                    </td>
+                    <td className="px-4 py-3 text-sm text-gray-700 text-center">
+                      {item.quantity || 1}
+                    </td>
+                    <td className="px-4 py-3 text-sm text-gray-700 text-right">
+                      {formatPrice(item.price || 0)}
+                    </td>
+                    <td className="px-4 py-3 text-sm font-semibold text-gray-800 text-right">
+                      {formatPrice(itemTotal)}
+                    </td>
                   </tr>
                 );
               })}
@@ -283,11 +329,15 @@ ${order.trackingNumber ? `Tracking Number: ${order.trackingNumber}` : ''}
         <div className="mt-8 pt-6 border-t border-gray-200 grid grid-cols-1 sm:grid-cols-2 gap-4 text-sm">
           <div>
             <p className="font-semibold text-gray-800 mb-1">Payment Method:</p>
-            <p className="text-gray-600">{formatPaymentMethod(order.paymentMethod)}</p>
+            <p className="text-gray-600">
+              {formatPaymentMethod(order.paymentMethod)}
+            </p>
           </div>
           {order.trackingNumber && (
             <div>
-              <p className="font-semibold text-gray-800 mb-1">Tracking Number:</p>
+              <p className="font-semibold text-gray-800 mb-1">
+                Tracking Number:
+              </p>
               <p className="text-gray-600 font-mono">{order.trackingNumber}</p>
             </div>
           )}
@@ -358,4 +408,3 @@ ${order.trackingNumber ? `Tracking Number: ${order.trackingNumber}` : ''}
 };
 
 export default Invoice;
-

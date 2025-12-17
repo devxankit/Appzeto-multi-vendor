@@ -9,6 +9,7 @@ import {
 import { motion } from "framer-motion";
 import { Link } from "react-router-dom";
 import { useBannerStore } from "../../../../shared/store/bannerStore";
+import { useCampaignStore } from "../../../../shared/store/campaignStore";
 import CampaignForm from "../../components/Campaigns/CampaignForm";
 import DataTable from "../../components/DataTable";
 import Badge from "../../../../shared/components/Badge";
@@ -93,13 +94,25 @@ const FestivalOffers = () => {
       key: "startDate",
       label: "Start Date",
       sortable: true,
-      render: (value) => new Date(value).toLocaleDateString() + ' ' + new Date(value).toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' }),
+      render: (value) =>
+        new Date(value).toLocaleDateString() +
+        " " +
+        new Date(value).toLocaleTimeString([], {
+          hour: "2-digit",
+          minute: "2-digit",
+        }),
     },
     {
       key: "endDate",
       label: "End Date",
       sortable: true,
-      render: (value) => new Date(value).toLocaleDateString() + ' ' + new Date(value).toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' }),
+      render: (value) =>
+        new Date(value).toLocaleDateString() +
+        " " +
+        new Date(value).toLocaleTimeString([], {
+          hour: "2-digit",
+          minute: "2-digit",
+        }),
     },
     {
       key: "status",
@@ -111,8 +124,8 @@ const FestivalOffers = () => {
             value === "active"
               ? "success"
               : value === "upcoming"
-                ? "warning"
-                : "error"
+              ? "warning"
+              : "error"
           }>
           {value}
         </Badge>

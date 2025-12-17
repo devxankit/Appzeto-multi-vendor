@@ -243,7 +243,7 @@ const BannerForm = ({ banner, onClose, onSave }) => {
                     onChange={handleChange}
                     required
                     className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-primary-500"
-                    placeholder="/images/banners/banner.png"
+                    placeholder="data/banners/banner.png"
                   />
                   {formData.image && (
                     <div className="mt-4">

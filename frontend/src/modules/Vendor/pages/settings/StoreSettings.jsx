@@ -1,34 +1,38 @@
-import { useState, useEffect } from 'react';
-import { FiSave, FiImage, FiGlobe, FiShoppingBag } from 'react-icons/fi';
-import { motion } from 'framer-motion';
+import { useState, useEffect } from "react";
+import { FiSave, FiImage, FiGlobe, FiShoppingBag } from "react-icons/fi";
+import { motion } from "framer-motion";
 import { useVendorAuthStore } from "../../store/vendorAuthStore";
 import { useVendorStore } from "../../store/vendorStore";
 import AnimatedSelect from "../../../Admin/components/AnimatedSelect";
-import toast from 'react-hot-toast';
+import toast from "react-hot-toast";
 
 const StoreSettings = () => {
   const { vendor } = useVendorAuthStore();
   const { updateVendorProfile } = useVendorAuthStore();
   const [formData, setFormData] = useState({});
-  const [activeSection, setActiveSection] = useState('identity');
+  const [activeSection, setActiveSection] = useState("identity");
 
   useEffect(() => {
     if (vendor) {
       setFormData({
-        storeName: vendor.storeName || '',
-        storeLogo: vendor.storeLogo || '',
-        storeDescription: vendor.storeDescription || '',
-        email: vendor.email || '',
-        phone: vendor.phone || '',
-        address: vendor.address ? `${vendor.address.street || ''}, ${vendor.address.city || ''}, ${vendor.address.state || ''} ${vendor.address.zipCode || ''}` : '',
-        businessHours: vendor.businessHours || 'Mon-Fri 9AM-6PM',
-        timezone: vendor.timezone || 'UTC',
-        currency: vendor.currency || 'INR',
+        storeName: vendor.storeName || "",
+        storeLogo: vendor.storeLogo || "",
+        storeDescription: vendor.storeDescription || "",
+        email: vendor.email || "",
+        phone: vendor.phone || "",
+        address: vendor.address
+          ? `${vendor.address.street || ""}, ${vendor.address.city || ""}, ${
+              vendor.address.state || ""
+            } ${vendor.address.zipCode || ""}`
+          : "",
+        businessHours: vendor.businessHours || "Mon-Fri 9AM-6PM",
+        timezone: vendor.timezone || "UTC",
+        currency: vendor.currency || "INR",
         socialMedia: vendor.socialMedia || {
-          facebook: '',
-          instagram: '',
-          twitter: '',
-          linkedin: '',
+          facebook: "",
+          instagram: "",
+          twitter: "",
+          linkedin: "",
         },
       });
     }
@@ -57,14 +61,14 @@ const StoreSettings = () => {
       // Parse address if provided
       let addressData = vendor.address || {};
       if (formData.address) {
-        const addressParts = formData.address.split(',');
+        const addressParts = formData.address.split(",");
         if (addressParts.length >= 3) {
           addressData = {
             street: addressParts[0].trim(),
             city: addressParts[1].trim(),
-            state: addressParts[2].trim().split(' ')[0],
-            zipCode: addressParts[2].trim().split(' ')[1] || '',
-            country: vendor.address?.country || 'USA',
+            state: addressParts[2].trim().split(" ")[0],
+            zipCode: addressParts[2].trim().split(" ")[1] || "",
+            country: vendor.address?.country || "USA",
           };
         }
       }
@@ -83,16 +87,16 @@ const StoreSettings = () => {
       };
 
       updateVendorProfile(vendor.id, updateData);
-      toast.success('Store settings saved successfully');
+      toast.success("Store settings saved successfully");
     } catch (error) {
-      toast.error('Failed to save settings');
+      toast.error("Failed to save settings");
     }
   };
 
   const sections = [
-    { id: 'identity', label: 'Store Identity', icon: FiShoppingBag },
-    { id: 'contact', label: 'Contact Info', icon: FiGlobe },
-    { id: 'social', label: 'Social Media', icon: FiImage },
+    { id: "identity", label: "Store Identity", icon: FiShoppingBag },
+    { id: "contact", label: "Contact Info", icon: FiGlobe },
+    { id: "social", label: "Social Media", icon: FiImage },
   ];
 
   if (!vendor) {
@@ -107,11 +111,14 @@ const StoreSettings = () => {
     <motion.div
       initial={{ opacity: 0, y: 20 }}
       animate={{ opacity: 1, y: 0 }}
-      className="space-y-6 max-w-full overflow-x-hidden"
-    >
+      className="space-y-6 max-w-full overflow-x-hidden">
       <div className="lg:hidden">
-        <h1 className="text-2xl sm:text-3xl font-bold text-gray-800 mb-2">Store Settings</h1>
-        <p className="text-sm sm:text-base text-gray-600">Configure your store identity and information</p>
+        <h1 className="text-2xl sm:text-3xl font-bold text-gray-800 mb-2">
+          Store Settings
+        </h1>
+        <p className="text-sm sm:text-base text-gray-600">
+          Configure your store identity and information
+        </p>
       </div>
 
       {/* Section Tabs */}
@@ -124,11 +131,11 @@ const StoreSettings = () => {
                 <button
                   key={section.id}
                   onClick={() => setActiveSection(section.id)}
-                  className={`flex items-center gap-1.5 sm:gap-2 px-3 sm:px-4 md:px-6 py-3 sm:py-4 border-b-2 transition-colors whitespace-nowrap text-xs sm:text-sm ${activeSection === section.id
-                      ? 'border-purple-600 text-purple-600 font-semibold'
-                      : 'border-transparent text-gray-600 hover:text-gray-800'
-                    }`}
-                >
+                  className={`flex items-center gap-1.5 sm:gap-2 px-3 sm:px-4 md:px-6 py-3 sm:py-4 border-b-2 transition-colors whitespace-nowrap text-xs sm:text-sm ${
+                    activeSection === section.id
+                      ? "border-purple-600 text-purple-600 font-semibold"
+                      : "border-transparent text-gray-600 hover:text-gray-800"
+                  }`}>
                   <Icon className="text-base sm:text-lg" />
                   <span>{section.label}</span>
                 </button>
@@ -139,7 +146,7 @@ const StoreSettings = () => {
 
         <form onSubmit={handleSubmit} className="p-3 sm:p-4 md:p-6">
           {/* Store Identity Section */}
-          {activeSection === 'identity' && (
+          {activeSection === "identity" && (
             <div className="space-y-6">
               <div className="grid grid-cols-1 md:grid-cols-2 gap-4 sm:gap-6">
                 <div>
@@ -149,7 +156,7 @@ const StoreSettings = () => {
                   <input
                     type="text"
                     name="storeName"
-                    value={formData.storeName || ''}
+                    value={formData.storeName || ""}
                     onChange={handleChange}
                     required
                     className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-purple-500"
@@ -163,10 +170,10 @@ const StoreSettings = () => {
                   <input
                     type="text"
                     name="storeLogo"
-                    value={formData.storeLogo || ''}
+                    value={formData.storeLogo || ""}
                     onChange={handleChange}
                     className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-purple-500"
-                    placeholder="/images/logos/logo.png"
+                    placeholder="data/logos/logo.png"
                   />
                 </div>
 
@@ -176,7 +183,7 @@ const StoreSettings = () => {
                   </label>
                   <textarea
                     name="storeDescription"
-                    value={formData.storeDescription || ''}
+                    value={formData.storeDescription || ""}
                     onChange={handleChange}
                     rows={3}
                     className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-purple-500"
@@ -190,15 +197,15 @@ const StoreSettings = () => {
                   </label>
                   <AnimatedSelect
                     name="timezone"
-                    value={formData.timezone || 'UTC'}
+                    value={formData.timezone || "UTC"}
                     onChange={handleChange}
                     options={[
-                      { value: 'UTC', label: 'UTC' },
-                      { value: 'America/New_York', label: 'Eastern Time' },
-                      { value: 'America/Chicago', label: 'Central Time' },
-                      { value: 'America/Denver', label: 'Mountain Time' },
-                      { value: 'America/Los_Angeles', label: 'Pacific Time' },
-                      { value: 'Asia/Kolkata', label: 'IST (India)' },
+                      { value: "UTC", label: "UTC" },
+                      { value: "America/New_York", label: "Eastern Time" },
+                      { value: "America/Chicago", label: "Central Time" },
+                      { value: "America/Denver", label: "Mountain Time" },
+                      { value: "America/Los_Angeles", label: "Pacific Time" },
+                      { value: "Asia/Kolkata", label: "IST (India)" },
                     ]}
                   />
                 </div>
@@ -209,13 +216,13 @@ const StoreSettings = () => {
                   </label>
                   <AnimatedSelect
                     name="currency"
-                    value={formData.currency || 'INR'}
+                    value={formData.currency || "INR"}
                     onChange={handleChange}
                     options={[
-                      { value: 'INR', label: 'INR (₹)' },
-                      { value: 'USD', label: 'USD ($)' },
-                      { value: 'EUR', label: 'EUR (€)' },
-                      { value: 'GBP', label: 'GBP (£)' },
+                      { value: "INR", label: "INR (₹)" },
+                      { value: "USD", label: "USD ($)" },
+                      { value: "EUR", label: "EUR (€)" },
+                      { value: "GBP", label: "GBP (£)" },
                     ]}
                   />
                 </div>
@@ -224,7 +231,7 @@ const StoreSettings = () => {
           )}
 
           {/* Contact Info Section */}
-          {activeSection === 'contact' && (
+          {activeSection === "contact" && (
             <div className="space-y-6">
               <div className="grid grid-cols-1 md:grid-cols-2 gap-4 sm:gap-6">
                 <div>
@@ -234,7 +241,7 @@ const StoreSettings = () => {
                   <input
                     type="email"
                     name="email"
-                    value={formData.email || ''}
+                    value={formData.email || ""}
                     onChange={handleChange}
                     required
                     className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-purple-500"
@@ -248,7 +255,7 @@ const StoreSettings = () => {
                   <input
                     type="tel"
                     name="phone"
-                    value={formData.phone || ''}
+                    value={formData.phone || ""}
                     onChange={handleChange}
                     required
                     className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-purple-500"
@@ -261,7 +268,7 @@ const StoreSettings = () => {
                   </label>
                   <textarea
                     name="address"
-                    value={formData.address || ''}
+                    value={formData.address || ""}
                     onChange={handleChange}
                     rows={2}
                     className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-purple-500"
@@ -276,7 +283,7 @@ const StoreSettings = () => {
                   <input
                     type="text"
                     name="businessHours"
-                    value={formData.businessHours || ''}
+                    value={formData.businessHours || ""}
                     onChange={handleChange}
                     placeholder="Mon-Fri 9AM-6PM"
                     className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-purple-500"
@@ -287,7 +294,7 @@ const StoreSettings = () => {
           )}
 
           {/* Social Media Section */}
-          {activeSection === 'social' && (
+          {activeSection === "social" && (
             <div className="space-y-6">
               <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
                 <div>
@@ -296,8 +303,10 @@ const StoreSettings = () => {
                   </label>
                   <input
                     type="url"
-                    value={formData.socialMedia?.facebook || ''}
-                    onChange={(e) => handleSocialMediaChange('facebook', e.target.value)}
+                    value={formData.socialMedia?.facebook || ""}
+                    onChange={(e) =>
+                      handleSocialMediaChange("facebook", e.target.value)
+                    }
                     placeholder="https://facebook.com/yourpage"
                     className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-purple-500"
                   />
@@ -308,8 +317,10 @@ const StoreSettings = () => {
                   </label>
                   <input
                     type="url"
-                    value={formData.socialMedia?.instagram || ''}
-                    onChange={(e) => handleSocialMediaChange('instagram', e.target.value)}
+                    value={formData.socialMedia?.instagram || ""}
+                    onChange={(e) =>
+                      handleSocialMediaChange("instagram", e.target.value)
+                    }
                     placeholder="https://instagram.com/yourpage"
                     className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-purple-500"
                   />
@@ -320,8 +331,10 @@ const StoreSettings = () => {
                   </label>
                   <input
                     type="url"
-                    value={formData.socialMedia?.twitter || ''}
-                    onChange={(e) => handleSocialMediaChange('twitter', e.target.value)}
+                    value={formData.socialMedia?.twitter || ""}
+                    onChange={(e) =>
+                      handleSocialMediaChange("twitter", e.target.value)
+                    }
                     placeholder="https://twitter.com/yourpage"
                     className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-purple-500"
                   />
@@ -332,8 +345,10 @@ const StoreSettings = () => {
                   </label>
                   <input
                     type="url"
-                    value={formData.socialMedia?.linkedin || ''}
-                    onChange={(e) => handleSocialMediaChange('linkedin', e.target.value)}
+                    value={formData.socialMedia?.linkedin || ""}
+                    onChange={(e) =>
+                      handleSocialMediaChange("linkedin", e.target.value)
+                    }
                     placeholder="https://linkedin.com/company/yourpage"
                     className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-purple-500"
                   />
@@ -345,8 +360,7 @@ const StoreSettings = () => {
           <div className="flex justify-end pt-4 sm:pt-6 border-t border-gray-200 mt-4 sm:mt-6">
             <button
               type="submit"
-              className="flex items-center gap-2 px-4 sm:px-6 py-2 bg-purple-600 text-white rounded-lg hover:bg-purple-700 transition-all font-semibold text-sm sm:text-base w-full sm:w-auto"
-            >
+              className="flex items-center gap-2 px-4 sm:px-6 py-2 bg-purple-600 text-white rounded-lg hover:bg-purple-700 transition-all font-semibold text-sm sm:text-base w-full sm:w-auto">
               <FiSave />
               Save Settings
             </button>
@@ -358,4 +372,3 @@ const StoreSettings = () => {
 };
 
 export default StoreSettings;
-

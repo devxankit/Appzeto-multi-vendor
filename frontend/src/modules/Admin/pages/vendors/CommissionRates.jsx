@@ -6,12 +6,12 @@ import DataTable from "../../components/DataTable";
 import ExportButton from "../../components/ExportButton";
 import Badge from "../../../../shared/components/Badge";
 import ConfirmModal from "../../components/ConfirmModal";
-import { useVendorAuthStore } from "../../../Vendor/store/vendorAuthStore";
+import { useVendorStore } from "../../../Vendor/store/vendorStore";
 import toast from "react-hot-toast";
 
 const CommissionRates = () => {
   const navigate = useNavigate();
-  const { vendors, updateCommissionRate } = useVendorAuthStore();
+  const { vendors, updateCommissionRate } = useVendorStore();
   const [searchQuery, setSearchQuery] = useState("");
   const [commissionModal, setCommissionModal] = useState({
     isOpen: false,
@@ -43,7 +43,12 @@ const CommissionRates = () => {
       return;
     }
     updateCommissionRate(commissionModal.vendorId, rate);
-    setCommissionModal({ isOpen: false, vendorId: null, vendorName: null, currentRate: "" });
+    setCommissionModal({
+      isOpen: false,
+      vendorId: null,
+      vendorName: null,
+      currentRate: "",
+    });
     setNewRate("");
     toast.success("Commission rate updated successfully");
   };
@@ -148,9 +153,16 @@ const CommissionRates = () => {
                 data={filteredVendors}
                 headers={[
                   { label: "ID", accessor: (row) => row.id },
-                  { label: "Store Name", accessor: (row) => row.storeName || row.name },
+                  {
+                    label: "Store Name",
+                    accessor: (row) => row.storeName || row.name,
+                  },
                   { label: "Email", accessor: (row) => row.email },
-                  { label: "Commission Rate", accessor: (row) => `${((row.commissionRate || 0) * 100).toFixed(1)}%` },
+                  {
+                    label: "Commission Rate",
+                    accessor: (row) =>
+                      `${((row.commissionRate || 0) * 100).toFixed(1)}%`,
+                  },
                 ]}
                 filename="vendor-commission-rates"
               />
@@ -172,7 +184,12 @@ const CommissionRates = () => {
       <ConfirmModal
         isOpen={commissionModal.isOpen}
         onClose={() => {
-          setCommissionModal({ isOpen: false, vendorId: null, vendorName: null, currentRate: "" });
+          setCommissionModal({
+            isOpen: false,
+            vendorId: null,
+            vendorName: null,
+            currentRate: "",
+          });
           setNewRate("");
         }}
         onConfirm={handleCommissionUpdate}
@@ -185,7 +202,9 @@ const CommissionRates = () => {
           <div className="mt-4">
             <div className="mb-3">
               <p className="text-sm text-gray-600 mb-1">Current Rate</p>
-              <p className="text-lg font-bold text-gray-800">{commissionModal.currentRate}%</p>
+              <p className="text-lg font-bold text-gray-800">
+                {commissionModal.currentRate}%
+              </p>
             </div>
             <label className="block text-sm font-semibold text-gray-700 mb-2">
               New Commission Rate (%)
@@ -211,4 +230,3 @@ const CommissionRates = () => {
 };
 
 export default CommissionRates;
-

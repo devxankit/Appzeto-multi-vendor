@@ -1,29 +1,42 @@
-import { useState, useEffect } from 'react';
-import { motion, AnimatePresence } from 'framer-motion';
-import { Link } from 'react-router-dom';
-import { FiHeart } from 'react-icons/fi';
-import Header from '../components/Layout/Header';
-import Navbar from '../components/Layout/Navbar';
-import Footer from '../components/Layout/Footer';
-import HeroBanner from '../components/Home/HeroBanner';
-import BrandLogosScroll from '../components/Home/BrandLogosScroll';
-import CategoriesSection from '../components/Home/CategoriesSection';
-import PromotionalBanners from '../components/Home/PromotionalBanners';
-import MostPopularSection from '../components/Home/MostPopularSection';
-import TrendingBanner from '../components/Home/TrendingBanner';
-import TrendingItemsSection from '../components/Home/TrendingItemsSection';
-import FlashSaleSection from '../components/Home/FlashSaleSection';
-import PopularBrandsSection from '../components/Home/PopularBrandsSection';
-import FeaturesSection from '../components/Home/FeaturesSection';
-import AnimatedBanner from '../../UserApp/components/Mobile/AnimatedBanner';
-import NewArrivalsSection from '../../UserApp/components/Mobile/NewArrivalsSection';
-import DailyDealsSection from '../../UserApp/components/Mobile/DailyDealsSection';
-import ProductCard from '../../../shared/components/ProductCard';
-import LazyImage from '../../../shared/components/LazyImage';
-import { getMostPopular, getTrending, getFlashSale, getRecommendedProducts } from '../../../data/products';
-import { FiThumbsUp, FiArrowRight } from 'react-icons/fi';
-import PageTransition from '../../../shared/components/PageTransition';
-import useResponsiveHeaderPadding from '../../../shared/hooks/useResponsiveHeaderPadding';
+import { useState, useEffect } from "react";
+import { motion, AnimatePresence } from "framer-motion";
+import { Link } from "react-router-dom";
+import { FiHeart } from "react-icons/fi";
+import Header from "../components/Layout/Header";
+import Navbar from "../components/Layout/Navbar";
+import Footer from "../components/Layout/Footer";
+import HeroBanner from "../components/Home/HeroBanner";
+import BrandLogosScroll from "../components/Home/BrandLogosScroll";
+import CategoriesSection from "../components/Home/CategoriesSection";
+import PromotionalBanners from "../components/Home/PromotionalBanners";
+import MostPopularSection from "../components/Home/MostPopularSection";
+import TrendingBanner from "../components/Home/TrendingBanner";
+import TrendingItemsSection from "../components/Home/TrendingItemsSection";
+import FlashSaleSection from "../components/Home/FlashSaleSection";
+import PopularBrandsSection from "../components/Home/PopularBrandsSection";
+import FeaturesSection from "../components/Home/FeaturesSection";
+import AnimatedBanner from "../../UserApp/components/Mobile/AnimatedBanner";
+import NewArrivalsSection from "../../UserApp/components/Mobile/NewArrivalsSection";
+import DailyDealsSection from "../../UserApp/components/Mobile/DailyDealsSection";
+import ProductCard from "../../../shared/components/ProductCard";
+import LazyImage from "../../../shared/components/LazyImage";
+import {
+  getMostPopular,
+  getTrending,
+  getFlashSale,
+  getRecommendedProducts,
+} from "../../../data/products";
+import { FiThumbsUp, FiArrowRight } from "react-icons/fi";
+import PageTransition from "../../../shared/components/PageTransition";
+import useResponsiveHeaderPadding from "../../../shared/hooks/useResponsiveHeaderPadding";
+import heroSlide1 from "../../../../data/hero/slide1.png";
+import heroSlide2 from "../../../../data/hero/slide2.png";
+import heroSlide3 from "../../../../data/hero/slide3.png";
+import heroSlide4 from "../../../../data/hero/slide4.png";
+import heroBanner2 from "../../../../data/hero/banner2.png";
+import babycareBanner from "../../../../data/banners/babycare-WEB.avif";
+import pharmacyBanner from "../../../../data/banners/pharmacy-WEB.avif";
+import petCareBanner from "../../../../data/banners/Pet-Care_WEB.avif";
 
 const Home = () => {
   const { responsivePadding } = useResponsiveHeaderPadding();
@@ -31,10 +44,10 @@ const Home = () => {
   const [autoSlidePaused, setAutoSlidePaused] = useState(false);
 
   const slides = [
-    { image: "/images/hero/slide1.png" },
-    { image: "/images/hero/slide2.png" },
-    { image: "/images/hero/slide3.png" },
-    { image: "/images/hero/slide4.png" },
+    { image: heroSlide1 },
+    { image: heroSlide2 },
+    { image: heroSlide3 },
+    { image: heroSlide4 },
   ];
 
   const mostPopular = getMostPopular();
@@ -45,37 +58,42 @@ const Home = () => {
   // Auto-slide functionality
   useEffect(() => {
     if (autoSlidePaused) return;
-    
+
     const interval = setInterval(() => {
       setCurrentSlide((prev) => (prev + 1) % slides.length);
     }, 5000);
     return () => clearInterval(interval);
   }, [slides.length, autoSlidePaused]);
-  
+
   // Ensure body scroll is restored when component mounts
   useEffect(() => {
-    document.body.style.overflowY = '';
+    document.body.style.overflowY = "";
     return () => {
-      document.body.style.overflowY = '';
+      document.body.style.overflowY = "";
     };
   }, []);
 
   return (
     <PageTransition>
-      <div className="min-h-screen w-full overflow-x-hidden" style={{ backgroundColor: 'rgba(241,242,244,1.00)' }}>
+      <div
+        className="min-h-screen w-full overflow-x-hidden"
+        style={{ backgroundColor: "rgba(241,242,244,1.00)" }}>
         <Header />
         <Navbar />
-        <main className="w-full overflow-x-hidden" style={{ paddingTop: `${responsivePadding}px` }}>
+        <main
+          className="w-full overflow-x-hidden"
+          style={{ paddingTop: `${responsivePadding}px` }}>
           {/* Desktop Layout - Redesigned with multi-column layout */}
           <div className="hidden md:block">
-            <div className="mx-auto desktop-container" style={{ maxWidth: '996px', padding: '0 12px' }}>
+            <div
+              className="mx-auto desktop-container"
+              style={{ maxWidth: "996px", padding: "0 12px" }}>
               {/* Hero Banner Carousel */}
               <div className="py-4">
-                <div 
+                <div
                   className="relative w-full h-64 rounded-2xl overflow-hidden shadow-xl cursor-pointer"
                   onMouseEnter={() => setAutoSlidePaused(true)}
-                  onMouseLeave={() => setAutoSlidePaused(false)}
-                >
+                  onMouseLeave={() => setAutoSlidePaused(false)}>
                   <AnimatePresence mode="wait">
                     {slides.map((slide, index) => {
                       if (index !== currentSlide) return null;
@@ -86,14 +104,15 @@ const Home = () => {
                           animate={{ opacity: 1, scale: 1 }}
                           exit={{ opacity: 0, scale: 0.95 }}
                           transition={{ duration: 0.6 }}
-                          className="absolute inset-0"
-                        >
+                          className="absolute inset-0">
                           <LazyImage
                             src={slide.image}
                             alt={`Slide ${index + 1}`}
                             className="w-full h-full object-cover"
                             onError={(e) => {
-                              e.target.src = `https://via.placeholder.com/1200x400?text=Slide+${index + 1}`;
+                              e.target.src = `https://via.placeholder.com/1200x400?text=Slide+${
+                                index + 1
+                              }`;
                             }}
                           />
                         </motion.div>
@@ -122,7 +141,7 @@ const Home = () => {
 
               {/* Brand Logos Scroll */}
               <div className="py-3">
-              <BrandLogosScroll />
+                <BrandLogosScroll />
               </div>
 
               {/* Animated Banner */}
@@ -143,14 +162,14 @@ const Home = () => {
                       initial={{ opacity: 0, y: 20 }}
                       animate={{ opacity: 1, y: 0 }}
                       transition={{ delay: 0.1 }}
-                      className="relative w-full h-32 rounded-xl overflow-hidden shadow-lg hover:shadow-xl transition-shadow"
-                    >
+                      className="relative w-full h-32 rounded-xl overflow-hidden shadow-lg hover:shadow-xl transition-shadow">
                       <LazyImage
-                        src="/images/banners/babycare-WEB.avif"
+                        src={babycareBanner}
                         alt="Baby Care"
                         className="w-full h-full object-cover"
                         onError={(e) => {
-                          e.target.src = "https://via.placeholder.com/400x200?text=Baby+Care";
+                          e.target.src =
+                            "https://via.placeholder.com/400x200?text=Baby+Care";
                         }}
                       />
                     </motion.div>
@@ -160,14 +179,14 @@ const Home = () => {
                       initial={{ opacity: 0, y: 20 }}
                       animate={{ opacity: 1, y: 0 }}
                       transition={{ delay: 0.2 }}
-                      className="relative w-full h-32 rounded-xl overflow-hidden shadow-lg hover:shadow-xl transition-shadow"
-                    >
+                      className="relative w-full h-32 rounded-xl overflow-hidden shadow-lg hover:shadow-xl transition-shadow">
                       <LazyImage
                         src="/images/banners/pharmacy-WEB.avif"
                         alt="Pharmacy"
                         className="w-full h-full object-cover"
                         onError={(e) => {
-                          e.target.src = "https://via.placeholder.com/400x200?text=Pharmacy";
+                          e.target.src =
+                            "https://via.placeholder.com/400x200?text=Pharmacy";
                         }}
                       />
                     </motion.div>
@@ -177,14 +196,14 @@ const Home = () => {
                       initial={{ opacity: 0, y: 20 }}
                       animate={{ opacity: 1, y: 0 }}
                       transition={{ delay: 0.3 }}
-                      className="relative w-full h-32 rounded-xl overflow-hidden shadow-lg hover:shadow-xl transition-shadow"
-                    >
+                      className="relative w-full h-32 rounded-xl overflow-hidden shadow-lg hover:shadow-xl transition-shadow">
                       <LazyImage
-                        src="/images/banners/Pet-Care_WEB.avif"
+                        src={petCareBanner}
                         alt="Pet Care"
                         className="w-full h-full object-cover"
                         onError={(e) => {
-                          e.target.src = "https://via.placeholder.com/400x200?text=Pet+Care";
+                          e.target.src =
+                            "https://via.placeholder.com/400x200?text=Pet+Care";
                         }}
                       />
                     </motion.div>
@@ -194,14 +213,14 @@ const Home = () => {
                       initial={{ opacity: 0, y: 20 }}
                       animate={{ opacity: 1, y: 0 }}
                       transition={{ delay: 0.4 }}
-                      className="relative w-full h-32 rounded-xl overflow-hidden shadow-lg hover:shadow-xl transition-shadow"
-                    >
+                      className="relative w-full h-32 rounded-xl overflow-hidden shadow-lg hover:shadow-xl transition-shadow">
                       <LazyImage
                         src="/images/banners/babycare-WEB.avif"
                         alt="Special Offers"
                         className="w-full h-full object-cover"
                         onError={(e) => {
-                          e.target.src = "https://via.placeholder.com/400x200?text=Special+Offers";
+                          e.target.src =
+                            "https://via.placeholder.com/400x200?text=Special+Offers";
                         }}
                       />
                     </motion.div>
@@ -212,11 +231,12 @@ const Home = () => {
               {/* Most Popular Section - 6-column Grid with more products */}
               <div className="py-4">
                 <div className="flex items-center justify-between mb-4">
-                  <h2 className="text-2xl font-bold text-gray-800">Most Popular</h2>
+                  <h2 className="text-2xl font-bold text-gray-800">
+                    Most Popular
+                  </h2>
                   <Link
                     to="/app/search"
-                    className="text-sm text-primary-600 font-semibold hover:text-primary-700 transition-colors"
-                  >
+                    className="text-sm text-primary-600 font-semibold hover:text-primary-700 transition-colors">
                     See All
                   </Link>
                 </div>
@@ -226,8 +246,7 @@ const Home = () => {
                       key={product.id}
                       initial={{ opacity: 0, y: 20 }}
                       animate={{ opacity: 1, y: 0 }}
-                      transition={{ delay: index * 0.03 }}
-                    >
+                      transition={{ delay: index * 0.03 }}>
                       <ProductCard product={product} />
                     </motion.div>
                   ))}
@@ -245,14 +264,14 @@ const Home = () => {
                   initial={{ opacity: 0, y: 20 }}
                   animate={{ opacity: 1, y: 0 }}
                   transition={{ delay: 0.3 }}
-                  className="relative w-full h-48 rounded-xl overflow-hidden shadow-lg"
-                >
+                  className="relative w-full h-48 rounded-xl overflow-hidden shadow-lg">
                   <LazyImage
-                    src="/images/hero/banner2.png"
+                    src={heroBanner2}
                     alt="Trending Items Banner"
                     className="w-full h-full object-cover object-center"
                     onError={(e) => {
-                      e.target.src = "https://via.placeholder.com/1200x300?text=Banner";
+                      e.target.src =
+                        "https://via.placeholder.com/1200x300?text=Banner";
                     }}
                   />
                 </motion.div>
@@ -266,12 +285,13 @@ const Home = () => {
                       <h2 className="text-2xl font-bold text-gray-800">
                         Flash Sale
                       </h2>
-                      <p className="text-sm text-gray-600">Limited time offers</p>
+                      <p className="text-sm text-gray-600">
+                        Limited time offers
+                      </p>
                     </div>
                     <Link
                       to="/app/flash-sale"
-                      className="text-sm text-primary-600 font-semibold hover:text-primary-700 transition-colors"
-                    >
+                      className="text-sm text-primary-600 font-semibold hover:text-primary-700 transition-colors">
                       See All
                     </Link>
                   </div>
@@ -281,8 +301,7 @@ const Home = () => {
                         key={product.id}
                         initial={{ opacity: 0, y: 20 }}
                         animate={{ opacity: 1, y: 0 }}
-                        transition={{ delay: index * 0.03 }}
-                      >
+                        transition={{ delay: index * 0.03 }}>
                         <ProductCard product={product} />
                       </motion.div>
                     ))}
@@ -293,11 +312,12 @@ const Home = () => {
               {/* Trending Items Section - 6-column Grid with more products */}
               <div className="py-4">
                 <div className="flex items-center justify-between mb-4">
-                  <h2 className="text-2xl font-bold text-gray-800">Trending Now</h2>
+                  <h2 className="text-2xl font-bold text-gray-800">
+                    Trending Now
+                  </h2>
                   <Link
                     to="/app/search"
-                    className="text-sm text-primary-600 font-semibold hover:text-primary-700 transition-colors"
-                  >
+                    className="text-sm text-primary-600 font-semibold hover:text-primary-700 transition-colors">
                     See All
                   </Link>
                 </div>
@@ -307,8 +327,7 @@ const Home = () => {
                       key={product.id}
                       initial={{ opacity: 0, y: 20 }}
                       animate={{ opacity: 1, y: 0 }}
-                      transition={{ delay: index * 0.03 }}
-                    >
+                      transition={{ delay: index * 0.03 }}>
                       <ProductCard product={product} />
                     </motion.div>
                   ))}
@@ -327,13 +346,14 @@ const Home = () => {
                         <h2 className="text-2xl font-bold text-gray-800 leading-tight">
                           Recommended for You
                         </h2>
-                        <p className="text-sm text-gray-500 mt-0.5">Curated just for you</p>
+                        <p className="text-sm text-gray-500 mt-0.5">
+                          Curated just for you
+                        </p>
                       </div>
                     </div>
                     <Link
                       to="/app/search"
-                      className="flex items-center gap-1 text-sm text-primary-600 font-semibold hover:text-primary-700 transition-colors"
-                    >
+                      className="flex items-center gap-1 text-sm text-primary-600 font-semibold hover:text-primary-700 transition-colors">
                       <span>See All</span>
                       <FiArrowRight className="text-sm" />
                     </Link>
@@ -344,8 +364,7 @@ const Home = () => {
                         key={product.id}
                         initial={{ opacity: 0, scale: 0.9 }}
                         animate={{ opacity: 1, scale: 1 }}
-                        transition={{ delay: index * 0.03 }}
-                      >
+                        transition={{ delay: index * 0.03 }}>
                         <ProductCard product={product} />
                       </motion.div>
                     ))}
@@ -356,11 +375,12 @@ const Home = () => {
               {/* Additional Product Sections - Best Sellers */}
               <div className="py-4">
                 <div className="flex items-center justify-between mb-4">
-                  <h2 className="text-2xl font-bold text-gray-800">Best Sellers</h2>
+                  <h2 className="text-2xl font-bold text-gray-800">
+                    Best Sellers
+                  </h2>
                   <Link
                     to="/app/search"
-                    className="text-sm text-primary-600 font-semibold hover:text-primary-700 transition-colors"
-                  >
+                    className="text-sm text-primary-600 font-semibold hover:text-primary-700 transition-colors">
                     See All
                   </Link>
                 </div>
@@ -370,8 +390,7 @@ const Home = () => {
                       key={product.id}
                       initial={{ opacity: 0, y: 20 }}
                       animate={{ opacity: 1, y: 0 }}
-                      transition={{ delay: index * 0.03 }}
-                    >
+                      transition={{ delay: index * 0.03 }}>
                       <ProductCard product={product} />
                     </motion.div>
                   ))}
@@ -384,15 +403,13 @@ const Home = () => {
                 whileInView={{ opacity: 1, y: 0 }}
                 viewport={{ once: true }}
                 transition={{ duration: 0.6 }}
-                className="py-8 text-left"
-              >
+                className="py-8 text-left">
                 <motion.h2
                   className="text-5xl lg:text-6xl font-black text-gray-400 leading-tight flex items-center justify-start gap-3 flex-wrap"
                   initial={{ opacity: 0 }}
                   whileInView={{ opacity: 1 }}
                   viewport={{ once: true }}
-                  transition={{ duration: 0.8, delay: 0.2 }}
-                >
+                  transition={{ duration: 0.8, delay: 0.2 }}>
                   <span>Bringing Shopping to Your Fingertips.</span>
                   <motion.span
                     animate={{
@@ -403,8 +420,7 @@ const Home = () => {
                       repeat: Infinity,
                       repeatDelay: 2,
                     }}
-                    className="text-red-500 inline-block"
-                  >
+                    className="text-red-500 inline-block">
                     <FiHeart className="text-6xl lg:text-7xl fill-red-500" />
                   </motion.span>
                 </motion.h2>
@@ -443,4 +459,3 @@ const Home = () => {
 };
 
 export default Home;
-

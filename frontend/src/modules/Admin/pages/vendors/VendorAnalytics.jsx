@@ -1,15 +1,21 @@
 import { useState, useMemo } from "react";
 import { useNavigate } from "react-router-dom";
-import { FiBarChart2, FiTrendingUp, FiDollarSign, FiShoppingBag, FiPackage } from "react-icons/fi";
+import {
+  FiBarChart2,
+  FiTrendingUp,
+  FiDollarSign,
+  FiShoppingBag,
+  FiPackage,
+} from "react-icons/fi";
 import { motion } from "framer-motion";
 import { formatPrice } from "../../../../shared/utils/helpers";
-import { useVendorAuthStore } from "../../../Vendor/store/vendorAuthStore";
+import { useVendorStore } from "../../../Vendor/store/vendorStore";
 import { useOrderStore } from "../../../../shared/store/orderStore";
 import { useCommissionStore } from "../../../../shared/store/commissionStore";
 
 const VendorAnalytics = () => {
   const navigate = useNavigate();
-  const { vendors } = useVendorAuthStore();
+  const { vendors } = useVendorStore();
   const { orders } = useOrderStore();
   const { getVendorEarningsSummary } = useCommissionStore();
 
@@ -17,29 +23,33 @@ const VendorAnalytics = () => {
 
   // Calculate vendor statistics
   const vendorStats = useMemo(() => {
-    return approvedVendors.map((vendor) => {
-      const vendorOrders = orders.filter((order) => {
-        if (order.vendorItems && Array.isArray(order.vendorItems)) {
-          return order.vendorItems.some((vi) => vi.vendorId === vendor.id);
-        }
-        return false;
-      });
+    return approvedVendors
+      .map((vendor) => {
+        const vendorOrders = orders.filter((order) => {
+          if (order.vendorItems && Array.isArray(order.vendorItems)) {
+            return order.vendorItems.some((vi) => vi.vendorId === vendor.id);
+          }
+          return false;
+        });
 
-      const earningsSummary = getVendorEarningsSummary(vendor.id);
-      const totalRevenue = vendorOrders.reduce((sum, order) => {
-        const vendorItem = order.vendorItems?.find((vi) => vi.vendorId === vendor.id);
-        return sum + (vendorItem?.subtotal || 0);
-      }, 0);
+        const earningsSummary = getVendorEarningsSummary(vendor.id);
+        const totalRevenue = vendorOrders.reduce((sum, order) => {
+          const vendorItem = order.vendorItems?.find(
+            (vi) => vi.vendorId === vendor.id
+          );
+          return sum + (vendorItem?.subtotal || 0);
+        }, 0);
 
-      return {
-        ...vendor,
-        totalOrders: vendorOrders.length,
-        totalRevenue,
-        totalEarnings: earningsSummary?.totalEarnings || 0,
-        pendingEarnings: earningsSummary?.pendingEarnings || 0,
-        paidEarnings: earningsSummary?.paidEarnings || 0,
-      };
-    }).sort((a, b) => b.totalRevenue - a.totalRevenue);
+        return {
+          ...vendor,
+          totalOrders: vendorOrders.length,
+          totalRevenue,
+          totalEarnings: earningsSummary?.totalEarnings || 0,
+          pendingEarnings: earningsSummary?.pendingEarnings || 0,
+          paidEarnings: earningsSummary?.paidEarnings || 0,
+        };
+      })
+      .sort((a, b) => b.totalRevenue - a.totalRevenue);
   }, [approvedVendors, orders, getVendorEarningsSummary]);
 
   const overallStats = useMemo(() => {
@@ -74,7 +84,9 @@ const VendorAnalytics = () => {
             <p className="text-sm text-gray-600">Total Vendors</p>
             <FiPackage className="text-blue-600" />
           </div>
-          <p className="text-2xl font-bold text-gray-800">{overallStats.totalVendors}</p>
+          <p className="text-2xl font-bold text-gray-800">
+            {overallStats.totalVendors}
+          </p>
         </div>
 
         <div className="bg-white rounded-xl p-6 shadow-sm border border-gray-200">
@@ -82,7 +94,9 @@ const VendorAnalytics = () => {
             <p className="text-sm text-gray-600">Total Orders</p>
             <FiShoppingBag className="text-green-600" />
           </div>
-          <p className="text-2xl font-bold text-gray-800">{overallStats.totalOrders}</p>
+          <p className="text-2xl font-bold text-gray-800">
+            {overallStats.totalOrders}
+          </p>
         </div>
 
         <div className="bg-white rounded-xl p-6 shadow-sm border border-gray-200">
@@ -108,17 +122,31 @@ const VendorAnalytics = () => {
 
       {/* Vendor Performance Table */}
       <div className="bg-white rounded-xl p-6 shadow-sm border border-gray-200">
-        <h2 className="text-lg font-bold text-gray-800 mb-4">Vendor Performance</h2>
+        <h2 className="text-lg font-bold text-gray-800 mb-4">
+          Vendor Performance
+        </h2>
         <div className="overflow-x-auto">
           <table className="w-full">
             <thead>
               <tr className="border-b border-gray-200">
-                <th className="text-left py-3 px-4 text-sm font-semibold text-gray-700">Vendor</th>
-                <th className="text-right py-3 px-4 text-sm font-semibold text-gray-700">Orders</th>
-                <th className="text-right py-3 px-4 text-sm font-semibold text-gray-700">Revenue</th>
-                <th className="text-right py-3 px-4 text-sm font-semibold text-gray-700">Earnings</th>
-                <th className="text-right py-3 px-4 text-sm font-semibold text-gray-700">Pending</th>
-                <th className="text-center py-3 px-4 text-sm font-semibold text-gray-700">Actions</th>
+                <th className="text-left py-3 px-4 text-sm font-semibold text-gray-700">
+                  Vendor
+                </th>
+                <th className="text-right py-3 px-4 text-sm font-semibold text-gray-700">
+                  Orders
+                </th>
+                <th className="text-right py-3 px-4 text-sm font-semibold text-gray-700">
+                  Revenue
+                </th>
+                <th className="text-right py-3 px-4 text-sm font-semibold text-gray-700">
+                  Earnings
+                </th>
+                <th className="text-right py-3 px-4 text-sm font-semibold text-gray-700">
+                  Pending
+                </th>
+                <th className="text-center py-3 px-4 text-sm font-semibold text-gray-700">
+                  Actions
+                </th>
               </tr>
             </thead>
             <tbody>
@@ -129,12 +157,16 @@ const VendorAnalytics = () => {
                   onClick={() => navigate(`/admin/vendors/${vendor.id}`)}>
                   <td className="py-3 px-4">
                     <div>
-                      <p className="font-semibold text-gray-800">{vendor.storeName || vendor.name}</p>
+                      <p className="font-semibold text-gray-800">
+                        {vendor.storeName || vendor.name}
+                      </p>
                       <p className="text-xs text-gray-500">{vendor.email}</p>
                     </div>
                   </td>
                   <td className="py-3 px-4 text-right">
-                    <span className="font-semibold text-gray-800">{vendor.totalOrders}</span>
+                    <span className="font-semibold text-gray-800">
+                      {vendor.totalOrders}
+                    </span>
                   </td>
                   <td className="py-3 px-4 text-right">
                     <span className="font-semibold text-gray-800">
@@ -178,4 +210,3 @@ const VendorAnalytics = () => {
 };
 
 export default VendorAnalytics;
-

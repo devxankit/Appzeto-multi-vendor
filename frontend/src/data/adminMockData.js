@@ -1,3 +1,7 @@
+import blueJeansImg from "../../data/products/blue jeans.png";
+import summerDressImg from "../../data/products/summer dress.png";
+import sneakersImg from "../../data/products/sneakers.png";
+
 // Mock analytics data for admin dashboard
 const generateDateRange = (days) => {
   const dates = [];
@@ -44,7 +48,7 @@ export const mockOrders = [
         name: "Slim Fit Blue Jeans",
         quantity: 1,
         price: 79.99,
-        image: "/images/products/blue jeans.png",
+        image: blueJeansImg,
       },
       {
         id: 3,
@@ -52,7 +56,7 @@ export const mockOrders = [
         name: "Floral Summer Dress",
         quantity: 1,
         price: 59.99,
-        image: "/images/products/summer dress.png",
+        image: summerDressImg,
       },
       {
         id: 5,
@@ -60,7 +64,7 @@ export const mockOrders = [
         name: "Casual Canvas Sneakers",
         quantity: 1,
         price: 49.99,
-        image: "/images/products/sneakers.png",
+        image: sneakersImg,
       },
     ],
     paymentMethod: "upi",

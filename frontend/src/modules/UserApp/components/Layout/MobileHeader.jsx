@@ -20,12 +20,12 @@ import MultiVendorBadge from "../Mobile/MultiVendorBadge";
 
 // Category gradient mapping - Very subtle pastel colors
 const categoryGradients = {
-  1: 'from-pink-50 via-rose-50 to-pink-100', // Clothing - Pinkish
-  2: 'from-amber-50 via-amber-100 to-yellow-50', // Footwear - Brownish
-  3: 'from-orange-50 via-orange-100 to-orange-50', // Bags - Orangeish
-  4: 'from-green-50 via-emerald-50 to-teal-50', // Jewelry - Greenish
-  5: 'from-purple-50 via-purple-100 to-indigo-50', // Accessories - Purple
-  6: 'from-blue-50 via-cyan-50 to-teal-50', // Athletic
+  1: "from-pink-50 via-rose-50 to-pink-100", // Clothing - Pinkish
+  2: "from-amber-50 via-amber-100 to-yellow-50", // Footwear - Brownish
+  3: "from-orange-50 via-orange-100 to-orange-50", // Bags - Orangeish
+  4: "from-green-50 via-emerald-50 to-teal-50", // Jewelry - Greenish
+  5: "from-purple-50 via-purple-100 to-indigo-50", // Accessories - Purple
+  6: "from-blue-50 via-cyan-50 to-teal-50", // Athletic
 };
 
 const MobileHeader = () => {
@@ -67,20 +67,20 @@ const MobileHeader = () => {
   // Get current page from location
   const getCurrentPage = () => {
     const path = location.pathname;
-    if (path === '/app' || path === '/app/') return 'home';
-    if (path.startsWith('/app/product/')) return 'product';
-    if (path.startsWith('/app/category/')) return 'category';
-    if (path === '/app/search') return 'search';
-    if (path === '/app/wishlist') return 'wishlist';
-    if (path === '/app/profile') return 'profile';
-    if (path === '/app/orders') return 'orders';
-    if (path.startsWith('/app/orders/')) return 'orderDetail';
-    if (path === '/app/checkout') return 'checkout';
-    if (path === '/app/offers') return 'offers';
-    if (path === '/app/daily-deals') return 'dailyDeals';
-    if (path === '/app/flash-sale') return 'flashSale';
-    if (path.startsWith('/app/vendor/')) return 'vendor';
-    return 'default';
+    if (path === "/app" || path === "/app/") return "home";
+    if (path.startsWith("/app/product/")) return "product";
+    if (path.startsWith("/app/category/")) return "category";
+    if (path === "/app/search") return "search";
+    if (path === "/app/wishlist") return "wishlist";
+    if (path === "/app/profile") return "profile";
+    if (path === "/app/orders") return "orders";
+    if (path.startsWith("/app/orders/")) return "orderDetail";
+    if (path === "/app/checkout") return "checkout";
+    if (path === "/app/offers") return "offers";
+    if (path === "/app/daily-deals") return "dailyDeals";
+    if (path === "/app/flash-sale") return "flashSale";
+    if (path.startsWith("/app/vendor/")) return "vendor";
+    return "default";
   };
 
   const currentPage = getCurrentPage();
@@ -90,31 +90,46 @@ const MobileHeader = () => {
     // Category pages - keep existing category-specific gradients
     if (currentCategoryId) {
       const gradientMap = {
-        1: 'linear-gradient(to bottom, rgb(252, 231, 243) 0%, rgb(255, 240, 245) 50%, rgb(255, 255, 255) 100%)', // Pink - moderate
-        2: 'linear-gradient(to bottom, rgb(254, 243, 199) 0%, rgb(255, 248, 220) 50%, rgb(255, 255, 255) 100%)', // Brown/Amber - moderate
-        3: 'linear-gradient(to bottom, rgb(255, 237, 213) 0%, rgb(255, 245, 230) 50%, rgb(255, 255, 255) 100%)', // Orange - moderate
-        4: 'linear-gradient(to bottom, rgb(209, 250, 229) 0%, rgb(236, 253, 245) 50%, rgb(255, 255, 255) 100%)', // Green - moderate
-        5: 'linear-gradient(to bottom, rgb(243, 232, 255) 0%, rgb(250, 245, 255) 50%, rgb(255, 255, 255) 100%)', // Purple - moderate
-        6: 'linear-gradient(to bottom, rgb(219, 234, 254) 0%, rgb(239, 246, 255) 50%, rgb(255, 255, 255) 100%)', // Blue - moderate
+        1: "linear-gradient(to bottom, rgb(252, 231, 243) 0%, rgb(255, 240, 245) 50%, rgb(255, 255, 255) 100%)", // Pink - moderate
+        2: "linear-gradient(to bottom, rgb(254, 243, 199) 0%, rgb(255, 248, 220) 50%, rgb(255, 255, 255) 100%)", // Brown/Amber - moderate
+        3: "linear-gradient(to bottom, rgb(255, 237, 213) 0%, rgb(255, 245, 230) 50%, rgb(255, 255, 255) 100%)", // Orange - moderate
+        4: "linear-gradient(to bottom, rgb(209, 250, 229) 0%, rgb(236, 253, 245) 50%, rgb(255, 255, 255) 100%)", // Green - moderate
+        5: "linear-gradient(to bottom, rgb(243, 232, 255) 0%, rgb(250, 245, 255) 50%, rgb(255, 255, 255) 100%)", // Purple - moderate
+        6: "linear-gradient(to bottom, rgb(219, 234, 254) 0%, rgb(239, 246, 255) 50%, rgb(255, 255, 255) 100%)", // Blue - moderate
       };
-      return gradientMap[currentCategoryId] || 'linear-gradient(to bottom, #EDE9FE 0%, #F5F3FF 50%, #FFFFFF 100%)';
+      return (
+        gradientMap[currentCategoryId] ||
+        "linear-gradient(to bottom, #EDE9FE 0%, #F5F3FF 50%, #FFFFFF 100%)"
+      );
     }
 
     // Page-specific gradients
     const pageGradients = {
-      home: 'linear-gradient(to bottom, rgb(196, 181, 253) 0%, rgb(221, 214, 254) 25%, rgb(245, 243, 255) 50%, rgb(255, 255, 255) 100%)', // Purple gradient for home - lighter intensity
-      product: 'linear-gradient(to bottom, rgb(237, 233, 254) 0%, rgb(245, 243, 255) 50%, rgb(255, 255, 255) 100%)', // Light purple
-      search: 'linear-gradient(to bottom, rgb(249, 115, 22) 0%, rgb(251, 146, 60) 30%, rgb(255, 237, 213) 60%, rgb(255, 255, 255) 100%)', // Orange gradient
-      wishlist: 'linear-gradient(to bottom, rgb(239, 68, 68) 0%, rgb(248, 113, 113) 30%, rgb(254, 226, 226) 60%, rgb(255, 255, 255) 100%)', // Red/pink gradient
-      profile: 'linear-gradient(to bottom, rgb(16, 185, 129) 0%, rgb(52, 211, 153) 30%, rgb(209, 250, 229) 60%, rgb(255, 255, 255) 100%)', // Green gradient
-      orders: 'linear-gradient(to bottom, rgb(59, 130, 246) 0%, rgb(96, 165, 250) 30%, rgb(219, 234, 254) 60%, rgb(255, 255, 255) 100%)', // Blue gradient
-      orderDetail: 'linear-gradient(to bottom, rgb(59, 130, 246) 0%, rgb(96, 165, 250) 30%, rgb(219, 234, 254) 60%, rgb(255, 255, 255) 100%)', // Blue gradient
-      checkout: 'linear-gradient(to bottom, rgb(16, 185, 129) 0%, rgb(52, 211, 153) 30%, rgb(209, 250, 229) 60%, rgb(255, 255, 255) 100%)', // Green gradient
-      offers: 'linear-gradient(to bottom, rgb(249, 115, 22) 0%, rgb(251, 146, 60) 30%, rgb(255, 237, 213) 60%, rgb(255, 255, 255) 100%)', // Orange gradient
-      dailyDeals: 'linear-gradient(to bottom, rgb(234, 179, 8) 0%, rgb(250, 204, 21) 30%, rgb(254, 243, 199) 60%, rgb(255, 255, 255) 100%)', // Yellow gradient
-      flashSale: 'linear-gradient(to bottom, rgb(239, 68, 68) 0%, rgb(248, 113, 113) 30%, rgb(254, 226, 226) 60%, rgb(255, 255, 255) 100%)', // Red gradient
-      vendor: 'linear-gradient(to bottom, rgb(124, 58, 237) 0%, rgb(167, 139, 250) 30%, rgb(237, 233, 254) 60%, rgb(255, 255, 255) 100%)', // Purple gradient
-      default: 'linear-gradient(to bottom, rgb(237, 233, 254) 0%, rgb(245, 243, 255) 50%, rgb(255, 255, 255) 100%)', // Light purple default
+      home: "linear-gradient(to bottom, rgb(196, 181, 253) 0%, rgb(221, 214, 254) 25%, rgb(245, 243, 255) 50%, rgb(255, 255, 255) 100%)", // Purple gradient for home - lighter intensity
+      product:
+        "linear-gradient(to bottom, rgb(237, 233, 254) 0%, rgb(245, 243, 255) 50%, rgb(255, 255, 255) 100%)", // Light purple
+      search:
+        "linear-gradient(to bottom, rgb(249, 115, 22) 0%, rgb(251, 146, 60) 30%, rgb(255, 237, 213) 60%, rgb(255, 255, 255) 100%)", // Orange gradient
+      wishlist:
+        "linear-gradient(to bottom, rgb(239, 68, 68) 0%, rgb(248, 113, 113) 30%, rgb(254, 226, 226) 60%, rgb(255, 255, 255) 100%)", // Red/pink gradient
+      profile:
+        "linear-gradient(to bottom, rgb(16, 185, 129) 0%, rgb(52, 211, 153) 30%, rgb(209, 250, 229) 60%, rgb(255, 255, 255) 100%)", // Green gradient
+      orders:
+        "linear-gradient(to bottom, rgb(59, 130, 246) 0%, rgb(96, 165, 250) 30%, rgb(219, 234, 254) 60%, rgb(255, 255, 255) 100%)", // Blue gradient
+      orderDetail:
+        "linear-gradient(to bottom, rgb(59, 130, 246) 0%, rgb(96, 165, 250) 30%, rgb(219, 234, 254) 60%, rgb(255, 255, 255) 100%)", // Blue gradient
+      checkout:
+        "linear-gradient(to bottom, rgb(16, 185, 129) 0%, rgb(52, 211, 153) 30%, rgb(209, 250, 229) 60%, rgb(255, 255, 255) 100%)", // Green gradient
+      offers:
+        "linear-gradient(to bottom, rgb(249, 115, 22) 0%, rgb(251, 146, 60) 30%, rgb(255, 237, 213) 60%, rgb(255, 255, 255) 100%)", // Orange gradient
+      dailyDeals:
+        "linear-gradient(to bottom, rgb(234, 179, 8) 0%, rgb(250, 204, 21) 30%, rgb(254, 243, 199) 60%, rgb(255, 255, 255) 100%)", // Yellow gradient
+      flashSale:
+        "linear-gradient(to bottom, rgb(239, 68, 68) 0%, rgb(248, 113, 113) 30%, rgb(254, 226, 226) 60%, rgb(255, 255, 255) 100%)", // Red gradient
+      vendor:
+        "linear-gradient(to bottom, rgb(124, 58, 237) 0%, rgb(167, 139, 250) 30%, rgb(237, 233, 254) 60%, rgb(255, 255, 255) 100%)", // Purple gradient
+      default:
+        "linear-gradient(to bottom, rgb(237, 233, 254) 0%, rgb(245, 243, 255) 50%, rgb(255, 255, 255) 100%)", // Light purple default
     };
 
     return pageGradients[currentPage] || pageGradients.default;
@@ -193,7 +208,13 @@ const MobileHeader = () => {
         };
 
         // Only set positions if they're valid and animation hasn't played yet
-        if (positions.startX > 0 && positions.endX > 0 && positions.startY > 0 && positions.endY > 0 && !hasPlayed) {
+        if (
+          positions.startX > 0 &&
+          positions.endX > 0 &&
+          positions.startY > 0 &&
+          positions.endY > 0 &&
+          !hasPlayed
+        ) {
           setAnimationPositions(positions);
           setPositionsReady(true);
           // Start animation once positions are ready
@@ -226,7 +247,11 @@ const MobileHeader = () => {
   };
 
   // Animation content - straight line movement only, starting from behind logo
-  const shouldShowAnimation = showCartAnimation && positionsReady && animationPositions.startX > 0 && animationPositions.endX > 0;
+  const shouldShowAnimation =
+    showCartAnimation &&
+    positionsReady &&
+    animationPositions.startX > 0 &&
+    animationPositions.endX > 0;
 
   const animationContent = shouldShowAnimation ? (
     <motion.div
@@ -235,10 +260,10 @@ const MobileHeader = () => {
         left: 0,
         top: 0,
         zIndex: 10000, // Above navbar but will be behind logo due to stacking context
-        willChange: 'transform, opacity',
-        transform: 'translateZ(0)',
-        backfaceVisibility: 'hidden',
-        WebkitBackfaceVisibility: 'hidden',
+        willChange: "transform, opacity",
+        transform: "translateZ(0)",
+        backfaceVisibility: "hidden",
+        WebkitBackfaceVisibility: "hidden",
       }}
       initial={{
         x: animationPositions.startX - 24,
@@ -266,7 +291,7 @@ const MobileHeader = () => {
           src="https://lottie.host/083a2680-e854-4006-a50b-674276be82cd/oQMRcuZUkS.lottie"
           autoplay
           loop={false}
-          style={{ width: '100%', height: '100%' }}
+          style={{ width: "100%", height: "100%" }}
         />
       </div>
     </motion.div>
@@ -278,7 +303,7 @@ const MobileHeader = () => {
       className="fixed top-0 left-0 right-0 z-[9999] shadow-lg overflow-visible"
       style={{
         background: headerBackground,
-        transition: 'background 0.5s ease-in-out',
+        transition: "background 0.5s ease-in-out",
       }}
       initial={false}
       animate={{
@@ -313,18 +338,36 @@ const MobileHeader = () => {
             <Link
               to="/app"
               className="flex items-center overflow-visible relative z-[10002]">
-              <div ref={logoRef} className="overflow-visible relative z-[10003]">
-                <img
-                  src={appLogo.src}
-                  alt={appLogo.alt}
-                  className="h-8 w-auto object-contain origin-left relative z-[10004]"
-                  style={{ transform: "scale(4)", position: "relative" }}
-                  onError={(e) => {
-                    // Fallback to placeholder if logo doesn't exist
-                    e.target.src =
-                      "https://via.placeholder.com/120x40/7C3AED/FFFFFF?text=LOGO";
-                  }}
-                />
+              <div
+                ref={logoRef}
+                className="overflow-visible relative z-[10003]">
+                {appLogo.src ? (
+                  <img
+                    src={appLogo.src}
+                    alt={appLogo.alt}
+                    className="h-6 sm:h-8 w-auto object-contain origin-left relative z-[10004]"
+                    onError={(e) => {
+                      // Hide image if logo doesn't exist
+                      e.target.style.display = "none";
+                      // Show text fallback
+                      const parent = e.target.parentElement;
+                      if (
+                        parent &&
+                        !parent.querySelector(".logo-text-fallback")
+                      ) {
+                        const fallback = document.createElement("span");
+                        fallback.className =
+                          "logo-text-fallback text-primary-600 font-bold text-sm sm:text-lg";
+                        fallback.textContent = "LOGO";
+                        parent.appendChild(fallback);
+                      }
+                    }}
+                  />
+                ) : (
+                  <span className="logo-text-fallback text-primary-600 font-bold text-sm sm:text-lg">
+                    LOGO
+                  </span>
+                )}
               </div>
             </Link>
             {/* Marketplace Badge */}
@@ -335,7 +378,6 @@ const MobileHeader = () => {
 
           {/* Right Side Actions */}
           <div className="flex items-center gap-2">
-
             {/* Cart Button */}
             <motion.button
               ref={cartRef}
@@ -345,8 +387,8 @@ const MobileHeader = () => {
               animate={
                 cartAnimationTrigger > 0
                   ? {
-                    scale: [1, 1.2, 1],
-                  }
+                      scale: [1, 1.2, 1],
+                    }
                   : {}
               }
               transition={{ duration: 0.5, ease: "easeOut" }}>
@@ -357,7 +399,7 @@ const MobileHeader = () => {
                   initial={{ scale: 0 }}
                   animate={{ scale: 1 }}
                   className="absolute -top-1 -right-1 w-5 h-5 rounded-full flex items-center justify-center text-white text-xs font-bold"
-                  style={{ backgroundColor: '#ffc101' }}>
+                  style={{ backgroundColor: "#ffc101" }}>
                   {itemCount > 9 ? "9+" : itemCount}
                 </motion.span>
               )}
@@ -451,8 +493,10 @@ const MobileHeader = () => {
   // Use portal to render outside of transformed containers (like PageTransition)
   return (
     <>
-      {typeof document !== 'undefined' && createPortal(headerContent, document.body)}
-      {typeof document !== 'undefined' && createPortal(animationContent, document.body)}
+      {typeof document !== "undefined" &&
+        createPortal(headerContent, document.body)}
+      {typeof document !== "undefined" &&
+        createPortal(animationContent, document.body)}
     </>
   );
 };

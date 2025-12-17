@@ -1,17 +1,17 @@
-import { useState, useEffect } from 'react';
-import { FiSearch, FiDollarSign } from 'react-icons/fi';
-import { motion } from 'framer-motion';
-import DataTable from '../../components/DataTable';
-import Badge from '../../../../shared/components/Badge';
-import AnimatedSelect from '../../components/AnimatedSelect';
-import { formatPrice } from '../../../../shared/utils/helpers';
-// import { formatDateTime } from '../../../utils/adminHelpers';
-import { mockOrders } from '../../../../data/adminMockData';
+import { useState, useEffect } from "react";
+import { FiSearch, FiDollarSign } from "react-icons/fi";
+import { motion } from "framer-motion";
+import DataTable from "../../components/DataTable";
+import Badge from "../../../../shared/components/Badge";
+import AnimatedSelect from "../../components/AnimatedSelect";
+import { formatPrice } from "../../../../shared/utils/helpers";
+import { formatDateTime } from "../../utils/adminHelpers";
+import { mockOrders } from "../../../../data/adminMockData";
 
 const Transactions = () => {
   const [transactions, setTransactions] = useState([]);
-  const [searchQuery, setSearchQuery] = useState('');
-  const [statusFilter, setStatusFilter] = useState('all');
+  const [searchQuery, setSearchQuery] = useState("");
+  const [statusFilter, setStatusFilter] = useState("all");
 
   useEffect(() => {
     // Generate transactions from orders
@@ -22,25 +22,27 @@ const Transactions = () => {
         customerName: order.customer.name,
         customerEmail: order.customer.email,
         amount: order.total,
-        type: 'payment',
-        status: order.status === 'cancelled' ? 'failed' : 'completed',
-        method: 'Credit Card',
+        type: "payment",
+        status: order.status === "cancelled" ? "failed" : "completed",
+        method: "Credit Card",
         date: order.date,
       },
-      ...(order.status === 'cancelled'
+      ...(order.status === "cancelled"
         ? [
-          {
-            id: `TXN-${order.id}-2`,
-            orderId: order.id,
-            customerName: order.customer.name,
-            customerEmail: order.customer.email,
-            amount: order.total,
-            type: 'refund',
-            status: 'completed',
-            method: 'Original Payment Method',
-            date: new Date(new Date(order.date).getTime() + 86400000).toISOString(),
-          },
-        ]
+            {
+              id: `TXN-${order.id}-2`,
+              orderId: order.id,
+              customerName: order.customer.name,
+              customerEmail: order.customer.email,
+              amount: order.total,
+              type: "refund",
+              status: "completed",
+              method: "Original Payment Method",
+              date: new Date(
+                new Date(order.date).getTime() + 86400000
+              ).toISOString(),
+            },
+          ]
         : []),
     ]);
     setTransactions(generatedTransactions);
@@ -53,26 +55,28 @@ const Transactions = () => {
       txn.customerName.toLowerCase().includes(searchQuery.toLowerCase()) ||
       txn.customerEmail.toLowerCase().includes(searchQuery.toLowerCase());
 
-    const matchesStatus = statusFilter === 'all' || txn.status === statusFilter;
+    const matchesStatus = statusFilter === "all" || txn.status === statusFilter;
 
     return matchesSearch && matchesStatus;
   });
 
   const columns = [
     {
-      key: 'id',
-      label: 'Transaction ID',
+      key: "id",
+      label: "Transaction ID",
       sortable: true,
-      render: (value) => <span className="font-semibold text-gray-800">{value}</span>,
+      render: (value) => (
+        <span className="font-semibold text-gray-800">{value}</span>
+      ),
     },
     {
-      key: 'orderId',
-      label: 'Order ID',
+      key: "orderId",
+      label: "Order ID",
       sortable: true,
     },
     {
-      key: 'customerName',
-      label: 'Customer',
+      key: "customerName",
+      label: "Customer",
       sortable: true,
       render: (value, row) => (
         <div>
@@ -82,81 +86,104 @@ const Transactions = () => {
       ),
     },
     {
-      key: 'amount',
-      label: 'Amount',
+      key: "amount",
+      label: "Amount",
       sortable: true,
       render: (value, row) => (
         <div className="flex items-center gap-2">
-          <FiDollarSign className={`text-sm ${row.type === 'refund' ? 'text-red-600' : 'text-green-600'
-            }`} />
-          <span className={`font-bold ${row.type === 'refund' ? 'text-red-600' : 'text-green-600'
+          <FiDollarSign
+            className={`text-sm ${
+              row.type === "refund" ? "text-red-600" : "text-green-600"
+            }`}
+          />
+          <span
+            className={`font-bold ${
+              row.type === "refund" ? "text-red-600" : "text-green-600"
             }`}>
-            {row.type === 'refund' ? '-' : '+'}{formatPrice(value)}
+            {row.type === "refund" ? "-" : "+"}
+            {formatPrice(value)}
           </span>
         </div>
       ),
     },
     {
-      key: 'type',
-      label: 'Type',
+      key: "type",
+      label: "Type",
       sortable: true,
       render: (value) => (
-        <span className={`px-2 py-1 rounded text-xs font-medium ${value === 'payment' ? 'bg-blue-100 text-blue-800' : 'bg-orange-100 text-orange-800'
+        <span
+          className={`px-2 py-1 rounded text-xs font-medium ${
+            value === "payment"
+              ? "bg-blue-100 text-blue-800"
+              : "bg-orange-100 text-orange-800"
           }`}>
           {value}
         </span>
       ),
     },
     {
-      key: 'method',
-      label: 'Payment Method',
+      key: "method",
+      label: "Payment Method",
       sortable: false,
     },
     {
-      key: 'status',
-      label: 'Status',
+      key: "status",
+      label: "Status",
       sortable: true,
-      render: (value) => <Badge variant={value === 'completed' ? 'success' : 'error'}>{value}</Badge>,
+      render: (value) => (
+        <Badge variant={value === "completed" ? "success" : "error"}>
+          {value}
+        </Badge>
+      ),
     },
     {
-      key: 'date',
-      label: 'Date',
+      key: "date",
+      label: "Date",
       sortable: true,
       render: (value) => formatDateTime(value),
     },
   ];
 
   const totalRevenue = filteredTransactions
-    .filter((t) => t.type === 'payment' && t.status === 'completed')
+    .filter((t) => t.type === "payment" && t.status === "completed")
     .reduce((sum, t) => sum + t.amount, 0);
 
   const totalRefunds = filteredTransactions
-    .filter((t) => t.type === 'refund' && t.status === 'completed')
+    .filter((t) => t.type === "refund" && t.status === "completed")
     .reduce((sum, t) => sum + t.amount, 0);
 
   return (
     <motion.div
       initial={{ opacity: 0, y: 20 }}
       animate={{ opacity: 1, y: 0 }}
-      className="space-y-6"
-    >
+      className="space-y-6">
       <div className="lg:hidden">
-        <h1 className="text-2xl sm:text-3xl font-bold text-gray-800 mb-2">Transactions</h1>
-        <p className="text-sm sm:text-base text-gray-600">View customer payment and refund transactions</p>
+        <h1 className="text-2xl sm:text-3xl font-bold text-gray-800 mb-2">
+          Transactions
+        </h1>
+        <p className="text-sm sm:text-base text-gray-600">
+          View customer payment and refund transactions
+        </p>
       </div>
 
       <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
         <div className="bg-white rounded-xl p-6 shadow-sm border border-gray-200">
           <p className="text-sm text-gray-600 mb-1">Total Revenue</p>
-          <p className="text-2xl font-bold text-green-600">{formatPrice(totalRevenue)}</p>
+          <p className="text-2xl font-bold text-green-600">
+            {formatPrice(totalRevenue)}
+          </p>
         </div>
         <div className="bg-white rounded-xl p-6 shadow-sm border border-gray-200">
           <p className="text-sm text-gray-600 mb-1">Total Refunds</p>
-          <p className="text-2xl font-bold text-red-600">{formatPrice(totalRefunds)}</p>
+          <p className="text-2xl font-bold text-red-600">
+            {formatPrice(totalRefunds)}
+          </p>
         </div>
         <div className="bg-white rounded-xl p-6 shadow-sm border border-gray-200">
           <p className="text-sm text-gray-600 mb-1">Net Revenue</p>
-          <p className="text-2xl font-bold text-gray-800">{formatPrice(totalRevenue - totalRefunds)}</p>
+          <p className="text-2xl font-bold text-gray-800">
+            {formatPrice(totalRevenue - totalRefunds)}
+          </p>
         </div>
       </div>
 
@@ -177,10 +204,10 @@ const Transactions = () => {
             value={statusFilter}
             onChange={(e) => setStatusFilter(e.target.value)}
             options={[
-              { value: 'all', label: 'All Status' },
-              { value: 'completed', label: 'Completed' },
-              { value: 'pending', label: 'Pending' },
-              { value: 'failed', label: 'Failed' },
+              { value: "all", label: "All Status" },
+              { value: "completed", label: "Completed" },
+              { value: "pending", label: "Pending" },
+              { value: "failed", label: "Failed" },
             ]}
             className="min-w-[140px]"
           />
@@ -200,4 +227,3 @@ const Transactions = () => {
 };
 
 export default Transactions;
-

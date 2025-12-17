@@ -5,12 +5,12 @@ import { motion } from "framer-motion";
 import DataTable from "../../components/DataTable";
 import Badge from "../../../../shared/components/Badge";
 import ConfirmModal from "../../components/ConfirmModal";
-import { useVendorAuthStore } from "../../../Vendor/store/vendorAuthStore";
+import { useVendorStore } from "../../../Vendor/store/vendorStore";
 import toast from "react-hot-toast";
 
 const PendingApprovals = () => {
   const navigate = useNavigate();
-  const { vendors, updateVendorStatus, initialize } = useVendorAuthStore();
+  const { vendors, updateVendorStatus, initialize } = useVendorStore();
 
   useEffect(() => {
     initialize();
@@ -61,7 +61,9 @@ const PendingApprovals = () => {
             />
           )}
           <div>
-            <span className="font-medium text-gray-800">{value || row.name}</span>
+            <span className="font-medium text-gray-800">
+              {value || row.name}
+            </span>
             <p className="text-xs text-gray-500">{row.name}</p>
           </div>
         </div>
@@ -77,7 +79,9 @@ const PendingApprovals = () => {
       key: "phone",
       label: "Phone",
       sortable: true,
-      render: (value) => <span className="text-sm text-gray-700">{value || "N/A"}</span>,
+      render: (value) => (
+        <span className="text-sm text-gray-700">{value || "N/A"}</span>
+      ),
     },
     {
       key: "joinDate",
@@ -139,13 +143,23 @@ const PendingApprovals = () => {
 
   const handleApprove = () => {
     updateVendorStatus(actionModal.vendorId, "approved");
-    setActionModal({ isOpen: false, type: null, vendorId: null, vendorName: null });
+    setActionModal({
+      isOpen: false,
+      type: null,
+      vendorId: null,
+      vendorName: null,
+    });
     toast.success("Vendor approved successfully");
   };
 
   const handleReject = () => {
     updateVendorStatus(actionModal.vendorId, "suspended");
-    setActionModal({ isOpen: false, type: null, vendorId: null, vendorName: null });
+    setActionModal({
+      isOpen: false,
+      type: null,
+      vendorId: null,
+      vendorName: null,
+    });
     toast.success("Vendor registration rejected");
   };
 
@@ -228,7 +242,12 @@ const PendingApprovals = () => {
         <ConfirmModal
           isOpen={actionModal.isOpen}
           onClose={() =>
-            setActionModal({ isOpen: false, type: null, vendorId: null, vendorName: null })
+            setActionModal({
+              isOpen: false,
+              type: null,
+              vendorId: null,
+              vendorName: null,
+            })
           }
           onConfirm={modalContent.onConfirm}
           title={modalContent.title}
@@ -243,4 +262,3 @@ const PendingApprovals = () => {
 };
 
 export default PendingApprovals;
-

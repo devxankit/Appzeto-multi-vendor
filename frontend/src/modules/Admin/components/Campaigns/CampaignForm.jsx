@@ -1,69 +1,87 @@
-import { useState, useEffect, useMemo } from 'react';
-import { useLocation } from 'react-router-dom';
-import { FiX, FiSave, FiCalendar, FiLink, FiEye, FiSearch, FiFilter, FiCheckSquare, FiSquare, FiXCircle, FiUpload, FiImage } from 'react-icons/fi';
-import { motion, AnimatePresence } from 'framer-motion';
-import { useCampaignStore } from '../../../../shared/store/campaignStore';
-import { useCategoryStore } from '../../../../shared/store/categoryStore';
-import { useBrandStore } from '../../../../shared/store/brandStore';
-import { products as initialProducts } from '../../../../data/products';
-import { generateSlug } from '../../../../shared/store/campaignStore';
-import { createCampaignBanner } from '@modules/Admin/utils/campaignHelpers';
-import AnimatedSelect from '../AnimatedSelect';
-import { formatPrice } from '../../../../shared/utils/helpers';
-import toast from 'react-hot-toast';
-import Button from '../Button';
+import { useState, useEffect, useMemo } from "react";
+import { useLocation } from "react-router-dom";
+import {
+  FiX,
+  FiSave,
+  FiCalendar,
+  FiLink,
+  FiEye,
+  FiSearch,
+  FiFilter,
+  FiCheckSquare,
+  FiSquare,
+  FiXCircle,
+  FiUpload,
+  FiImage,
+} from "react-icons/fi";
+import { motion, AnimatePresence } from "framer-motion";
+import { useCampaignStore } from "../../../../shared/store/campaignStore";
+import { useCategoryStore } from "../../../../shared/store/categoryStore";
+import { useBrandStore } from "../../../../shared/store/brandStore";
+import { products as initialProducts } from "../../../../data/products";
+import { generateSlug } from "../../../../shared/store/campaignStore";
+import { createCampaignBanner } from "@modules/Admin/utils/campaignHelpers";
+import AnimatedSelect from "../AnimatedSelect";
+import { formatPrice } from "../../../../shared/utils/helpers";
+import toast from "react-hot-toast";
+import Button from "../Button";
 
 const CampaignForm = ({ campaign, onClose, onSave }) => {
   const location = useLocation();
-  const isAppRoute = location.pathname.startsWith('/app');
+  const isAppRoute = location.pathname.startsWith("/app");
   const { createCampaign, updateCampaign } = useCampaignStore();
   const isEdit = !!campaign;
 
   const [formData, setFormData] = useState({
-    name: '',
-    type: 'flash_sale',
-    description: '',
-    discountType: 'percentage',
-    discountValue: '',
-    startDate: '',
-    endDate: '',
+    name: "",
+    type: "flash_sale",
+    description: "",
+    discountType: "percentage",
+    discountValue: "",
+    startDate: "",
+    endDate: "",
     productIds: [],
     isActive: true,
-    slug: '',
+    slug: "",
     autoCreateBanner: true,
     pageConfig: {
       showCountdown: true,
-      countdownType: 'campaign_end',
-      viewModes: ['grid', 'list'],
-      defaultViewMode: 'grid',
+      countdownType: "campaign_end",
+      viewModes: ["grid", "list"],
+      defaultViewMode: "grid",
       enableFilters: true,
       enableSorting: true,
       productsPerPage: 12,
       showStats: true,
     },
     bannerConfig: {
-      title: '',
-      subtitle: '',
-      image: '',
+      title: "",
+      subtitle: "",
+      image: "",
       customImage: false,
     },
   });
 
   const [products] = useState(() => {
-    const savedProducts = localStorage.getItem('admin-products');
+    const savedProducts = localStorage.getItem("admin-products");
     return savedProducts ? JSON.parse(savedProducts) : initialProducts;
   });
 
   // Product selection filters
-  const [productSearchQuery, setProductSearchQuery] = useState('');
-  const [selectedProductCategory, setSelectedProductCategory] = useState('all');
-  const [selectedProductBrand, setSelectedProductBrand] = useState('all');
-  const [selectedProductStock, setSelectedProductStock] = useState('all');
+  const [productSearchQuery, setProductSearchQuery] = useState("");
+  const [selectedProductCategory, setSelectedProductCategory] = useState("all");
+  const [selectedProductBrand, setSelectedProductBrand] = useState("all");
+  const [selectedProductStock, setSelectedProductStock] = useState("all");
   const [productPage, setProductPage] = useState(1);
   const productsPerPage = 20;
 
   // Get stores
-  const { categories, getRootCategories, getCategoriesByParent, initialize: initCategories } = useCategoryStore();
+  const {
+    categories,
+    getRootCategories,
+    getCategoriesByParent,
+    initialize: initCategories,
+  } = useCategoryStore();
   const { brands, initialize: initBrands } = useBrandStore();
 
   // Initialize stores
@@ -77,17 +95,21 @@ const CampaignForm = ({ campaign, onClose, onSave }) => {
     if (formData.name) {
       const campaigns = useCampaignStore.getState().campaigns;
       const existingCampaigns = isEdit
-        ? campaigns.filter(c => c.id !== campaign.id)
+        ? campaigns.filter((c) => c.id !== campaign.id)
         : campaigns;
       return generateSlug(formData.name, existingCampaigns);
     }
-    return '';
+    return "";
   }, [formData.name, isEdit, campaign]);
 
   // Update slug when name changes (if slug is empty or matches old generated slug)
   useEffect(() => {
-    if (formData.name && (!formData.slug || formData.slug === generateSlug(campaign?.name || '', []))) {
-      setFormData(prev => ({
+    if (
+      formData.name &&
+      (!formData.slug ||
+        formData.slug === generateSlug(campaign?.name || "", []))
+    ) {
+      setFormData((prev) => ({
         ...prev,
         slug: generatedSlug,
       }));
@@ -97,39 +119,46 @@ const CampaignForm = ({ campaign, onClose, onSave }) => {
   useEffect(() => {
     if (campaign) {
       setFormData({
-        name: campaign.name || '',
-        type: campaign.type || 'flash_sale',
-        description: campaign.description || '',
-        discountType: campaign.discountType || 'percentage',
-        discountValue: campaign.discountValue || '',
-        startDate: campaign.startDate ? campaign.startDate.split('T')[0] : '',
-        endDate: campaign.endDate ? campaign.endDate.split('T')[0] : '',
+        name: campaign.name || "",
+        type: campaign.type || "flash_sale",
+        description: campaign.description || "",
+        discountType: campaign.discountType || "percentage",
+        discountValue: campaign.discountValue || "",
+        startDate: campaign.startDate ? campaign.startDate.split("T")[0] : "",
+        endDate: campaign.endDate ? campaign.endDate.split("T")[0] : "",
         productIds: campaign.productIds || [],
         isActive: campaign.isActive !== undefined ? campaign.isActive : true,
-        slug: campaign.slug || '',
-        autoCreateBanner: campaign.autoCreateBanner !== undefined ? campaign.autoCreateBanner : true,
+        slug: campaign.slug || "",
+        autoCreateBanner:
+          campaign.autoCreateBanner !== undefined
+            ? campaign.autoCreateBanner
+            : true,
         pageConfig: campaign.pageConfig || {
           showCountdown: true,
-          countdownType: 'campaign_end',
-          viewModes: ['grid', 'list'],
-          defaultViewMode: 'grid',
+          countdownType: "campaign_end",
+          viewModes: ["grid", "list"],
+          defaultViewMode: "grid",
           enableFilters: true,
           enableSorting: true,
           productsPerPage: 12,
           showStats: true,
         },
-        bannerConfig: campaign.bannerConfig ? {
-          ...campaign.bannerConfig,
-          // Detect if image is base64 (custom uploaded image)
-          customImage: campaign.bannerConfig.image && campaign.bannerConfig.image.startsWith('data:image/')
-            ? true
-            : (campaign.bannerConfig.customImage || false),
-        } : {
-          title: '',
-          subtitle: '',
-          image: '',
-          customImage: false,
-        },
+        bannerConfig: campaign.bannerConfig
+          ? {
+              ...campaign.bannerConfig,
+              // Detect if image is base64 (custom uploaded image)
+              customImage:
+                campaign.bannerConfig.image &&
+                campaign.bannerConfig.image.startsWith("data:image/")
+                  ? true
+                  : campaign.bannerConfig.customImage || false,
+            }
+          : {
+              title: "",
+              subtitle: "",
+              image: "",
+              customImage: false,
+            },
       });
     } else {
       // Set default dates
@@ -138,8 +167,8 @@ const CampaignForm = ({ campaign, onClose, onSave }) => {
       tomorrow.setDate(tomorrow.getDate() + 1);
       setFormData((prev) => ({
         ...prev,
-        startDate: today.toISOString().split('T')[0],
-        endDate: tomorrow.toISOString().split('T')[0],
+        startDate: today.toISOString().split("T")[0],
+        endDate: tomorrow.toISOString().split("T")[0],
       }));
     }
   }, [campaign]);
@@ -148,19 +177,24 @@ const CampaignForm = ({ campaign, onClose, onSave }) => {
     const { name, value, type, checked } = e.target;
 
     // Handle nested pageConfig updates
-    if (name.startsWith('pageConfig.')) {
-      const configKey = name.split('.')[1];
+    if (name.startsWith("pageConfig.")) {
+      const configKey = name.split(".")[1];
       setFormData({
         ...formData,
         pageConfig: {
           ...formData.pageConfig,
-          [configKey]: type === 'checkbox' ? checked : (type === 'number' ? parseInt(value) : value),
+          [configKey]:
+            type === "checkbox"
+              ? checked
+              : type === "number"
+              ? parseInt(value)
+              : value,
         },
       });
     }
     // Handle nested bannerConfig updates
-    else if (name.startsWith('bannerConfig.')) {
-      const configKey = name.split('.')[1];
+    else if (name.startsWith("bannerConfig.")) {
+      const configKey = name.split(".")[1];
       setFormData({
         ...formData,
         bannerConfig: {
@@ -170,11 +204,11 @@ const CampaignForm = ({ campaign, onClose, onSave }) => {
       });
     }
     // Handle viewModes array
-    else if (name === 'viewMode') {
+    else if (name === "viewMode") {
       const viewModes = formData.pageConfig.viewModes || [];
       const newViewModes = checked
         ? [...viewModes, value]
-        : viewModes.filter(m => m !== value);
+        : viewModes.filter((m) => m !== value);
       setFormData({
         ...formData,
         pageConfig: {
@@ -182,11 +216,15 @@ const CampaignForm = ({ campaign, onClose, onSave }) => {
           viewModes: newViewModes,
         },
       });
-    }
-    else {
+    } else {
       setFormData({
         ...formData,
-        [name]: type === 'checkbox' ? checked : (type === 'number' ? parseFloat(value) : value),
+        [name]:
+          type === "checkbox"
+            ? checked
+            : type === "number"
+            ? parseFloat(value)
+            : value,
       });
     }
   };
@@ -203,33 +241,42 @@ const CampaignForm = ({ campaign, onClose, onSave }) => {
     }
 
     // Category filter - include products from parent category and all its subcategories
-    if (selectedProductCategory !== 'all') {
+    if (selectedProductCategory !== "all") {
       const parentCategoryId = parseInt(selectedProductCategory);
       // Get all subcategories for this parent category
       const subcategories = getCategoriesByParent(parentCategoryId);
-      const allCategoryIds = [parentCategoryId, ...subcategories.map(cat => cat.id)];
+      const allCategoryIds = [
+        parentCategoryId,
+        ...subcategories.map((cat) => cat.id),
+      ];
 
-      filtered = filtered.filter(
-        (product) => allCategoryIds.includes(product.categoryId)
+      filtered = filtered.filter((product) =>
+        allCategoryIds.includes(product.categoryId)
       );
     }
 
     // Brand filter
-    if (selectedProductBrand !== 'all') {
+    if (selectedProductBrand !== "all") {
       filtered = filtered.filter(
         (product) => product.brandId === parseInt(selectedProductBrand)
       );
     }
 
     // Stock filter
-    if (selectedProductStock !== 'all') {
+    if (selectedProductStock !== "all") {
       filtered = filtered.filter(
         (product) => product.stock === selectedProductStock
       );
     }
 
     return filtered;
-  }, [products, productSearchQuery, selectedProductCategory, selectedProductBrand, selectedProductStock]);
+  }, [
+    products,
+    productSearchQuery,
+    selectedProductCategory,
+    selectedProductBrand,
+    selectedProductStock,
+  ]);
 
   // Paginated products
   const paginatedProducts = useMemo(() => {
@@ -238,12 +285,19 @@ const CampaignForm = ({ campaign, onClose, onSave }) => {
     return filteredProducts.slice(startIndex, endIndex);
   }, [filteredProducts, productPage, productsPerPage]);
 
-  const totalProductPages = Math.ceil(filteredProducts.length / productsPerPage);
+  const totalProductPages = Math.ceil(
+    filteredProducts.length / productsPerPage
+  );
 
   // Reset page when filters change
   useEffect(() => {
     setProductPage(1);
-  }, [productSearchQuery, selectedProductCategory, selectedProductBrand, selectedProductStock]);
+  }, [
+    productSearchQuery,
+    selectedProductCategory,
+    selectedProductBrand,
+    selectedProductStock,
+  ]);
 
   const handleProductToggle = (productId) => {
     setFormData({
@@ -256,14 +310,18 @@ const CampaignForm = ({ campaign, onClose, onSave }) => {
 
   // Select all filtered products
   const handleSelectAllFiltered = () => {
-    const filteredIds = filteredProducts.map(p => p.id);
-    const allSelected = filteredIds.every(id => formData.productIds.includes(id));
+    const filteredIds = filteredProducts.map((p) => p.id);
+    const allSelected = filteredIds.every((id) =>
+      formData.productIds.includes(id)
+    );
 
     if (allSelected) {
       // Deselect all filtered
       setFormData({
         ...formData,
-        productIds: formData.productIds.filter(id => !filteredIds.includes(id)),
+        productIds: formData.productIds.filter(
+          (id) => !filteredIds.includes(id)
+        ),
       });
     } else {
       // Select all filtered
@@ -277,17 +335,17 @@ const CampaignForm = ({ campaign, onClose, onSave }) => {
 
   // Clear all filters
   const handleClearFilters = () => {
-    setProductSearchQuery('');
-    setSelectedProductCategory('all');
-    setSelectedProductBrand('all');
-    setSelectedProductStock('all');
+    setProductSearchQuery("");
+    setSelectedProductCategory("all");
+    setSelectedProductBrand("all");
+    setSelectedProductStock("all");
     setProductPage(1);
   };
 
   // Check if all filtered products are selected
   const allFilteredSelected = useMemo(() => {
     if (filteredProducts.length === 0) return false;
-    return filteredProducts.every(p => formData.productIds.includes(p.id));
+    return filteredProducts.every((p) => formData.productIds.includes(p.id));
   }, [filteredProducts, formData.productIds]);
 
   // Handle custom banner image upload
@@ -295,14 +353,14 @@ const CampaignForm = ({ campaign, onClose, onSave }) => {
     const file = e.target.files[0];
     if (file) {
       // Check if file is an image
-      if (!file.type.startsWith('image/')) {
-        toast.error('Please select an image file');
+      if (!file.type.startsWith("image/")) {
+        toast.error("Please select an image file");
         return;
       }
 
       // Check file size (max 5MB)
       if (file.size > 5 * 1024 * 1024) {
-        toast.error('Image size should be less than 5MB');
+        toast.error("Image size should be less than 5MB");
         return;
       }
 
@@ -316,10 +374,10 @@ const CampaignForm = ({ campaign, onClose, onSave }) => {
             customImage: true, // Flag to indicate custom image
           },
         });
-        toast.success('Banner image uploaded successfully');
+        toast.success("Banner image uploaded successfully");
       };
       reader.onerror = () => {
-        toast.error('Error reading image file');
+        toast.error("Error reading image file");
       };
       reader.readAsDataURL(file);
     }
@@ -329,19 +387,19 @@ const CampaignForm = ({ campaign, onClose, onSave }) => {
     e.preventDefault();
 
     if (!formData.name.trim()) {
-      toast.error('Campaign name is required');
+      toast.error("Campaign name is required");
       return;
     }
     if (!formData.startDate || !formData.endDate) {
-      toast.error('Start and end dates are required');
+      toast.error("Start and end dates are required");
       return;
     }
     if (new Date(formData.startDate) >= new Date(formData.endDate)) {
-      toast.error('End date must be after start date');
+      toast.error("End date must be after start date");
       return;
     }
     if (formData.productIds.length === 0) {
-      toast.error('Please select at least one product');
+      toast.error("Please select at least one product");
       return;
     }
 
@@ -365,7 +423,7 @@ const CampaignForm = ({ campaign, onClose, onSave }) => {
           try {
             createCampaignBanner(createdCampaign, campaignData.bannerConfig);
           } catch (bannerError) {
-            console.error('Failed to create banner:', bannerError);
+            console.error("Failed to create banner:", bannerError);
             // Don't fail the campaign creation if banner fails
           }
         }
@@ -396,48 +454,50 @@ const CampaignForm = ({ campaign, onClose, onSave }) => {
           initial={{ opacity: 0 }}
           animate={{ opacity: 1 }}
           exit={{ opacity: 0 }}
-          className={`fixed inset-0 z-[10001] flex ${isAppRoute ? 'items-start pt-[10px]' : 'items-end'} sm:items-center justify-center p-4 pointer-events-none`}
-          style={{ zIndex: 10001 }}
-        >
+          className={`fixed inset-0 z-[10001] flex ${
+            isAppRoute ? "items-start pt-[10px]" : "items-end"
+          } sm:items-center justify-center p-4 pointer-events-none`}
+          style={{ zIndex: 10001 }}>
           <motion.div
             variants={{
               hidden: {
-                y: isAppRoute ? '-100%' : '100%',
+                y: isAppRoute ? "-100%" : "100%",
                 scale: 0.95,
-                opacity: 0
+                opacity: 0,
               },
               visible: {
                 y: 0,
                 scale: 1,
                 opacity: 1,
                 transition: {
-                  type: 'spring',
+                  type: "spring",
                   damping: 22,
                   stiffness: 350,
-                  mass: 0.7
-                }
+                  mass: 0.7,
+                },
               },
               exit: {
-                y: isAppRoute ? '-100%' : '100%',
+                y: isAppRoute ? "-100%" : "100%",
                 scale: 0.95,
                 opacity: 0,
                 transition: {
-                  type: 'spring',
+                  type: "spring",
                   damping: 30,
-                  stiffness: 400
-                }
-              }
+                  stiffness: 400,
+                },
+              },
             }}
             initial="hidden"
             animate="visible"
             exit="exit"
             onClick={(e) => e.stopPropagation()}
-            className={`bg-white ${isAppRoute ? 'rounded-b-3xl' : 'rounded-t-3xl'} sm:rounded-xl shadow-xl max-w-4xl w-full max-h-[90vh] overflow-y-auto scrollbar-admin pointer-events-auto pb-20 sm:pb-6 -mb-[30px] sm:mb-0`}
-            style={{ willChange: 'transform', zIndex: 10001 }}
-          >
+            className={`bg-white ${
+              isAppRoute ? "rounded-b-3xl" : "rounded-t-3xl"
+            } sm:rounded-xl shadow-xl max-w-4xl w-full max-h-[90vh] overflow-y-auto scrollbar-admin pointer-events-auto pb-20 sm:pb-6 -mb-[30px] sm:mb-0`}
+            style={{ willChange: "transform", zIndex: 10001 }}>
             <div className="sticky top-0 bg-white border-b border-gray-200 p-6 flex items-center justify-between z-10">
               <h2 className="text-2xl font-bold text-gray-800">
-                {isEdit ? 'Edit Campaign' : 'Create Campaign'}
+                {isEdit ? "Edit Campaign" : "Create Campaign"}
               </h2>
               <Button
                 onClick={onClose}
@@ -450,7 +510,9 @@ const CampaignForm = ({ campaign, onClose, onSave }) => {
             <form onSubmit={handleSubmit} className="p-6 space-y-6">
               {/* Basic Information */}
               <div>
-                <h3 className="text-lg font-bold text-gray-800 mb-4">Basic Information</h3>
+                <h3 className="text-lg font-bold text-gray-800 mb-4">
+                  Basic Information
+                </h3>
                 <div className="space-y-4">
                   <div>
                     <label className="block text-sm font-semibold text-gray-700 mb-2">
@@ -477,10 +539,10 @@ const CampaignForm = ({ campaign, onClose, onSave }) => {
                       onChange={handleChange}
                       required
                       options={[
-                        { value: 'flash_sale', label: 'Flash Sale' },
-                        { value: 'daily_deal', label: 'Daily Deal' },
-                        { value: 'special_offer', label: 'Special Offer' },
-                        { value: 'festival', label: 'Festival Offer' },
+                        { value: "flash_sale", label: "Flash Sale" },
+                        { value: "daily_deal", label: "Daily Deal" },
+                        { value: "special_offer", label: "Special Offer" },
+                        { value: "festival", label: "Festival Offer" },
                       ]}
                     />
                   </div>
@@ -516,7 +578,9 @@ const CampaignForm = ({ campaign, onClose, onSave }) => {
                         />
                         <FiLink className="absolute right-3 top-1/2 transform -translate-y-1/2 text-gray-400" />
                       </div>
-                      <p className="text-xs text-gray-500 mt-1">URL-friendly version of campaign name</p>
+                      <p className="text-xs text-gray-500 mt-1">
+                        URL-friendly version of campaign name
+                      </p>
                     </div>
                     <div>
                       <label className="block text-sm font-semibold text-gray-700 mb-2">
@@ -525,10 +589,15 @@ const CampaignForm = ({ campaign, onClose, onSave }) => {
                       <div className="relative">
                         <div className="w-full px-4 py-2 border border-gray-200 bg-gray-50 rounded-lg text-sm text-gray-600 flex items-center gap-2">
                           <FiEye className="text-gray-400" />
-                          <span>/sale/{formData.slug || generatedSlug || 'campaign-slug'}</span>
+                          <span>
+                            /sale/
+                            {formData.slug || generatedSlug || "campaign-slug"}
+                          </span>
                         </div>
                       </div>
-                      <p className="text-xs text-gray-500 mt-1">Preview of the campaign page URL</p>
+                      <p className="text-xs text-gray-500 mt-1">
+                        Preview of the campaign page URL
+                      </p>
                     </div>
                   </div>
                 </div>
@@ -536,7 +605,9 @@ const CampaignForm = ({ campaign, onClose, onSave }) => {
 
               {/* Discount Settings */}
               <div>
-                <h3 className="text-lg font-bold text-gray-800 mb-4">Discount Settings</h3>
+                <h3 className="text-lg font-bold text-gray-800 mb-4">
+                  Discount Settings
+                </h3>
                 <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
                   <div>
                     <label className="block text-sm font-semibold text-gray-700 mb-2">
@@ -548,8 +619,8 @@ const CampaignForm = ({ campaign, onClose, onSave }) => {
                       onChange={handleChange}
                       required
                       options={[
-                        { value: 'percentage', label: 'Percentage' },
-                        { value: 'fixed', label: 'Fixed Amount' },
+                        { value: "percentage", label: "Percentage" },
+                        { value: "fixed", label: "Fixed Amount" },
                       ]}
                     />
                   </div>
@@ -565,12 +636,20 @@ const CampaignForm = ({ campaign, onClose, onSave }) => {
                       onChange={handleChange}
                       required
                       min="0"
-                      step={formData.discountType === 'percentage' ? '1' : '0.01'}
+                      step={
+                        formData.discountType === "percentage" ? "1" : "0.01"
+                      }
                       className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-primary-500"
-                      placeholder={formData.discountType === 'percentage' ? 'e.g., 20' : 'e.g., 10.00'}
+                      placeholder={
+                        formData.discountType === "percentage"
+                          ? "e.g., 20"
+                          : "e.g., 10.00"
+                      }
                     />
-                    {formData.discountType === 'percentage' && (
-                      <p className="text-xs text-gray-500 mt-1">Enter percentage (e.g., 20 for 20%)</p>
+                    {formData.discountType === "percentage" && (
+                      <p className="text-xs text-gray-500 mt-1">
+                        Enter percentage (e.g., 20 for 20%)
+                      </p>
                     )}
                   </div>
                 </div>
@@ -578,7 +657,9 @@ const CampaignForm = ({ campaign, onClose, onSave }) => {
 
               {/* Schedule */}
               <div>
-                <h3 className="text-lg font-bold text-gray-800 mb-4">Schedule</h3>
+                <h3 className="text-lg font-bold text-gray-800 mb-4">
+                  Schedule
+                </h3>
                 <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
                   <div>
                     <label className="block text-sm font-semibold text-gray-700 mb-2">
@@ -614,7 +695,9 @@ const CampaignForm = ({ campaign, onClose, onSave }) => {
               {/* Products */}
               <div>
                 <div className="flex items-center justify-between mb-4">
-                  <h3 className="text-lg font-bold text-gray-800">Select Products</h3>
+                  <h3 className="text-lg font-bold text-gray-800">
+                    Select Products
+                  </h3>
                   <div className="flex items-center gap-2">
                     <span className="text-sm text-gray-600">
                       {formData.productIds.length} selected
@@ -623,8 +706,7 @@ const CampaignForm = ({ campaign, onClose, onSave }) => {
                       <button
                         type="button"
                         onClick={handleSelectAllFiltered}
-                        className="flex items-center gap-1 px-3 py-1 text-sm text-primary-600 hover:bg-primary-50 rounded-lg transition-colors"
-                      >
+                        className="flex items-center gap-1 px-3 py-1 text-sm text-primary-600 hover:bg-primary-50 rounded-lg transition-colors">
                         {allFilteredSelected ? (
                           <>
                             <FiCheckSquare className="text-base" />
@@ -656,9 +738,8 @@ const CampaignForm = ({ campaign, onClose, onSave }) => {
                     {productSearchQuery && (
                       <button
                         type="button"
-                        onClick={() => setProductSearchQuery('')}
-                        className="absolute right-3 top-1/2 transform -translate-y-1/2 text-gray-400 hover:text-gray-600"
-                      >
+                        onClick={() => setProductSearchQuery("")}
+                        className="absolute right-3 top-1/2 transform -translate-y-1/2 text-gray-400 hover:text-gray-600">
                         <FiXCircle />
                       </button>
                     )}
@@ -669,12 +750,17 @@ const CampaignForm = ({ campaign, onClose, onSave }) => {
                     {/* Category Filter - Only Parent Categories */}
                     <AnimatedSelect
                       value={selectedProductCategory}
-                      onChange={(e) => setSelectedProductCategory(e.target.value)}
+                      onChange={(e) =>
+                        setSelectedProductCategory(e.target.value)
+                      }
                       options={[
-                        { value: 'all', label: 'All Categories' },
+                        { value: "all", label: "All Categories" },
                         ...getRootCategories()
                           .filter((cat) => cat.isActive !== false)
-                          .map((cat) => ({ value: String(cat.id), label: cat.name })),
+                          .map((cat) => ({
+                            value: String(cat.id),
+                            label: cat.name,
+                          })),
                       ]}
                     />
 
@@ -683,10 +769,13 @@ const CampaignForm = ({ campaign, onClose, onSave }) => {
                       value={selectedProductBrand}
                       onChange={(e) => setSelectedProductBrand(e.target.value)}
                       options={[
-                        { value: 'all', label: 'All Brands' },
+                        { value: "all", label: "All Brands" },
                         ...(brands || [])
                           .filter((brand) => brand.isActive !== false)
-                          .map((brand) => ({ value: String(brand.id), label: brand.name })),
+                          .map((brand) => ({
+                            value: String(brand.id),
+                            label: brand.name,
+                          })),
                       ]}
                     />
 
@@ -695,21 +784,23 @@ const CampaignForm = ({ campaign, onClose, onSave }) => {
                       value={selectedProductStock}
                       onChange={(e) => setSelectedProductStock(e.target.value)}
                       options={[
-                        { value: 'all', label: 'All Stock' },
-                        { value: 'in_stock', label: 'In Stock' },
-                        { value: 'low_stock', label: 'Low Stock' },
-                        { value: 'out_of_stock', label: 'Out of Stock' },
+                        { value: "all", label: "All Stock" },
+                        { value: "in_stock", label: "In Stock" },
+                        { value: "low_stock", label: "Low Stock" },
+                        { value: "out_of_stock", label: "Out of Stock" },
                       ]}
                     />
                   </div>
 
                   {/* Clear Filters Button */}
-                  {(productSearchQuery || selectedProductCategory !== 'all' || selectedProductBrand !== 'all' || selectedProductStock !== 'all') && (
+                  {(productSearchQuery ||
+                    selectedProductCategory !== "all" ||
+                    selectedProductBrand !== "all" ||
+                    selectedProductStock !== "all") && (
                     <button
                       type="button"
                       onClick={handleClearFilters}
-                      className="flex items-center gap-1 text-sm text-gray-600 hover:text-gray-800"
-                    >
+                      className="flex items-center gap-1 text-sm text-gray-600 hover:text-gray-800">
                       <FiXCircle className="text-xs" />
                       <span>Clear all filters</span>
                     </button>
@@ -717,8 +808,10 @@ const CampaignForm = ({ campaign, onClose, onSave }) => {
 
                   {/* Results Count */}
                   <div className="text-sm text-gray-600">
-                    Showing {paginatedProducts.length} of {filteredProducts.length} products
-                    {filteredProducts.length !== products.length && ` (${products.length} total)`}
+                    Showing {paginatedProducts.length} of{" "}
+                    {filteredProducts.length} products
+                    {filteredProducts.length !== products.length &&
+                      ` (${products.length} total)`}
                   </div>
                 </div>
 
@@ -728,12 +821,14 @@ const CampaignForm = ({ campaign, onClose, onSave }) => {
                     <div className="text-center py-8">
                       <FiSearch className="text-4xl text-gray-300 mx-auto mb-2" />
                       <p className="text-gray-500">No products found</p>
-                      {(productSearchQuery || selectedProductCategory !== 'all' || selectedProductBrand !== 'all' || selectedProductStock !== 'all') && (
+                      {(productSearchQuery ||
+                        selectedProductCategory !== "all" ||
+                        selectedProductBrand !== "all" ||
+                        selectedProductStock !== "all") && (
                         <button
                           type="button"
                           onClick={handleClearFilters}
-                          className="mt-2 text-sm text-primary-600 hover:text-primary-700"
-                        >
+                          className="mt-2 text-sm text-primary-600 hover:text-primary-700">
                           Clear filters to see all products
                         </button>
                       )}
@@ -744,8 +839,7 @@ const CampaignForm = ({ campaign, onClose, onSave }) => {
                         {paginatedProducts.map((product) => (
                           <label
                             key={product.id}
-                            className="flex items-center gap-3 p-3 hover:bg-gray-50 rounded-lg cursor-pointer border border-transparent hover:border-gray-200 transition-colors"
-                          >
+                            className="flex items-center gap-3 p-3 hover:bg-gray-50 rounded-lg cursor-pointer border border-transparent hover:border-gray-200 transition-colors">
                             <input
                               type="checkbox"
                               checked={formData.productIds.includes(product.id)}
@@ -757,22 +851,34 @@ const CampaignForm = ({ campaign, onClose, onSave }) => {
                               alt={product.name}
                               className="w-12 h-12 object-cover rounded-lg flex-shrink-0"
                               onError={(e) => {
-                                e.target.src = 'https://via.placeholder.com/48x48?text=Product';
+                                e.target.src =
+                                  "https://via.placeholder.com/48x48?text=Product";
                               }}
                             />
                             <div className="flex-1 min-w-0">
-                              <p className="font-semibold text-gray-800 truncate">{product.name}</p>
+                              <p className="font-semibold text-gray-800 truncate">
+                                {product.name}
+                              </p>
                               <div className="flex items-center gap-2 mt-1">
-                                <p className="text-sm font-medium text-gray-700">{formatPrice(product.price)}</p>
-                                {product.originalPrice && product.originalPrice > product.price && (
-                                  <p className="text-xs text-gray-400 line-through">{formatPrice(product.originalPrice)}</p>
-                                )}
+                                <p className="text-sm font-medium text-gray-700">
+                                  {formatPrice(product.price)}
+                                </p>
+                                {product.originalPrice &&
+                                  product.originalPrice > product.price && (
+                                    <p className="text-xs text-gray-400 line-through">
+                                      {formatPrice(product.originalPrice)}
+                                    </p>
+                                  )}
                                 {product.stock && (
-                                  <span className={`text-xs px-2 py-0.5 rounded ${product.stock === 'in_stock' ? 'bg-green-100 text-green-700' :
-                                    product.stock === 'low_stock' ? 'bg-yellow-100 text-yellow-700' :
-                                      'bg-red-100 text-red-700'
+                                  <span
+                                    className={`text-xs px-2 py-0.5 rounded ${
+                                      product.stock === "in_stock"
+                                        ? "bg-green-100 text-green-700"
+                                        : product.stock === "low_stock"
+                                        ? "bg-yellow-100 text-yellow-700"
+                                        : "bg-red-100 text-red-700"
                                     }`}>
-                                    {product.stock.replace('_', ' ')}
+                                    {product.stock.replace("_", " ")}
                                   </span>
                                 )}
                               </div>
@@ -786,10 +892,11 @@ const CampaignForm = ({ campaign, onClose, onSave }) => {
                         <div className="flex items-center justify-between mt-4 pt-4 border-t border-gray-200">
                           <button
                             type="button"
-                            onClick={() => setProductPage(p => Math.max(1, p - 1))}
+                            onClick={() =>
+                              setProductPage((p) => Math.max(1, p - 1))
+                            }
                             disabled={productPage === 1}
-                            className="px-3 py-1 text-sm text-gray-600 hover:text-gray-800 disabled:opacity-50 disabled:cursor-not-allowed"
-                          >
+                            className="px-3 py-1 text-sm text-gray-600 hover:text-gray-800 disabled:opacity-50 disabled:cursor-not-allowed">
                             Previous
                           </button>
                           <span className="text-sm text-gray-600">
@@ -797,10 +904,13 @@ const CampaignForm = ({ campaign, onClose, onSave }) => {
                           </span>
                           <button
                             type="button"
-                            onClick={() => setProductPage(p => Math.min(totalProductPages, p + 1))}
+                            onClick={() =>
+                              setProductPage((p) =>
+                                Math.min(totalProductPages, p + 1)
+                              )
+                            }
                             disabled={productPage === totalProductPages}
-                            className="px-3 py-1 text-sm text-gray-600 hover:text-gray-800 disabled:opacity-50 disabled:cursor-not-allowed"
-                          >
+                            className="px-3 py-1 text-sm text-gray-600 hover:text-gray-800 disabled:opacity-50 disabled:cursor-not-allowed">
                             Next
                           </button>
                         </div>
@@ -818,9 +928,10 @@ const CampaignForm = ({ campaign, onClose, onSave }) => {
                       </span>
                       <button
                         type="button"
-                        onClick={() => setFormData({ ...formData, productIds: [] })}
-                        className="text-xs text-primary-600 hover:text-primary-700"
-                      >
+                        onClick={() =>
+                          setFormData({ ...formData, productIds: [] })
+                        }
+                        className="text-xs text-primary-600 hover:text-primary-700">
                         Clear selection
                       </button>
                     </div>
@@ -830,7 +941,9 @@ const CampaignForm = ({ campaign, onClose, onSave }) => {
 
               {/* Page Options */}
               <div>
-                <h3 className="text-lg font-bold text-gray-800 mb-4">Page Options</h3>
+                <h3 className="text-lg font-bold text-gray-800 mb-4">
+                  Page Options
+                </h3>
                 <div className="space-y-4">
                   <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
                     <div>
@@ -842,18 +955,22 @@ const CampaignForm = ({ campaign, onClose, onSave }) => {
                           onChange={handleChange}
                           className="w-4 h-4 text-primary-600 rounded focus:ring-primary-500"
                         />
-                        <span className="text-sm font-semibold text-gray-700">Show Countdown Timer</span>
+                        <span className="text-sm font-semibold text-gray-700">
+                          Show Countdown Timer
+                        </span>
                       </label>
                       {formData.pageConfig.showCountdown && (
                         <div className="mt-2">
-                          <label className="block text-xs text-gray-600 mb-1">Countdown Type</label>
+                          <label className="block text-xs text-gray-600 mb-1">
+                            Countdown Type
+                          </label>
                           <AnimatedSelect
                             name="pageConfig.countdownType"
                             value={formData.pageConfig.countdownType}
                             onChange={handleChange}
                             options={[
-                              { value: 'campaign_end', label: 'Campaign End' },
-                              { value: 'daily_reset', label: 'Daily Reset' },
+                              { value: "campaign_end", label: "Campaign End" },
+                              { value: "daily_reset", label: "Daily Reset" },
                             ]}
                           />
                         </div>
@@ -868,7 +985,9 @@ const CampaignForm = ({ campaign, onClose, onSave }) => {
                           onChange={handleChange}
                           className="w-4 h-4 text-primary-600 rounded focus:ring-primary-500"
                         />
-                        <span className="text-sm font-semibold text-gray-700">Show Stats Banner</span>
+                        <span className="text-sm font-semibold text-gray-700">
+                          Show Stats Banner
+                        </span>
                       </label>
                     </div>
                   </div>
@@ -884,22 +1003,30 @@ const CampaignForm = ({ campaign, onClose, onSave }) => {
                             type="checkbox"
                             name="viewMode"
                             value="grid"
-                            checked={formData.pageConfig.viewModes.includes('grid')}
+                            checked={formData.pageConfig.viewModes.includes(
+                              "grid"
+                            )}
                             onChange={handleChange}
                             className="w-4 h-4 text-primary-600 rounded focus:ring-primary-500"
                           />
-                          <span className="text-sm text-gray-700">Grid View</span>
+                          <span className="text-sm text-gray-700">
+                            Grid View
+                          </span>
                         </label>
                         <label className="flex items-center gap-2">
                           <input
                             type="checkbox"
                             name="viewMode"
                             value="list"
-                            checked={formData.pageConfig.viewModes.includes('list')}
+                            checked={formData.pageConfig.viewModes.includes(
+                              "list"
+                            )}
                             onChange={handleChange}
                             className="w-4 h-4 text-primary-600 rounded focus:ring-primary-500"
                           />
-                          <span className="text-sm text-gray-700">List View</span>
+                          <span className="text-sm text-gray-700">
+                            List View
+                          </span>
                         </label>
                       </div>
                     </div>
@@ -911,7 +1038,7 @@ const CampaignForm = ({ campaign, onClose, onSave }) => {
                         name="pageConfig.defaultViewMode"
                         value={formData.pageConfig.defaultViewMode}
                         onChange={handleChange}
-                        options={formData.pageConfig.viewModes.map(mode => ({
+                        options={formData.pageConfig.viewModes.map((mode) => ({
                           value: mode,
                           label: mode.charAt(0).toUpperCase() + mode.slice(1),
                         }))}
@@ -929,7 +1056,9 @@ const CampaignForm = ({ campaign, onClose, onSave }) => {
                           onChange={handleChange}
                           className="w-4 h-4 text-primary-600 rounded focus:ring-primary-500"
                         />
-                        <span className="text-sm font-semibold text-gray-700">Enable Filters</span>
+                        <span className="text-sm font-semibold text-gray-700">
+                          Enable Filters
+                        </span>
                       </label>
                     </div>
                     <div>
@@ -941,7 +1070,9 @@ const CampaignForm = ({ campaign, onClose, onSave }) => {
                           onChange={handleChange}
                           className="w-4 h-4 text-primary-600 rounded focus:ring-primary-500"
                         />
-                        <span className="text-sm font-semibold text-gray-700">Enable Sorting</span>
+                        <span className="text-sm font-semibold text-gray-700">
+                          Enable Sorting
+                        </span>
                       </label>
                     </div>
                   </div>
@@ -965,7 +1096,9 @@ const CampaignForm = ({ campaign, onClose, onSave }) => {
 
               {/* Banner Settings */}
               <div>
-                <h3 className="text-lg font-bold text-gray-800 mb-4">Banner Settings</h3>
+                <h3 className="text-lg font-bold text-gray-800 mb-4">
+                  Banner Settings
+                </h3>
                 <div className="space-y-4">
                   <label className="flex items-center gap-2">
                     <input
@@ -975,7 +1108,9 @@ const CampaignForm = ({ campaign, onClose, onSave }) => {
                       onChange={handleChange}
                       className="w-4 h-4 text-primary-600 rounded focus:ring-primary-500"
                     />
-                    <span className="text-sm font-semibold text-gray-700">Auto-create Banner</span>
+                    <span className="text-sm font-semibold text-gray-700">
+                      Auto-create Banner
+                    </span>
                   </label>
 
                   {formData.autoCreateBanner && (
@@ -1015,7 +1150,9 @@ const CampaignForm = ({ campaign, onClose, onSave }) => {
                         <div className="space-y-3">
                           {/* Option 1: Upload Custom Image */}
                           <div>
-                            <label className="block text-xs text-gray-600 mb-2">Option 1: Upload Custom Image</label>
+                            <label className="block text-xs text-gray-600 mb-2">
+                              Option 1: Upload Custom Image
+                            </label>
                             <div className="relative">
                               <input
                                 type="file"
@@ -1026,93 +1163,108 @@ const CampaignForm = ({ campaign, onClose, onSave }) => {
                               />
                               <label
                                 htmlFor="banner-image-upload"
-                                className="flex items-center justify-center gap-2 w-full px-4 py-3 border-2 border-dashed border-gray-300 rounded-lg cursor-pointer hover:border-primary-500 hover:bg-primary-50 transition-colors bg-white"
-                              >
+                                className="flex items-center justify-center gap-2 w-full px-4 py-3 border-2 border-dashed border-gray-300 rounded-lg cursor-pointer hover:border-primary-500 hover:bg-primary-50 transition-colors bg-white">
                                 <FiUpload className="text-lg text-primary-600" />
                                 <span className="text-sm font-medium text-gray-700">
-                                  {formData.bannerConfig.image && formData.bannerConfig.customImage
-                                    ? 'Change Custom Banner Image'
-                                    : 'Upload Custom Banner Image'}
+                                  {formData.bannerConfig.image &&
+                                  formData.bannerConfig.customImage
+                                    ? "Change Custom Banner Image"
+                                    : "Upload Custom Banner Image"}
                                 </span>
                               </label>
                             </div>
                             {/* Preview for custom uploaded image */}
-                            {formData.bannerConfig.image && formData.bannerConfig.customImage && (
-                              <div className="mt-3">
-                                <div className="relative inline-block">
-                                  <img
-                                    src={formData.bannerConfig.image}
-                                    alt="Banner preview"
-                                    className="w-full max-w-xs h-32 object-cover rounded-lg border border-gray-200"
-                                    onError={(e) => {
-                                      e.target.style.display = 'none';
-                                    }}
-                                  />
-                                  <button
-                                    type="button"
-                                    onClick={() => {
-                                      setFormData({
-                                        ...formData,
-                                        bannerConfig: {
-                                          ...formData.bannerConfig,
-                                          image: '',
-                                          customImage: false,
-                                        },
-                                      });
-                                    }}
-                                    className="absolute -top-2 -right-2 p-1 bg-red-500 text-white rounded-full hover:bg-red-600 transition-colors"
-                                    title="Remove image"
-                                  >
-                                    <FiX className="text-sm" />
-                                  </button>
+                            {formData.bannerConfig.image &&
+                              formData.bannerConfig.customImage && (
+                                <div className="mt-3">
+                                  <div className="relative inline-block">
+                                    <img
+                                      src={formData.bannerConfig.image}
+                                      alt="Banner preview"
+                                      className="w-full max-w-xs h-32 object-cover rounded-lg border border-gray-200"
+                                      onError={(e) => {
+                                        e.target.style.display = "none";
+                                      }}
+                                    />
+                                    <button
+                                      type="button"
+                                      onClick={() => {
+                                        setFormData({
+                                          ...formData,
+                                          bannerConfig: {
+                                            ...formData.bannerConfig,
+                                            image: "",
+                                            customImage: false,
+                                          },
+                                        });
+                                      }}
+                                      className="absolute -top-2 -right-2 p-1 bg-red-500 text-white rounded-full hover:bg-red-600 transition-colors"
+                                      title="Remove image">
+                                      <FiX className="text-sm" />
+                                    </button>
+                                  </div>
+                                  <p className="text-xs text-gray-500 mt-1">
+                                    Custom uploaded image
+                                  </p>
                                 </div>
-                                <p className="text-xs text-gray-500 mt-1">Custom uploaded image</p>
-                              </div>
-                            )}
+                              )}
 
                             {/* Preview for URL image */}
-                            {formData.bannerConfig.image && !formData.bannerConfig.customImage && !formData.bannerConfig.image.startsWith('data:') && (
-                              <div className="mt-3">
-                                <div className="relative inline-block">
-                                  <img
-                                    src={formData.bannerConfig.image}
-                                    alt="Banner preview"
-                                    className="w-full max-w-xs h-32 object-cover rounded-lg border border-gray-200"
-                                    onError={(e) => {
-                                      e.target.parentElement.style.display = 'none';
-                                    }}
-                                  />
-                                  <button
-                                    type="button"
-                                    onClick={() => {
-                                      setFormData({
-                                        ...formData,
-                                        bannerConfig: {
-                                          ...formData.bannerConfig,
-                                          image: '',
-                                        },
-                                      });
-                                    }}
-                                    className="absolute -top-2 -right-2 p-1 bg-red-500 text-white rounded-full hover:bg-red-600 transition-colors"
-                                    title="Remove image"
-                                  >
-                                    <FiX className="text-sm" />
-                                  </button>
+                            {formData.bannerConfig.image &&
+                              !formData.bannerConfig.customImage &&
+                              !formData.bannerConfig.image.startsWith(
+                                "data:"
+                              ) && (
+                                <div className="mt-3">
+                                  <div className="relative inline-block">
+                                    <img
+                                      src={formData.bannerConfig.image}
+                                      alt="Banner preview"
+                                      className="w-full max-w-xs h-32 object-cover rounded-lg border border-gray-200"
+                                      onError={(e) => {
+                                        e.target.parentElement.style.display =
+                                          "none";
+                                      }}
+                                    />
+                                    <button
+                                      type="button"
+                                      onClick={() => {
+                                        setFormData({
+                                          ...formData,
+                                          bannerConfig: {
+                                            ...formData.bannerConfig,
+                                            image: "",
+                                          },
+                                        });
+                                      }}
+                                      className="absolute -top-2 -right-2 p-1 bg-red-500 text-white rounded-full hover:bg-red-600 transition-colors"
+                                      title="Remove image">
+                                      <FiX className="text-sm" />
+                                    </button>
+                                  </div>
+                                  <p className="text-xs text-gray-500 mt-1">
+                                    Image from URL
+                                  </p>
                                 </div>
-                                <p className="text-xs text-gray-500 mt-1">Image from URL</p>
-                              </div>
-                            )}
+                              )}
                           </div>
 
                           {/* Option 2: Image URL */}
                           <div>
-                            <label className="block text-xs text-gray-600 mb-2">Option 2: Use Image URL (Optional - defaults to promotional image)</label>
+                            <label className="block text-xs text-gray-600 mb-2">
+                              Option 2: Use Image URL (Optional - defaults to
+                              promotional image)
+                            </label>
                             <div className="relative">
                               <FiImage className="absolute left-3 top-1/2 transform -translate-y-1/2 text-gray-400" />
                               <input
                                 type="text"
                                 name="bannerConfig.image"
-                                value={formData.bannerConfig.customImage ? '' : formData.bannerConfig.image}
+                                value={
+                                  formData.bannerConfig.customImage
+                                    ? ""
+                                    : formData.bannerConfig.image
+                                }
                                 onChange={(e) => {
                                   setFormData({
                                     ...formData,
@@ -1125,14 +1277,15 @@ const CampaignForm = ({ campaign, onClose, onSave }) => {
                                 }}
                                 disabled={formData.bannerConfig.customImage}
                                 className="w-full pl-10 pr-4 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-primary-500 disabled:bg-gray-100 disabled:cursor-not-allowed"
-                                placeholder="/images/promotional/beauty.jpg"
+                                placeholder="data/promotional/beauty.jpg"
                               />
                             </div>
-                            {formData.bannerConfig.image && !formData.bannerConfig.customImage && (
-                              <p className="text-xs text-gray-500 mt-1">
-                                Leave empty to use default promotional image
-                              </p>
-                            )}
+                            {formData.bannerConfig.image &&
+                              !formData.bannerConfig.customImage && (
+                                <p className="text-xs text-gray-500 mt-1">
+                                  Leave empty to use default promotional image
+                                </p>
+                              )}
                           </div>
                         </div>
                       </div>
@@ -1143,7 +1296,9 @@ const CampaignForm = ({ campaign, onClose, onSave }) => {
 
               {/* Settings */}
               <div>
-                <h3 className="text-lg font-bold text-gray-800 mb-4">Settings</h3>
+                <h3 className="text-lg font-bold text-gray-800 mb-4">
+                  Settings
+                </h3>
                 <label className="flex items-center gap-2">
                   <input
                     type="checkbox"
@@ -1152,25 +1307,19 @@ const CampaignForm = ({ campaign, onClose, onSave }) => {
                     onChange={handleChange}
                     className="w-4 h-4 text-primary-600 rounded focus:ring-primary-500"
                   />
-                  <span className="text-sm font-semibold text-gray-700">Active</span>
+                  <span className="text-sm font-semibold text-gray-700">
+                    Active
+                  </span>
                 </label>
               </div>
 
               {/* Actions */}
               <div className="flex items-center justify-end gap-4 pt-4 border-t border-gray-200">
-                <Button
-                  type="button"
-                  onClick={onClose}
-                  variant="secondary"
-                >
+                <Button type="button" onClick={onClose} variant="secondary">
                   Cancel
                 </Button>
-                <Button
-                  type="submit"
-                  variant="primary"
-                  icon={FiSave}
-                >
-                  {isEdit ? 'Update Campaign' : 'Create Campaign'}
+                <Button type="submit" variant="primary" icon={FiSave}>
+                  {isEdit ? "Update Campaign" : "Create Campaign"}
                 </Button>
               </div>
             </form>
@@ -1182,4 +1331,3 @@ const CampaignForm = ({ campaign, onClose, onSave }) => {
 };
 
 export default CampaignForm;
-

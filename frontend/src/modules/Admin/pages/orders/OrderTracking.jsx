@@ -1,25 +1,31 @@
-import { useState, useEffect } from 'react';
-import { useNavigate } from 'react-router-dom';
-import { FiSearch, FiMapPin, FiTruck, FiPackage, FiCheckCircle } from 'react-icons/fi';
-import { motion } from 'framer-motion';
-import DataTable from '../../components/DataTable';
-import Badge from '../../../../shared/components/Badge';
+import { useState, useEffect } from "react";
+import { useNavigate } from "react-router-dom";
+import {
+  FiSearch,
+  FiMapPin,
+  FiTruck,
+  FiPackage,
+  FiCheckCircle,
+} from "react-icons/fi";
+import { motion } from "framer-motion";
+import DataTable from "../../components/DataTable";
+import Badge from "../../../../shared/components/Badge";
 // import { formatDateTime } from '../../utils/adminHelpers';
-import { mockOrders } from '../../../../data/adminMockData';
+import { mockOrders } from "../../../../data/adminMockData";
 
 const OrderTracking = () => {
   const navigate = useNavigate();
   const [orders, setOrders] = useState([]);
-  const [searchQuery, setSearchQuery] = useState('');
+  const [searchQuery, setSearchQuery] = useState("");
   const [selectedOrder, setSelectedOrder] = useState(null);
 
   useEffect(() => {
-    const savedOrders = localStorage.getItem('admin-orders');
+    const savedOrders = localStorage.getItem("admin-orders");
     if (savedOrders) {
       setOrders(JSON.parse(savedOrders));
     } else {
       setOrders(mockOrders);
-      localStorage.setItem('admin-orders', JSON.stringify(mockOrders));
+      localStorage.setItem("admin-orders", JSON.stringify(mockOrders));
     }
   }, []);
 
@@ -31,24 +37,44 @@ const OrderTracking = () => {
 
   const getTrackingSteps = (status) => {
     const steps = [
-      { label: 'Order Placed', status: 'completed', icon: FiCheckCircle },
-      { label: 'Processing', status: status === 'processing' || status === 'shipped' || status === 'delivered' ? 'completed' : 'pending', icon: FiPackage },
-      { label: 'Shipped', status: status === 'shipped' || status === 'delivered' ? 'completed' : 'pending', icon: FiTruck },
-      { label: 'Delivered', status: status === 'delivered' ? 'completed' : 'pending', icon: FiMapPin },
+      { label: "Order Placed", status: "completed", icon: FiCheckCircle },
+      {
+        label: "Processing",
+        status:
+          status === "processing" ||
+          status === "shipped" ||
+          status === "delivered"
+            ? "completed"
+            : "pending",
+        icon: FiPackage,
+      },
+      {
+        label: "Shipped",
+        status:
+          status === "shipped" || status === "delivered"
+            ? "completed"
+            : "pending",
+        icon: FiTruck,
+      },
+      {
+        label: "Delivered",
+        status: status === "delivered" ? "completed" : "pending",
+        icon: FiMapPin,
+      },
     ];
     return steps;
   };
 
   const columns = [
     {
-      key: 'id',
-      label: 'Order ID',
+      key: "id",
+      label: "Order ID",
       sortable: true,
       render: (value) => <span className="font-semibold">{value}</span>,
     },
     {
-      key: 'customer',
-      label: 'Customer',
+      key: "customer",
+      label: "Customer",
       sortable: true,
       render: (value) => (
         <div>
@@ -58,26 +84,25 @@ const OrderTracking = () => {
       ),
     },
     {
-      key: 'status',
-      label: 'Status',
+      key: "status",
+      label: "Status",
       sortable: true,
       render: (value) => <Badge variant={value}>{value}</Badge>,
     },
     {
-      key: 'date',
-      label: 'Order Date',
+      key: "date",
+      label: "Order Date",
       sortable: true,
-      render: (value) => new Date(step.date).toLocaleString(),
+      render: (value) => new Date(value).toLocaleString(),
     },
     {
-      key: 'actions',
-      label: 'Actions',
+      key: "actions",
+      label: "Actions",
       sortable: false,
       render: (_, row) => (
         <button
           onClick={() => setSelectedOrder(row)}
-          className="px-3 py-1 bg-primary-600 text-white rounded-lg hover:bg-primary-700 transition-colors text-sm font-semibold"
-        >
+          className="px-3 py-1 bg-primary-600 text-white rounded-lg hover:bg-primary-700 transition-colors text-sm font-semibold">
           Track
         </button>
       ),
@@ -88,12 +113,15 @@ const OrderTracking = () => {
     <motion.div
       initial={{ opacity: 0, y: 20 }}
       animate={{ opacity: 1, y: 0 }}
-      className="space-y-6"
-    >
+      className="space-y-6">
       <div className="flex flex-col sm:flex-row items-start sm:items-center justify-between gap-4">
         <div className="lg:hidden">
-          <h1 className="text-2xl sm:text-3xl font-bold text-gray-800 mb-2">Order Tracking</h1>
-          <p className="text-sm sm:text-base text-gray-600">Track order status and delivery progress</p>
+          <h1 className="text-2xl sm:text-3xl font-bold text-gray-800 mb-2">
+            Order Tracking
+          </h1>
+          <p className="text-sm sm:text-base text-gray-600">
+            Track order status and delivery progress
+          </p>
         </div>
       </div>
 
@@ -124,31 +152,48 @@ const OrderTracking = () => {
 
         {selectedOrder && (
           <div className="bg-white rounded-xl p-6 shadow-sm border border-gray-200">
-            <h3 className="text-lg font-bold text-gray-800 mb-4">Tracking Details</h3>
+            <h3 className="text-lg font-bold text-gray-800 mb-4">
+              Tracking Details
+            </h3>
             <div className="space-y-4">
               <div>
                 <p className="text-sm text-gray-600 mb-1">Order ID</p>
-                <p className="font-semibold text-gray-800">{selectedOrder.id}</p>
+                <p className="font-semibold text-gray-800">
+                  {selectedOrder.id}
+                </p>
               </div>
               <div>
                 <p className="text-sm text-gray-600 mb-1">Customer</p>
-                <p className="font-semibold text-gray-800">{selectedOrder.customer.name}</p>
+                <p className="font-semibold text-gray-800">
+                  {selectedOrder.customer.name}
+                </p>
               </div>
               <div className="space-y-3 pt-4 border-t border-gray-200">
                 {getTrackingSteps(selectedOrder.status).map((step, index) => {
                   const Icon = step.icon;
                   return (
                     <div key={index} className="flex items-start gap-3">
-                      <div className={`flex-shrink-0 w-8 h-8 rounded-full flex items-center justify-center ${step.status === 'completed' ? 'bg-green-100 text-green-600' : 'bg-gray-100 text-gray-400'
+                      <div
+                        className={`flex-shrink-0 w-8 h-8 rounded-full flex items-center justify-center ${
+                          step.status === "completed"
+                            ? "bg-green-100 text-green-600"
+                            : "bg-gray-100 text-gray-400"
                         }`}>
                         <Icon className="text-sm" />
                       </div>
                       <div className="flex-1">
-                        <p className={`font-medium ${step.status === 'completed' ? 'text-gray-800' : 'text-gray-400'}`}>
+                        <p
+                          className={`font-medium ${
+                            step.status === "completed"
+                              ? "text-gray-800"
+                              : "text-gray-400"
+                          }`}>
                           {step.label}
                         </p>
-                        {step.status === 'completed' && (
-                          <p className="text-xs text-gray-500 mt-1">Completed</p>
+                        {step.status === "completed" && (
+                          <p className="text-xs text-gray-500 mt-1">
+                            Completed
+                          </p>
                         )}
                       </div>
                     </div>
@@ -157,8 +202,7 @@ const OrderTracking = () => {
               </div>
               <button
                 onClick={() => navigate(`/admin/orders/${selectedOrder.id}`)}
-                className="w-full mt-4 px-4 py-2 bg-primary-600 text-white rounded-lg hover:bg-primary-700 transition-colors font-semibold"
-              >
+                className="w-full mt-4 px-4 py-2 bg-primary-600 text-white rounded-lg hover:bg-primary-700 transition-colors font-semibold">
                 View Full Details
               </button>
             </div>
@@ -170,4 +214,3 @@ const OrderTracking = () => {
 };
 
 export default OrderTracking;
-

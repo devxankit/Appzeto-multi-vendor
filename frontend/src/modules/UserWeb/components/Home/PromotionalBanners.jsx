@@ -4,6 +4,9 @@ import { motion } from "framer-motion";
 import { useBannerStore } from "../../../../shared/store/bannerStore";
 import { useCampaignStore } from "../../../../shared/store/campaignStore";
 import { gsapAnimations } from "../../../../shared/utils/animations";
+import beautyPromoImg from "../../../../../data/promotional/beauty.jpg";
+import healthPromoImg from "../../../../../data/promotional/health.jpg";
+import kitchenPromoImg from "../../../../../data/promotional/kitchen.jpg";
 
 const PromotionalBanners = () => {
   const sectionRef = useRef(null);
@@ -37,7 +40,7 @@ const PromotionalBanners = () => {
         description: banner.description || "",
         discount: banner.subtitle || "Special Offer",
         gradient: "from-blue-400 via-purple-400 to-pink-400",
-        image: banner.image || "/images/promotional/beauty.jpg",
+        image: banner.image || beautyPromoImg,
         link: banner.link || "/offers",
         isCampaign: true,
       }));
@@ -61,7 +64,7 @@ const PromotionalBanners = () => {
       description: "All about your health",
       discount: "Up to 20% Off",
       gradient: "from-orange-400 via-pink-400 to-red-400",
-      image: "/images/promotional/health.jpg",
+      image: healthPromoImg,
     },
     {
       id: 3,
@@ -71,7 +74,7 @@ const PromotionalBanners = () => {
       description: "Low prices are here to spice things up.",
       discount: "Up to 35% Off",
       gradient: "from-blue-400 via-indigo-400 to-purple-400",
-      image: "/images/promotional/kitchen.jpg",
+      image: kitchenPromoImg,
     },
   ];
 

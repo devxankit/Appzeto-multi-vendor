@@ -1,37 +1,38 @@
-import { create } from 'zustand';
-import { persist, createJSONStorage } from 'zustand/middleware';
-import toast from 'react-hot-toast';
+import { create } from "zustand";
+import { persist, createJSONStorage } from "zustand/middleware";
+import toast from "react-hot-toast";
+import logoImage from "../../../data/logos/ChatGPT Image Dec 2, 2025, 03_01_19 PM.png";
 
 const defaultSettings = {
   general: {
-    storeName: 'Appzeto E-commerce',
-    storeLogo: '/images/logos/logo.png',
-    favicon: '/images/logos/logo.png',
-    contactEmail: 'contact@example.com',
-    contactPhone: '+1234567890',
-    address: '',
-    businessHours: 'Mon-Fri 9AM-6PM',
-    timezone: 'UTC',
-    currency: 'INR',
-    language: 'en',
+    storeName: "Appzeto E-commerce",
+    storeLogo: logoImage,
+    favicon: logoImage,
+    contactEmail: "contact@example.com",
+    contactPhone: "+1234567890",
+    address: "",
+    businessHours: "Mon-Fri 9AM-6PM",
+    timezone: "UTC",
+    currency: "INR",
+    language: "en",
     socialMedia: {
-      facebook: '',
-      instagram: '',
-      twitter: '',
-      linkedin: '',
+      facebook: "",
+      instagram: "",
+      twitter: "",
+      linkedin: "",
     },
-    accentColor: '#FFE11B',
-    storeDescription: '',
+    accentColor: "#FFE11B",
+    storeDescription: "",
   },
   payment: {
-    paymentMethods: ['cod', 'card', 'wallet'],
+    paymentMethods: ["cod", "card", "wallet"],
     codEnabled: true,
     cardEnabled: true,
     walletEnabled: true,
     upiEnabled: false,
-    paymentGateway: 'stripe',
-    stripePublicKey: '',
-    stripeSecretKey: '',
+    paymentGateway: "stripe",
+    stripePublicKey: "",
+    stripeSecretKey: "",
     paymentFees: {
       cod: 0,
       card: 2.5,
@@ -43,14 +44,20 @@ const defaultSettings = {
     shippingZones: [],
     freeShippingThreshold: 100,
     defaultShippingRate: 5,
-    shippingMethods: ['standard', 'express'],
+    shippingMethods: ["standard", "express"],
   },
   orders: {
     cancellationTimeLimit: 24, // hours
     minimumOrderValue: 0,
     orderTrackingEnabled: true,
     orderConfirmationEmail: true,
-    orderStatuses: ['pending', 'processing', 'shipped', 'delivered', 'cancelled'],
+    orderStatuses: [
+      "pending",
+      "processing",
+      "shipped",
+      "delivered",
+      "cancelled",
+    ],
   },
   customers: {
     guestCheckoutEnabled: true,
@@ -65,20 +72,20 @@ const defaultSettings = {
   products: {
     itemsPerPage: 12,
     gridColumns: 4,
-    defaultSort: 'popularity',
+    defaultSort: "popularity",
     lowStockThreshold: 10,
-    outOfStockBehavior: 'show', // 'hide' or 'show'
+    outOfStockBehavior: "show", // 'hide' or 'show'
     stockAlertsEnabled: true,
   },
   tax: {
     defaultTaxRate: 18,
-    taxCalculationMethod: 'exclusive', // 'inclusive' or 'exclusive'
-    priceDisplayFormat: 'INR', // Currency format
+    taxCalculationMethod: "exclusive", // 'inclusive' or 'exclusive'
+    priceDisplayFormat: "INR", // Currency format
   },
   content: {
-    privacyPolicy: '',
-    termsConditions: '',
-    refundPolicy: '',
+    privacyPolicy: "",
+    termsConditions: "",
+    refundPolicy: "",
   },
   features: {
     wishlistEnabled: true,
@@ -99,7 +106,7 @@ const defaultSettings = {
     },
   },
   reviews: {
-    moderationMode: 'manual', // 'auto' or 'manual'
+    moderationMode: "manual", // 'auto' or 'manual'
     purchaseRequired: true,
     displaySettings: {
       showAll: true,
@@ -108,12 +115,12 @@ const defaultSettings = {
     },
   },
   email: {
-    smtpHost: '',
+    smtpHost: "",
     smtpPort: 587,
-    smtpUser: '',
-    smtpPassword: '',
-    fromEmail: 'noreply@example.com',
-    fromName: 'Appzeto Store',
+    smtpUser: "",
+    smtpPassword: "",
+    fromEmail: "noreply@example.com",
+    fromName: "Appzeto Store",
   },
   notifications: {
     email: {
@@ -129,16 +136,16 @@ const defaultSettings = {
     },
   },
   seo: {
-    metaTitle: 'Appzeto E-commerce - Shop Online',
-    metaDescription: 'Shop the latest trends and products',
-    metaKeywords: 'ecommerce, shopping, online store',
-    ogImage: '/images/logos/logo.png',
-    canonicalUrl: '',
+    metaTitle: "Appzeto E-commerce - Shop Online",
+    metaDescription: "Shop the latest trends and products",
+    metaKeywords: "ecommerce, shopping, online store",
+    ogImage: logoImage,
+    canonicalUrl: "",
   },
   theme: {
-    primaryColor: '#10B981',
-    secondaryColor: '#3B82F6',
-    fontFamily: 'Inter',
+    primaryColor: "#10B981",
+    secondaryColor: "#3B82F6",
+    fontFamily: "Inter",
   },
 };
 
@@ -150,12 +157,15 @@ export const useSettingsStore = create(
 
       // Initialize settings
       initialize: () => {
-        const savedSettings = localStorage.getItem('admin-settings');
+        const savedSettings = localStorage.getItem("admin-settings");
         if (savedSettings) {
           set({ settings: JSON.parse(savedSettings) });
         } else {
           set({ settings: defaultSettings });
-          localStorage.setItem('admin-settings', JSON.stringify(defaultSettings));
+          localStorage.setItem(
+            "admin-settings",
+            JSON.stringify(defaultSettings)
+          );
         }
       },
 
@@ -181,20 +191,22 @@ export const useSettingsStore = create(
             },
           };
           set({ settings: updatedSettings, isLoading: false });
-          localStorage.setItem('admin-settings', JSON.stringify(updatedSettings));
-          toast.success('Settings updated successfully');
+          localStorage.setItem(
+            "admin-settings",
+            JSON.stringify(updatedSettings)
+          );
+          toast.success("Settings updated successfully");
           return updatedSettings;
         } catch (error) {
           set({ isLoading: false });
-          toast.error('Failed to update settings');
+          toast.error("Failed to update settings");
           throw error;
         }
       },
     }),
     {
-      name: 'settings-storage',
+      name: "settings-storage",
       storage: createJSONStorage(() => localStorage),
     }
   )
 );
-

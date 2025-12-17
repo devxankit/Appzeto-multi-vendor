@@ -1,6 +1,7 @@
-import { create } from 'zustand';
-import { persist, createJSONStorage } from 'zustand/middleware';
-import toast from 'react-hot-toast';
+import { create } from "zustand";
+import { persist, createJSONStorage } from "zustand/middleware";
+import toast from "react-hot-toast";
+import heroSlide1 from "../../../data/hero/slide1.png";
 
 export const useBannerStore = create(
   persist(
@@ -10,7 +11,7 @@ export const useBannerStore = create(
 
       // Initialize banners
       initialize: () => {
-        const savedBanners = localStorage.getItem('admin-banners');
+        const savedBanners = localStorage.getItem("admin-banners");
         if (savedBanners) {
           set({ banners: JSON.parse(savedBanners) });
         } else {
@@ -18,11 +19,11 @@ export const useBannerStore = create(
           const defaultBanners = [
             {
               id: 1,
-              type: 'hero',
-              title: 'Welcome to Our Store',
-              subtitle: 'Discover Amazing Products',
-              image: '/images/hero/slide1.png',
-              link: '/',
+              type: "hero",
+              title: "Welcome to Our Store",
+              subtitle: "Discover Amazing Products",
+              image: heroSlide1,
+              link: "/",
               order: 1,
               isActive: true,
               startDate: null,
@@ -30,7 +31,7 @@ export const useBannerStore = create(
             },
           ];
           set({ banners: defaultBanners });
-          localStorage.setItem('admin-banners', JSON.stringify(defaultBanners));
+          localStorage.setItem("admin-banners", JSON.stringify(defaultBanners));
         }
       },
 
@@ -58,20 +59,20 @@ export const useBannerStore = create(
         set({ isLoading: true });
         try {
           const banners = get().banners;
-          const newId = banners.length > 0 
-            ? Math.max(...banners.map((b) => b.id)) + 1 
-            : 1;
-          
+          const newId =
+            banners.length > 0 ? Math.max(...banners.map((b) => b.id)) + 1 : 1;
+
           const newBanner = {
             id: newId,
             type: bannerData.type, // 'hero', 'promotional'
-            title: bannerData.title || '',
-            subtitle: bannerData.subtitle || '',
-            description: bannerData.description || '',
-            image: bannerData.image || '',
-            link: bannerData.link || '',
+            title: bannerData.title || "",
+            subtitle: bannerData.subtitle || "",
+            description: bannerData.description || "",
+            image: bannerData.image || "",
+            link: bannerData.link || "",
             order: bannerData.order || banners.length + 1,
-            isActive: bannerData.isActive !== undefined ? bannerData.isActive : true,
+            isActive:
+              bannerData.isActive !== undefined ? bannerData.isActive : true,
             startDate: bannerData.startDate || null,
             endDate: bannerData.endDate || null,
             createdAt: new Date().toISOString(),
@@ -80,12 +81,12 @@ export const useBannerStore = create(
 
           const updatedBanners = [...banners, newBanner];
           set({ banners: updatedBanners, isLoading: false });
-          localStorage.setItem('admin-banners', JSON.stringify(updatedBanners));
-          toast.success('Banner created successfully');
+          localStorage.setItem("admin-banners", JSON.stringify(updatedBanners));
+          toast.success("Banner created successfully");
           return newBanner;
         } catch (error) {
           set({ isLoading: false });
-          toast.error('Failed to create banner');
+          toast.error("Failed to create banner");
           throw error;
         }
       },
@@ -97,16 +98,20 @@ export const useBannerStore = create(
           const banners = get().banners;
           const updatedBanners = banners.map((banner) =>
             banner.id === parseInt(id)
-              ? { ...banner, ...bannerData, updatedAt: new Date().toISOString() }
+              ? {
+                  ...banner,
+                  ...bannerData,
+                  updatedAt: new Date().toISOString(),
+                }
               : banner
           );
           set({ banners: updatedBanners, isLoading: false });
-          localStorage.setItem('admin-banners', JSON.stringify(updatedBanners));
-          toast.success('Banner updated successfully');
+          localStorage.setItem("admin-banners", JSON.stringify(updatedBanners));
+          toast.success("Banner updated successfully");
           return updatedBanners.find((banner) => banner.id === parseInt(id));
         } catch (error) {
           set({ isLoading: false });
-          toast.error('Failed to update banner');
+          toast.error("Failed to update banner");
           throw error;
         }
       },
@@ -116,14 +121,16 @@ export const useBannerStore = create(
         set({ isLoading: true });
         try {
           const banners = get().banners;
-          const updatedBanners = banners.filter((banner) => banner.id !== parseInt(id));
+          const updatedBanners = banners.filter(
+            (banner) => banner.id !== parseInt(id)
+          );
           set({ banners: updatedBanners, isLoading: false });
-          localStorage.setItem('admin-banners', JSON.stringify(updatedBanners));
-          toast.success('Banner deleted successfully');
+          localStorage.setItem("admin-banners", JSON.stringify(updatedBanners));
+          toast.success("Banner deleted successfully");
           return true;
         } catch (error) {
           set({ isLoading: false });
-          toast.error('Failed to delete banner');
+          toast.error("Failed to delete banner");
           throw error;
         }
       },
@@ -135,15 +142,17 @@ export const useBannerStore = create(
           const banners = get().banners;
           const updatedBanners = banners.map((banner) => {
             const newOrder = bannerIds.indexOf(banner.id);
-            return newOrder !== -1 ? { ...banner, order: newOrder + 1 } : banner;
+            return newOrder !== -1
+              ? { ...banner, order: newOrder + 1 }
+              : banner;
           });
           set({ banners: updatedBanners, isLoading: false });
-          localStorage.setItem('admin-banners', JSON.stringify(updatedBanners));
-          toast.success('Banners reordered successfully');
+          localStorage.setItem("admin-banners", JSON.stringify(updatedBanners));
+          toast.success("Banners reordered successfully");
           return true;
         } catch (error) {
           set({ isLoading: false });
-          toast.error('Failed to reorder banners');
+          toast.error("Failed to reorder banners");
           throw error;
         }
       },
@@ -157,9 +166,8 @@ export const useBannerStore = create(
       },
     }),
     {
-      name: 'banner-storage',
+      name: "banner-storage",
       storage: createJSONStorage(() => localStorage),
     }
   )
 );
-
