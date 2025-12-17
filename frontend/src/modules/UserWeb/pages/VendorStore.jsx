@@ -25,6 +25,7 @@ import useResponsiveHeaderPadding from "../../../shared/hooks/useResponsiveHeade
 import useInfiniteScroll from "../../../shared/hooks/useInfiniteScroll";
 import Badge from "../../../shared/components/Badge";
 import logoImage from "../../../../data/logos/ChatGPT Image Dec 2, 2025, 03_01_19 PM.png";
+import { getImagePath } from "../../../shared/utils/imagePaths";
 
 const VendorStore = () => {
   const { id } = useParams();
@@ -452,7 +453,7 @@ const VendorStore = () => {
                         alt={vendor.storeName}
                         className="w-full h-full object-cover"
                         onError={(e) => {
-                          e.target.src = "/images/logos/logo.png";
+                          e.target.src = getImagePath("/images/logos/logo.png");
                         }}
                       />
                     ) : (

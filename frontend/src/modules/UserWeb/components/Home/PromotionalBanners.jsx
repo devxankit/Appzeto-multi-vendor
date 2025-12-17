@@ -55,7 +55,7 @@ const PromotionalBanners = () => {
       description: "Bring the character",
       discount: "Up to 15% Off",
       gradient: "from-teal-400 via-cyan-400 to-blue-400",
-      image: "/images/promotional/beauty.jpg",
+      image: beautyPromoImg,
     },
     {
       id: 2,

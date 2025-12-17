@@ -49,7 +49,7 @@ export const initializeFashionHubData = () => {
           price: 24.99,
           vendorId: 1,
           vendorName: "Fashion Hub",
-          image: "/images/products/white t shirt.png",
+          image: whiteTShirtImg,
         },
         {
           id: 2,
@@ -73,7 +73,7 @@ export const initializeFashionHubData = () => {
               name: "Classic White T-Shirt",
               quantity: 2,
               price: 24.99,
-              image: "/images/products/white t shirt.png",
+              image: whiteTShirtImg,
             },
             {
               id: 2,
@@ -491,7 +491,7 @@ export const initializeFashionHubData = () => {
           price: 34.99,
           vendorId: 1,
           vendorName: "Fashion Hub",
-          image: "/images/products/belt.png",
+          image: beltImg,
         },
       ],
       vendorItems: [

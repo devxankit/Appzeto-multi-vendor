@@ -181,7 +181,7 @@ const Home = () => {
                       transition={{ delay: 0.2 }}
                       className="relative w-full h-32 rounded-xl overflow-hidden shadow-lg hover:shadow-xl transition-shadow">
                       <LazyImage
-                        src="/images/banners/pharmacy-WEB.avif"
+                        src={pharmacyBanner}
                         alt="Pharmacy"
                         className="w-full h-full object-cover"
                         onError={(e) => {
@@ -215,7 +215,7 @@ const Home = () => {
                       transition={{ delay: 0.4 }}
                       className="relative w-full h-32 rounded-xl overflow-hidden shadow-lg hover:shadow-xl transition-shadow">
                       <LazyImage
-                        src="/images/banners/babycare-WEB.avif"
+                        src={babycareBanner}
                         alt="Special Offers"
                         className="w-full h-full object-cover"
                         onError={(e) => {
