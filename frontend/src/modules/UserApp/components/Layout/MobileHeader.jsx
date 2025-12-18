@@ -16,7 +16,6 @@ import { motion } from "framer-motion";
 import { DotLottieReact } from "@lottiefiles/dotlottie-react";
 import SearchBar from "../../../../shared/components/SearchBar";
 import MobileCategoryIcons from "../Mobile/MobileCategoryIcons";
-import MultiVendorBadge from "../Mobile/MultiVendorBadge";
 
 // Category gradient mapping - Very subtle pastel colors
 const categoryGradients = {
@@ -370,10 +369,6 @@ const MobileHeader = () => {
                 )}
               </div>
             </Link>
-            {/* Marketplace Badge */}
-            <div className="hidden sm:block">
-              <MultiVendorBadge vendorCount={50} size="sm" />
-            </div>
           </div>
 
           {/* Right Side Actions */}
