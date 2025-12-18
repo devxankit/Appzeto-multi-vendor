@@ -16,7 +16,7 @@ import toast from "react-hot-toast";
 
 const ProductFAQs = () => {
   const { vendor } = useVendorAuthStore();
-  const { getVendorProducts } = useVendorAuthStore();
+  const { getVendorProducts } = useVendorStore();
   const [faqs, setFaqs] = useState([]);
   const [editingFaq, setEditingFaq] = useState(null);
   const [expandedFaq, setExpandedFaq] = useState(null);
@@ -44,10 +44,10 @@ const ProductFAQs = () => {
     const updatedFaqs =
       editingFaq && editingFaq.id
         ? faqs.map((f) =>
-          f.id === editingFaq.id
-            ? { ...faqData, id: editingFaq.id, vendorId }
-            : f
-        )
+            f.id === editingFaq.id
+              ? { ...faqData, id: editingFaq.id, vendorId }
+              : f
+          )
         : [...faqs, { ...faqData, id: Date.now(), vendorId }];
 
     setFaqs(updatedFaqs);

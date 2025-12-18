@@ -22,7 +22,7 @@ import { useCommissionStore } from "../../../shared/store/commissionStore";
 const Analytics = () => {
   const { vendor } = useVendorAuthStore();
   const { orders } = useOrderStore();
-  const { getVendorProducts } = useVendorAuthStore();
+  const { getVendorProducts } = useVendorStore();
   const { getVendorEarningsSummary } = useCommissionStore();
 
   const [period, setPeriod] = useState("month");
@@ -145,11 +145,11 @@ const Analytics = () => {
     const revenueChange =
       previousRevenue > 0
         ? (((recentRevenue - previousRevenue) / previousRevenue) * 100).toFixed(
-          1
-        )
+            1
+          )
         : recentRevenue > 0
-          ? 100
-          : 0;
+        ? 100
+        : 0;
 
     // Calculate order counts
     const recentOrders = analyticsData
@@ -163,8 +163,8 @@ const Analytics = () => {
       previousOrders > 0
         ? (((recentOrders - previousOrders) / previousOrders) * 100).toFixed(1)
         : recentOrders > 0
-          ? 100
-          : 0;
+        ? 100
+        : 0;
 
     return {
       totalRevenue: earningsSummary?.totalEarnings || totalRevenue,

@@ -19,7 +19,7 @@ import toast from "react-hot-toast";
 const ManageProducts = () => {
   const navigate = useNavigate();
   const { vendor } = useVendorAuthStore();
-  const { getVendorProducts } = useVendorAuthStore();
+  const { getVendorProducts } = useVendorStore();
   const { categories, initialize: initCategories } = useCategoryStore();
   const { brands, initialize: initBrands } = useBrandStore();
 
@@ -41,10 +41,12 @@ const ManageProducts = () => {
 
     // Initialize dummy products for Fashion Hub vendor (id: 1) on first load
     if (vendorId === 1) {
-      const hasInitialized = localStorage.getItem('fashionhub-products-initialized');
+      const hasInitialized = localStorage.getItem(
+        "fashionhub-products-initialized"
+      );
       if (!hasInitialized) {
         initializeFashionHubProducts();
-        localStorage.setItem('fashionhub-products-initialized', 'true');
+        localStorage.setItem("fashionhub-products-initialized", "true");
       }
     }
 
@@ -56,10 +58,14 @@ const ManageProducts = () => {
 
     // Get all products (from localStorage or initial data)
     const savedProducts = localStorage.getItem("admin-products");
-    const allProducts = savedProducts ? JSON.parse(savedProducts) : initialProducts;
+    const allProducts = savedProducts
+      ? JSON.parse(savedProducts)
+      : initialProducts;
 
     // Filter by vendor
-    const vendorProducts = allProducts.filter((p) => p.vendorId === parseInt(vendorId));
+    const vendorProducts = allProducts.filter(
+      (p) => p.vendorId === parseInt(vendorId)
+    );
     setProducts(vendorProducts);
   };
 
@@ -137,8 +143,8 @@ const ManageProducts = () => {
             value === "in_stock"
               ? "success"
               : value === "low_stock"
-                ? "warning"
-                : "error"
+              ? "warning"
+              : "error"
           }>
           {value?.replace("_", " ").toUpperCase() || "N/A"}
         </Badge>
@@ -176,10 +182,14 @@ const ManageProducts = () => {
 
     // Get all products
     const savedProducts = localStorage.getItem("admin-products");
-    const allProducts = savedProducts ? JSON.parse(savedProducts) : initialProducts;
+    const allProducts = savedProducts
+      ? JSON.parse(savedProducts)
+      : initialProducts;
 
     // Remove the product
-    const updatedProducts = allProducts.filter((p) => p.id !== deleteModal.productId);
+    const updatedProducts = allProducts.filter(
+      (p) => p.id !== deleteModal.productId
+    );
     localStorage.setItem("admin-products", JSON.stringify(updatedProducts));
 
     // Reload vendor products
@@ -232,10 +242,10 @@ const ManageProducts = () => {
               value={selectedStatus}
               onChange={(e) => setSelectedStatus(e.target.value)}
               options={[
-                { value: 'all', label: 'All Status' },
-                { value: 'in_stock', label: 'In Stock' },
-                { value: 'low_stock', label: 'Low Stock' },
-                { value: 'out_of_stock', label: 'Out of Stock' },
+                { value: "all", label: "All Status" },
+                { value: "in_stock", label: "In Stock" },
+                { value: "low_stock", label: "Low Stock" },
+                { value: "out_of_stock", label: "Out of Stock" },
               ]}
               className="w-full sm:w-auto min-w-[140px]"
             />
@@ -244,7 +254,7 @@ const ManageProducts = () => {
               value={selectedCategory}
               onChange={(e) => setSelectedCategory(e.target.value)}
               options={[
-                { value: 'all', label: 'All Categories' },
+                { value: "all", label: "All Categories" },
                 ...categories
                   .filter((cat) => cat.isActive !== false)
                   .map((cat) => ({ value: String(cat.id), label: cat.name })),
@@ -310,4 +320,3 @@ const ManageProducts = () => {
 };
 
 export default ManageProducts;
-

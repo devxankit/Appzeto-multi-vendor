@@ -185,6 +185,7 @@ import VendorProductFAQs from "./modules/Vendor/pages/ProductFAQs";
 import VendorTaxPricing from "./modules/Vendor/pages/TaxPricing";
 import VendorShippingManagement from "./modules/Vendor/pages/ShippingManagement";
 import VendorCustomers from "./modules/Vendor/pages/Customers";
+import VendorCustomerDetail from "./modules/Vendor/pages/CustomerDetail";
 import VendorSupportTickets from "./modules/Vendor/pages/SupportTickets";
 import VendorProductAttributes from "./modules/Vendor/pages/ProductAttributes";
 import VendorInventoryReports from "./modules/Vendor/pages/InventoryReports";
@@ -566,6 +567,7 @@ const AppRoutes = () => {
           path="shipping-management"
           element={<VendorShippingManagement />}
         />
+        <Route path="customers/:id" element={<VendorCustomerDetail />} />
         <Route path="customers" element={<VendorCustomers />} />
         <Route path="support-tickets" element={<VendorSupportTickets />} />
         <Route path="support-tickets/:id" element={<VendorSupportTickets />} />

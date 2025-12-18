@@ -1,6 +1,6 @@
-import { useState, useMemo } from 'react';
-import { FiPackage, FiTrendingUp, FiTrendingDown } from 'react-icons/fi';
-import { motion } from 'framer-motion';
+import { useState, useMemo } from "react";
+import { FiPackage, FiTrendingUp, FiTrendingDown } from "react-icons/fi";
+import { motion } from "framer-motion";
 import DataTable from "../../../Admin/components/DataTable";
 import ExportButton from "../../../Admin/components/ExportButton";
 import { formatPrice } from "../../../../shared/utils/helpers";
@@ -10,9 +10,9 @@ import { useOrderStore } from "../../../../shared/store/orderStore";
 
 const ProductPerformanceReport = () => {
   const { vendor } = useVendorAuthStore();
-  const { getVendorProducts } = useVendorAuthStore();
+  const { getVendorProducts } = useVendorStore();
   const { getVendorOrders } = useOrderStore();
-  const [sortBy, setSortBy] = useState('revenue');
+  const [sortBy, setSortBy] = useState("revenue");
 
   const vendorId = vendor?.id;
   const products = vendorId ? getVendorProducts(vendorId) : [];
@@ -44,7 +44,8 @@ const ProductPerformanceReport = () => {
             if (performanceMap[item.id]) {
               performanceMap[item.id].orders += 1;
               performanceMap[item.id].quantitySold += item.quantity || 1;
-              performanceMap[item.id].revenue += (item.price || 0) * (item.quantity || 1);
+              performanceMap[item.id].revenue +=
+                (item.price || 0) * (item.quantity || 1);
             }
           });
         }
@@ -52,17 +53,17 @@ const ProductPerformanceReport = () => {
     });
 
     return Object.values(performanceMap).sort((a, b) => {
-      if (sortBy === 'revenue') return b.revenue - a.revenue;
-      if (sortBy === 'quantity') return b.quantitySold - a.quantitySold;
-      if (sortBy === 'orders') return b.orders - a.orders;
+      if (sortBy === "revenue") return b.revenue - a.revenue;
+      if (sortBy === "quantity") return b.quantitySold - a.quantitySold;
+      if (sortBy === "orders") return b.orders - a.orders;
       return b.rating - a.rating;
     });
   }, [products, orders, vendorId, sortBy]);
 
   const columns = [
     {
-      key: 'name',
-      label: 'Product',
+      key: "name",
+      label: "Product",
       sortable: true,
       render: (value, row) => (
         <div>
@@ -72,42 +73,47 @@ const ProductPerformanceReport = () => {
       ),
     },
     {
-      key: 'quantitySold',
-      label: 'Quantity Sold',
+      key: "quantitySold",
+      label: "Quantity Sold",
       sortable: true,
       render: (value) => <span className="font-semibold">{value}</span>,
     },
     {
-      key: 'orders',
-      label: 'Orders',
+      key: "orders",
+      label: "Orders",
       sortable: true,
     },
     {
-      key: 'revenue',
-      label: 'Revenue',
+      key: "revenue",
+      label: "Revenue",
       sortable: true,
       render: (value) => (
         <span className="font-bold text-gray-800">{formatPrice(value)}</span>
       ),
     },
     {
-      key: 'stockQuantity',
-      label: 'Stock',
+      key: "stockQuantity",
+      label: "Stock",
       sortable: true,
       render: (value) => (
-        <span className={value < 10 ? 'text-red-600 font-semibold' : 'text-gray-800'}>
+        <span
+          className={
+            value < 10 ? "text-red-600 font-semibold" : "text-gray-800"
+          }>
           {value}
         </span>
       ),
     },
     {
-      key: 'rating',
-      label: 'Rating',
+      key: "rating",
+      label: "Rating",
       sortable: true,
       render: (value, row) => (
         <div>
           <span className="font-semibold">{value.toFixed(1)}</span>
-          <span className="text-xs text-gray-500 ml-1">({row.reviewCount} reviews)</span>
+          <span className="text-xs text-gray-500 ml-1">
+            ({row.reviewCount} reviews)
+          </span>
         </div>
       ),
     },
@@ -127,12 +133,16 @@ const ProductPerformanceReport = () => {
       <div className="grid grid-cols-1 md:grid-cols-4 gap-4">
         <div className="bg-white rounded-xl p-4 sm:p-6 shadow-sm border border-gray-200">
           <p className="text-sm text-gray-600 mb-2">Total Products</p>
-          <p className="text-xl sm:text-2xl font-bold text-gray-800">{products.length}</p>
+          <p className="text-xl sm:text-2xl font-bold text-gray-800">
+            {products.length}
+          </p>
         </div>
         <div className="bg-white rounded-xl p-4 sm:p-6 shadow-sm border border-gray-200">
           <p className="text-sm text-gray-600 mb-2">Total Revenue</p>
           <p className="text-xl sm:text-2xl font-bold text-gray-800">
-            {formatPrice(productPerformance.reduce((sum, p) => sum + p.revenue, 0))}
+            {formatPrice(
+              productPerformance.reduce((sum, p) => sum + p.revenue, 0)
+            )}
           </p>
         </div>
         <div className="bg-white rounded-xl p-4 sm:p-6 shadow-sm border border-gray-200">
@@ -153,7 +163,9 @@ const ProductPerformanceReport = () => {
       <div className="bg-white rounded-xl p-4 shadow-sm border border-gray-200">
         <div className="flex flex-col sm:flex-row items-stretch sm:items-center gap-3 sm:gap-4">
           <div className="flex-1">
-            <label className="text-sm font-semibold text-gray-600 mb-2 block">Sort By</label>
+            <label className="text-sm font-semibold text-gray-600 mb-2 block">
+              Sort By
+            </label>
             <select
               value={sortBy}
               onChange={(e) => setSortBy(e.target.value)}
@@ -169,12 +181,15 @@ const ProductPerformanceReport = () => {
             <ExportButton
               data={productPerformance}
               headers={[
-                { label: 'Product', accessor: (row) => row.name },
-                { label: 'Quantity Sold', accessor: (row) => row.quantitySold },
-                { label: 'Orders', accessor: (row) => row.orders },
-                { label: 'Revenue', accessor: (row) => formatPrice(row.revenue) },
-                { label: 'Stock', accessor: (row) => row.stockQuantity },
-                { label: 'Rating', accessor: (row) => row.rating.toFixed(1) },
+                { label: "Product", accessor: (row) => row.name },
+                { label: "Quantity Sold", accessor: (row) => row.quantitySold },
+                { label: "Orders", accessor: (row) => row.orders },
+                {
+                  label: "Revenue",
+                  accessor: (row) => formatPrice(row.revenue),
+                },
+                { label: "Stock", accessor: (row) => row.stockQuantity },
+                { label: "Rating", accessor: (row) => row.rating.toFixed(1) },
               ]}
               filename="vendor-product-performance"
             />
@@ -200,4 +215,3 @@ const ProductPerformanceReport = () => {
 };
 
 export default ProductPerformanceReport;
-

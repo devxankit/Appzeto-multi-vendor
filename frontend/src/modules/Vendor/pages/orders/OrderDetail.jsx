@@ -84,7 +84,7 @@ const OrderDetail = () => {
                     <AnimatedSelect
                         options={statusOptions}
                         value={order.status}
-                        onChange={handleStatusChange}
+                        onChange={(e) => handleStatusChange(e.target.value)}
                         color={statusOptions.find(opt => opt.value === order.status)?.color || 'gray'}
                     />
                 </div>

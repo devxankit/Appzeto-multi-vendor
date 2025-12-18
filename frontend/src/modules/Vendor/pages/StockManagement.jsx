@@ -22,7 +22,7 @@ import toast from "react-hot-toast";
 
 const StockManagement = () => {
   const { vendor } = useVendorAuthStore();
-  const { getVendorProducts } = useVendorAuthStore();
+  const { getVendorProducts } = useVendorStore();
   const [products, setProducts] = useState([]);
   const [searchQuery, setSearchQuery] = useState("");
   const [stockFilter, setStockFilter] = useState("all");
@@ -109,8 +109,8 @@ const StockManagement = () => {
           newQuantity === 0
             ? "out_of_stock"
             : newQuantity <= lowStockThreshold
-              ? "low_stock"
-              : "in_stock";
+            ? "low_stock"
+            : "in_stock";
         return {
           ...p,
           stockQuantity: parseInt(newQuantity),
@@ -190,8 +190,8 @@ const StockManagement = () => {
             value === "in_stock"
               ? "success"
               : value === "low_stock"
-                ? "warning"
-                : "error"
+              ? "warning"
+              : "error"
           }>
           {value?.replace("_", " ").toUpperCase() || "N/A"}
         </Badge>
@@ -416,8 +416,8 @@ const StockUpdateModal = ({
     stockQuantity === 0
       ? "out_of_stock"
       : stockQuantity <= lowStockThreshold
-        ? "low_stock"
-        : "in_stock";
+      ? "low_stock"
+      : "in_stock";
 
   return (
     <AnimatePresence>
@@ -535,8 +535,8 @@ const StockUpdateModal = ({
                       newStockStatus === "in_stock"
                         ? "success"
                         : newStockStatus === "low_stock"
-                          ? "warning"
-                          : "error"
+                        ? "warning"
+                        : "error"
                     }>
                     {newStockStatus.replace("_", " ").toUpperCase()}
                   </Badge>

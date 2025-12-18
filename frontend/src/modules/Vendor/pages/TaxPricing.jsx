@@ -10,7 +10,7 @@ import toast from "react-hot-toast";
 
 const TaxPricing = () => {
   const { vendor } = useVendorAuthStore();
-  const { getVendorProducts } = useVendorAuthStore();
+  const { getVendorProducts } = useVendorStore();
   const [products, setProducts] = useState([]);
   const [bulkAction, setBulkAction] = useState({
     type: "percentage",
